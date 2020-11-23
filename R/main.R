@@ -1,3 +1,30 @@
+setClassUnion("characterOrNULL", c("character", "NULL"))
+
+
+setClass("MultiOmicsModules", package = "MOSClip",
+         slots = c(alphas  = "numeric",
+                   zlists  = "list",
+                   coxObjs = "list",
+                   modulesView  = "list",
+                   modules     = "list",
+                   formulas = "list",
+                   title = "characterOrNULL"))
+
+
+
+setClass("MultiOmicsPathway", package = "MOSClip",
+         slots = c(pvalue = "numeric",
+                   zlist = "numeric",
+                   coxObj = "data.frame",
+                   pathView = "list",
+                   formula = "character",
+                   title = "characterOrNULL"))
+
+
+setClass("SinglePath", package = "MOSClip",
+         slots = c(global = "MultiOmicsPathway",
+                   modules = "MultiOmicsModules"))
+
 #'export
 #'
 #' This class is the storage for the different omic datasets that we need to analyze.
@@ -12,62 +39,16 @@
 #' @exportClass Omics
 #' @import MultiAssayExperiment
 
-setClass("Omics", 
-         slots = c(data = "MultiAssayExperiment",
-                   modelInfo = "list",
-                   specificArgs = "list")
+Omics<-setClass("Omics", package = "MOSClip",
+         contains = "MultiAssayExperiment",
+         slots = c(modelInfo = "list",
+                   specificArgs = "list",
+                   pathResult = "list")
         )
 
 
-setMethod("initialize",
-          signature=signature(.Object="Omics"),
-          function(.Object, data, modelInfo, specificArgs) {
-            if (missing(data)) {
-              cat("missing\n")
-              data <- MultiAssayExperiment()
-            }
-            if (missing(modelInfo))
-              modelInfo <- vector("list", length(assays(data)))
-            if (missing(specificArgs)) {
-              specificArgs <- vector("list", length(assays(data)))
-            }
-            .Object@data <- data
-            .Object@modelInfo <- modelInfo
-            .Object@specificArgs <- specificArgs
-            .Object
-          })
 
 
-#' Wrapper of Omics
-#' @name Omics
-#' @param ... insert the slots. see \code{Slots}
-#' @rdname Omics-class
-#' @export
-Omics <- function(...) new("Omics", ...)
 
-setMethod("show",
-          signature = "Omics",
-          definition = function(object) {
-            nm <- names(assays(data))
-            if (is.null(nm))
-              nm <- seq_len(length(nm))
-            for (i in seq_along(nm)) {
-              cat(paste0("Data \"", nm[i], "\" to be process with \"", object@modelInfo[[i]],"\". "))
-              if (is.null(object@specificArgs[[i]])) {
-                cat("Default parameters\n")
-              } else {
-                cat("Arguments:\n")
-                arguments <- sapply(seq_along(object@specificArgs[[i]]), function(argI) {
-                  values <- object@specificArgs[[i]][[argI]]
-                  if (is.list(values)) {
-                    values <- values[1:2]
-                    values <- paste(paste(names(values), unlist(values), sep=" -> "), collapse = " ,")
-                    values <- paste0(values, " ...")
-                  }
-                  paste(names(object@specificArgs[[i]])[argI], values, sep=" :")
-                })
-                cat(paste(arguments, collapse ="\n"), "\n")
-              }
-              
-            }
-          })
+
+
