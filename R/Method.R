@@ -1,6 +1,56 @@
-setMethod("initialize",
-          signature=signature(.Object="Omics"),
-          
+setClassUnion("characterOrNULL", c("character", "NULL"))
+
+
+setClass(Class ="MultiOmicsModules", 
+         slots = c(alphas  = "numeric",
+                   zlists  = "list",
+                   coxObjs = "list",
+                   modulesView  = "list",
+                   modules     = "list",
+                   formulas = "list",
+                   title = "characterOrNULL"))
+
+
+
+setClass(Class ="MultiOmicsPathway", 
+         slots = c(pvalue = "numeric",
+                   zlist = "numeric",
+                   coxObj = "data.frame",
+                   pathView = "list",
+                   formula = "character",
+                   title = "characterOrNULL"))
+
+
+setClass(Class ="SinglePath", package = "biocmosclip",
+         slots = c(global = "MultiOmicsPathway",
+                   modules = "MultiOmicsModules"))
+
+#' This class is the storage for the different omic datasets that we need to analyze.
+#'
+#' @slot data a MultiAssayExperiment containing all the data.
+#' @slot modelInfo a list with length equal to length(data) that are modelInfo to process each dataset.
+#' @slot specificArgs a list with length equal to length(data) to set additional parameters specific of the modelInfo.
+#'
+#' @name Omics-class
+#' @rdname Omics-class
+#' 
+#' @export
+
+#' @import MultiAssayExperiment
+Omics <- setClass(Class = "Omics", package = "biocmosclip",
+         contains = "MultiAssayExperiment",
+         slots = c(modelInfo = "list",
+                   specificArgs = "list",
+                   pathResult = "list")
+)
+
+
+#' @export
+setGeneric("initialize", function(.Object, modelInfo, specificArgs,pathResult) standardGeneric("initialize"))
+
+#' @export
+setMethod("initialize", 
+          signature(.Object = "Omics"),
           function(.Object, modelInfo, specificArgs,pathResult) {
             .Object <- callNextMethod()
             if (missing(modelInfo))
@@ -15,16 +65,12 @@ setMethod("initialize",
           }
 )
 
-#'Wrapper of Omics
-#' @name Omics
-#' @param ... insert the slots. see \code{Slots}
-#' @rdname Omics-class
 #' @export
-# Omics <- function(...) new("Omics", ...)
+setGeneric("show", function(object) standardGeneric("show"))
 
-
-setMethod("show", signature = "Omics",
-          definition = function(object) {
+#' @export
+setMethod("show",  signature(object = "Omics"),
+          function(object) {
             nm <- names(assays(object))
             if (is.null(nm))
               nm <- seq_len(length(nm))
@@ -49,7 +95,11 @@ setMethod("show", signature = "Omics",
             }
           })
 
-setMethod("check", signature = "Omics",
+#' @export
+setGeneric("check", function(object) standardGeneric("check") )
+
+#' @export
+setMethod("check",  signature(object = "Omics"),
    check_Omics <- function(object) {
       if (length(object@ExpermentList@listData) != length(object@modelInfo)){
       msg <- "Data and relative methods to analyze them must be equal in length."
@@ -95,12 +145,7 @@ setMethod("check", signature = "Omics",
   return(TRUE)
 })
 
-
-
-
-
-
-
+#' @export
 setMethod("show",
           signature = "MultiOmicsModules",
           definition = function(object) {
@@ -130,7 +175,7 @@ setMethod("show",
             invisible(NULL)
           })
 
-
+#' @export
 setMethod("show",
           signature = "MultiOmicsPathway",
           definition = function(object) {
@@ -140,3 +185,5 @@ setMethod("show",
             cat(paste0("Pathway overall pvalue: ", object@pvalue, "\n"))
             invisible(NULL)
           })
+
+

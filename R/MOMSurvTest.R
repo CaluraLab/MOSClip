@@ -31,7 +31,7 @@ MOMSurvTest <- function(genes, omicsObj, annot,
   moView <- createMOMView(omicsObj, genes)
   formula = survFormula
   
-  coxObj <- annot
+  coxObj <- omicsObj@colData
   
   additionalCovariates <- lapply(moView, function(mo) {
     mo$x
