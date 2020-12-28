@@ -27,7 +27,6 @@ setClass(Class ="SinglePath", package = "biocmosclip",
 
 #' This class is the storage for the different omic datasets that we need to analyze.
 #'
-#' @slot data a MultiAssayExperiment containing all the data.
 #' @slot modelInfo a list with length equal to length(data) that are modelInfo to process each dataset.
 #' @slot specificArgs a list with length equal to length(data) to set additional parameters specific of the modelInfo.
 #'
@@ -35,7 +34,6 @@ setClass(Class ="SinglePath", package = "biocmosclip",
 #' @rdname Omics-class
 #' 
 #' @export
-
 #' @import MultiAssayExperiment
 Omics <- setClass(Class = "Omics", package = "biocmosclip",
          contains = "MultiAssayExperiment",
@@ -46,30 +44,44 @@ Omics <- setClass(Class = "Omics", package = "biocmosclip",
 
 
 #' @export
-setGeneric("initialize", function(.Object, modelInfo, specificArgs,pathResult) standardGeneric("initialize"))
+setGeneric("initialize", function(.Object,experime, modelInfo, specificArgs,pathResult) standardGeneric("initialize"))
 
 #' @export
 setMethod("initialize", 
           signature(.Object = "Omics"),
-          function(.Object, modelInfo, specificArgs,pathResult) {
+          
+          function(.Object,experime, modelInfo, specificArgs,pathResult) {
             .Object <- callNextMethod()
-            if (missing(modelInfo))
-              modelInfo <- vector("list", length(assays(.Object)))
-            if (missing(specificArgs)) {
-              specificArgs <- vector("list", length(assays(.Object)))
+            
+            # if (!missing(experime)){
+            #    .Object@ExperimentList <- experime
+            # }
+            if (missing(modelInfo)){
+               modelInfo <- vector("list", length(assays(.Object)))
             }
+            if (missing(specificArgs)) {
+               specificArgs <- vector("list", length(assays(.Object)))
+            }
+
+            # .Object@colData@rownames <- character()
+            # .Object@SampleMap@listData <- list(assay = factor(), primary = character(),colname = character())
             .Object@modelInfo <- modelInfo
             .Object@specificArgs <- specificArgs
-            .Object@pathResult <- list()
+            .Object@pathResult <- list(a = matrix(1,3,3))
             .Object
           }
 )
 
 #' @export
-setGeneric("show", function(object) standardGeneric("show"))
+Omics <- function(...) {
+   new("Omics",...)
+}
 
 #' @export
-setMethod("show",  signature(object = "Omics"),
+setGeneric("showOmics", function(object) standardGeneric("showOmics"))
+
+#' @export
+setMethod("showOmics",  signature(object = "Omics"),
           function(object) {
             nm <- names(assays(object))
             if (is.null(nm))
@@ -146,9 +158,13 @@ setMethod("check",  signature(object = "Omics"),
 })
 
 #' @export
-setMethod("show",
+setGeneric("showModule", function(object) 
+   standardGeneric("showModule") )
+
+#' @export
+setMethod("showModule",
           signature = "MultiOmicsModules",
-          definition = function(object) {
+          definition = function(object){
             sthis <- seq_len(min(length(object@alphas), 3))
             sthis <- order(object@alphas)[sthis]
             
@@ -176,9 +192,13 @@ setMethod("show",
           })
 
 #' @export
-setMethod("show",
+setGeneric("showPathway", function(object) 
+   standardGeneric("showPathway") )
+
+#' @export
+setMethod("showPathway",
           signature = "MultiOmicsPathway",
-          definition = function(object) {
+          definition = function(object){
             if (!is.null(object@title)) {
               cat("\"",object@title, "\"\n", sep = "")
             }

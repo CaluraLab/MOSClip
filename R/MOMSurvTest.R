@@ -1,6 +1,6 @@
 createMOMView <- function(omicsObj, genes) {
   listCovariates <- lapply(seq_along(omicsObj@ExpermentList@listData), function(i) {
-    test <- get(omicsObj@methods[i])
+    test <- get(omicsObj@modelInfo[i])
     specificArgs <- omicsObj@specificArgs[[i]]
     args <- list(data=omicsObj@ExpermentList@listData[[i]], features=genes)
     if (!is.null(specificArgs))
@@ -21,7 +21,7 @@ MOMSurvTest <- function(genes, omicsObj, annot,
   
   # check if topological method has been used
   for (i in seq_along(omicsObj@ExpermentList@listData)) {
-    if (omicsObj@methods[i] == "summarizeWithPca") {
+    if (omicsObj@modelInfo[i] == "summarizeWithPca") {
       if (omicsObj@specificArgs[[i]]$method=="topological") {
         stop("Topological: not valid method for module analysis.")
       }
