@@ -36,46 +36,57 @@ setClass(Class ="SinglePath", package = "biocmosclip",
 #' @export
 #' @import MultiAssayExperiment
 Omics <- setClass(Class = "Omics", package = "biocmosclip",
-         contains = "MultiAssayExperiment",
+         
          slots = c(modelInfo = "list",
                    specificArgs = "list",
-                   pathResult = "list")
+                   pathResult = "list"),
+         contains = "MultiAssayExperiment"
 )
 
 
-#' @export
-setGeneric("initialize", function(.Object,experime, modelInfo, specificArgs,pathResult) standardGeneric("initialize"))
 
 #' @export
-setMethod("initialize", 
-          signature(.Object = "Omics"),
-          
-          function(.Object,experime, modelInfo, specificArgs,pathResult) {
-            .Object <- callNextMethod()
-            
-            # if (!missing(experime)){
-            #    .Object@ExperimentList <- experime
-            # }
-            if (missing(modelInfo)){
-               modelInfo <- vector("list", length(assays(.Object)))
-            }
-            if (missing(specificArgs)) {
-               specificArgs <- vector("list", length(assays(.Object)))
-            }
+Omics <- function(experiments = ExperimentList(), colData = S4Vectors::DataFrame(),
+               sampleMap = S4Vectors::DataFrame(
+                  assay = factor(),
+                  primary = character(),
+                  colname = character()),
+               metadata = list(),
+               drops = list(),
+               modelInfo= list(),
+               specificArgs= list(),
+               pathResult= list())
+      {
+         MAE <- MultiAssayExperiment(experiments)
+         cat("nnnn\n")
+         new("Omics",
+             ExperimentList = MAE@ExperimentList,
+             colData = MAE@colData,
+             sampleMap = MAE@sampleMap,
+             metadata = MAE@metadata,
+             modelInfo = modelInfo,
+             specificArgs = specificArgs,
+             pathResult = pathResult)
+      }
+   
+      
+        # 
+        # if (missing(modelInfo)){
+        #    modelInfo <- vector("list", length(assays(.Object)))
+        # }
+        # if (missing(specificArgs)) {
+        #    specificArgs <- vector("list", length(assays(.Object)))
+        # }
+        # 
+        # # .Object@colData@rownames <- character()
+        # # .Object@SampleMap@listData <- list(assay = factor(), primary = character(),colname = character())
+        # .Object@modelInfo <- modelInfo
+        # .Object@specificArgs <- specificArgs
+        # .Object@pathResult <- list(a = matrix(1,3,3))
+        # 
+    
+  
 
-            # .Object@colData@rownames <- character()
-            # .Object@SampleMap@listData <- list(assay = factor(), primary = character(),colname = character())
-            .Object@modelInfo <- modelInfo
-            .Object@specificArgs <- specificArgs
-            .Object@pathResult <- list(a = matrix(1,3,3))
-            .Object
-          }
-)
-
-#' @export
-Omics <- function(...) {
-   new("Omics",...)
-}
 
 #' @export
 setGeneric("showOmics", function(object) standardGeneric("showOmics"))

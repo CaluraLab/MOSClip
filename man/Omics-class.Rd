@@ -5,7 +5,7 @@
 \alias{Omics}
 \title{This class is the storage for the different omic datasets that we need to analyze.}
 \usage{
-Omics(...)
+Omics(experime, modelInfo, specificArgs, pathResult)
 }
 \description{
 This class is the storage for the different omic datasets that we need to analyze.
