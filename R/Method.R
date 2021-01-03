@@ -1,50 +1,5 @@
 setClassUnion("characterOrNULL", c("character", "NULL"))
 
-
-setClass(Class ="MultiOmicsModules", 
-         slots = c(alphas  = "numeric",
-                   zlists  = "list",
-                   coxObjs = "list",
-                   modulesView  = "list",
-                   modules     = "list",
-                   formulas = "list",
-                   title = "characterOrNULL"))
-
-
-
-setClass(Class ="MultiOmicsPathway", 
-         slots = c(pvalue = "numeric",
-                   zlist = "numeric",
-                   coxObj = "data.frame",
-                   pathView = "list",
-                   formula = "character",
-                   title = "characterOrNULL"))
-
-
-setClass(Class ="SinglePath", package = "biocmosclip",
-         slots = c(global = "MultiOmicsPathway",
-                   modules = "MultiOmicsModules"))
-
-#' This class is the storage for the different omic datasets that we need to analyze.
-#'
-#' @slot modelInfo a list with length equal to length(data) that are modelInfo to process each dataset.
-#' @slot specificArgs a list with length equal to length(data) to set additional parameters specific of the modelInfo.
-#'
-#' @name Omics-class
-#' @rdname Omics-class
-#' 
-#' @export
-#' @import MultiAssayExperiment
-Omics <- setClass(Class = "Omics", package = "biocmosclip",
-         
-         slots = c(modelInfo = "list",
-                   specificArgs = "list",
-                   pathResult = "list"),
-         contains = "MultiAssayExperiment"
-)
-
-
-
 #' @export
 Omics <- function(experiments = ExperimentList(), colData = S4Vectors::DataFrame(),
                sampleMap = S4Vectors::DataFrame(
@@ -57,8 +12,11 @@ Omics <- function(experiments = ExperimentList(), colData = S4Vectors::DataFrame
                specificArgs= list(),
                pathResult= list())
       {
-         MAE <- MultiAssayExperiment(experiments)
-         cat("nnnn\n")
+         MAE <- MultiAssayExperiment(experiments,colData,
+                                     sampleMap, metadata,drops)
+         
+         
+         
          new("Omics",
              ExperimentList = MAE@ExperimentList,
              colData = MAE@colData,
@@ -68,22 +26,6 @@ Omics <- function(experiments = ExperimentList(), colData = S4Vectors::DataFrame
              specificArgs = specificArgs,
              pathResult = pathResult)
       }
-   
-      
-        # 
-        # if (missing(modelInfo)){
-        #    modelInfo <- vector("list", length(assays(.Object)))
-        # }
-        # if (missing(specificArgs)) {
-        #    specificArgs <- vector("list", length(assays(.Object)))
-        # }
-        # 
-        # # .Object@colData@rownames <- character()
-        # # .Object@SampleMap@listData <- list(assay = factor(), primary = character(),colname = character())
-        # .Object@modelInfo <- modelInfo
-        # .Object@specificArgs <- specificArgs
-        # .Object@pathResult <- list(a = matrix(1,3,3))
-        # 
     
   
 
@@ -218,7 +160,7 @@ setMethod("showPathway",
           })
 
 
-setClassUnion("characterOrNULL", c("character", "NULL"))
+
 
 setGeneric("convertPathway", function(graph, useThisGenes) standardGeneric("convertPathway"))
 

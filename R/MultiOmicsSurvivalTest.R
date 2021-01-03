@@ -21,7 +21,7 @@
 #' @importFrom survClip survivalcox survivalcoxr
 #' @export
 
-multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
+multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
                                           survFormula = "Surv(days, status) ~",
                                           autoCompleteFormula=T,
                                           useThisGenes=NULL,
@@ -72,14 +72,14 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
   if (!identical(row.names(annot), row.names(covariates)))
     stop("Mismatch in covariates and annot annotations rownames.")
   
-  coxObj <- data.frame(annot, covariates)
+  coxObj <- data.frame(omicsObj@colData, covariates)
   # createDiscreteClasses(coxObj, covariates)
   
   formula = survFormula
   
   add_covs <- colnames(covariates)
   if (include_from_annot) {
-    add_annot_covs <- colnames(annot)[!colnames(annot) %in% c("days", "status")]
+    add_annot_covs <- colnames(omicsObj@colData)[!colnames(annot) %in% c("days", "status")]
     add_covs <- c(add_covs, add_annot_covs)
   }
   
@@ -117,7 +117,7 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
 #' @importFrom survival Surv
 #' 
 #' @export
-multiOmicsSurvivalModuleTest <- function(omicsObj, graph, annot,
+multiOmicsSurvivalModuleTest <- function(omicsObj, graph,
                                          survFormula = "Surv(days, status) ~",
                                          autoCompleteFormula=T, useThisGenes=NULL,
                                          pathName=NULL, robust=FALSE, include_from_annot=F) {
@@ -136,9 +136,8 @@ multiOmicsSurvivalModuleTest <- function(omicsObj, graph, annot,
   
   # create the modules
   cliques <- houseOfClipUtility::extractCliquesFromDag(graph)
-  
+
   results <- lapply(cliques, MOMSurvTest, omicsObj=omicsObj,
-                    annot = annot,
                     survFormula = survFormula,
                     autoCompleteFormula=autoCompleteFormula,
                     robust=robust, include_from_annot=include_from_annot)
@@ -147,7 +146,7 @@ multiOmicsSurvivalModuleTest <- function(omicsObj, graph, annot,
   zlist    <- lapply(results, function(x) x$zlist)
   momics   <- lapply(results, function(x) x$moView)
   coxObjs  <- lapply(results, function(x) x$coxObj)
-  # moduleData <- lapply(results, function(x) x$moduleData)
+  moduleData <- lapply(results, function(x) x$moduleData)
   modules  <- cliques
   formulas <- lapply(results, function(x) x$formula)
   
