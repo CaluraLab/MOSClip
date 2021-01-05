@@ -12,8 +12,7 @@ Omics <- function(experiments = ExperimentList(), colData = S4Vectors::DataFrame
                specificArgs= list(),
                pathResult= list())
       {
-         MAE <- MultiAssayExperiment(experiments,colData,
-                                     sampleMap, metadata,drops)
+         MAE <- MultiAssayExperiment(experiments,colData)
          
          
          

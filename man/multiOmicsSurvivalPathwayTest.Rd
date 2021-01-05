@@ -7,7 +7,6 @@
 multiOmicsSurvivalPathwayTest(
   omicsObj,
   graph,
-  annot,
   survFormula = "Surv(days, status) ~",
   autoCompleteFormula = T,
   useThisGenes = NULL,
@@ -21,8 +20,6 @@ multiOmicsSurvivalPathwayTest(
 
 \item{graph}{a pathway in graphNEL, Pathway or geneset format.}
 
-\item{annot}{survival annotation: days and status (0,1). Row.names are samples. Additional covariates can be passed as columns (use include_from_annot).}
-
 \item{survFormula}{Formula to compute survival}
 
 \item{autoCompleteFormula}{logical. If TRUE autocomplete the survFormula using all the available covariates}
@@ -34,6 +31,8 @@ multiOmicsSurvivalPathwayTest(
 \item{robust}{should be used the robust mode for cox}
 
 \item{include_from_annot}{compute cox using additional covariates from annot}
+
+\item{annot}{survival annotation: days and status (0,1). Row.names are samples. Additional covariates can be passed as columns (use include_from_annot).}
 }
 \value{
 MultiOmicsPathway object
