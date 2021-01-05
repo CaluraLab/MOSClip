@@ -44,11 +44,16 @@ multiPathwayModuleReport <- function(multiPathwayModuleList, priority_to=NULL) {
   if (!is(multiPathwayModuleList,"list"))
     stop("A list of pathway results are expected.")
   
-  multiMatrixRes <- lapply(multiPathwayModuleList, function(p) {
-    summary <- formatModuleReport(p)
-    data.frame(pathway=p@title, module=row.names(summary), summary,
-               row.names=NULL, stringsAsFactors = F)
-  })
+  n_temp <- names(multiPathwayModuleList)
+  
+  multiMatrixRes <- lapply(n_temp, function(name,list){summary <- formatModuleReport(list[[name]]);
+                                       data.frame(pathway=name, module=row.names(summary), summary,
+                                        row.names=NULL, stringsAsFactors = F) }, multiPathwayModuleList)
+  # multiMatrixRes <- lapply(multiPathwayModuleList, function(p) {
+  #   summary <- formatModuleReport(p)
+  #   data.frame(pathway=p@title, module=row.names(summary), summary,
+  #              row.names=NULL, stringsAsFactors = F)
+  # })
   resDF <- mergeAll(multiMatrixRes)
   resDF <- resDF[order(resDF$pvalue), ]
   rownames(resDF) <- apply(resDF,1, function(r) paste(r["pathway"],r["module"],sep="."))
