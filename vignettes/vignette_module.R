@@ -103,6 +103,13 @@ moduleSummary
 useThisPathways <- unique(moduleSummary$pathway[moduleSummary$pvalue <= 0.05])
 sModule <- moduleSummary[moduleSummary$pathway %in% useThisPathways, , drop = T]
 
+
+##############################################
+####
+#### REALLY SLOW
+####
+#############################################
+
 if (file.exists("perms.RData")) {
   load("perms.RData")
 } else {
@@ -113,4 +120,5 @@ if (file.exists("perms.RData")) {
   save(perms, file = file)
   file.symlink(file, link)
 }
+
 
