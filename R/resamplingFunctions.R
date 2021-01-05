@@ -82,7 +82,7 @@ filterExpr <- function(exp, samples) {
 #' @rdname resampling
 #' 
 filterMultiOmicsForSamples <- function(MO, samples) {
-  filterData <- lapply(MO@data, function(expr) {
+  filterData <- lapply(experiments(MO), function(expr) {
     if (is.matrix(expr) || is.data.frame(expr)) {
       filterExpr(expr, samples)
     } else if (is.list(expr)) {
@@ -94,7 +94,7 @@ filterMultiOmicsForSamples <- function(MO, samples) {
       stop("Something wrong 5923")
     }
   })
-  MO@data <- filterData
+  MO@ExperimentList <- as(filterData,"ExperimentList")
   MO
 }
 
@@ -124,15 +124,16 @@ resampling <- function(fullMultiOmics, pathdb, nperm=100, pathwaySubset=NULL, nP
   perms <- lapply(seq_len(nperm), function(boot){
     cat("boot", boot, "\n")
     pts <- patientsPerms[[boot]]
-    sAnn <- survAnnot[pts, ]
-    multiOmics <- filterMultiOmicsForSamples(fullMultiOmics, pts)
+    multiOmics <- fullMultiOmics[,pts]
+    
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
       # print(g@title)
       set.seed(1234)
-      fcl = multiOmicsSurvivalModuleTest(multiOmics, g, sAnn, useThisGenes = genesToConsider)
+      fcl = multiOmicsSurvivalModuleTest(multiOmics, g, useThisGenes = genesToConsider)
       fcl
     })
+    
     multiPathwayModuleReport(multiOmicsReactome)
   })
   perms
