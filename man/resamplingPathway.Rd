@@ -6,7 +6,6 @@
 \usage{
 resamplingPathway(
   fullMultiOmics,
-  survAnnot,
   pathdb,
   nperm = 100,
   pathwaySubset = NULL,
@@ -16,8 +15,6 @@ resamplingPathway(
 \arguments{
 \item{fullMultiOmics}{a multiOmic object}
 
-\item{survAnnot}{survival annotation}
-
 \item{pathdb}{pathway dayabase}
 
 \item{nperm}{number of permutation}
@@ -25,6 +22,8 @@ resamplingPathway(
 \item{pathwaySubset}{a list of pathways to resample}
 
 \item{nPatients}{number of patients to remove for resampling}
+
+\item{survAnnot}{survival annotation}
 }
 \value{
 list of the resampling tables of results

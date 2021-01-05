@@ -27,7 +27,52 @@ Omics <- function(experiments = ExperimentList(), colData = S4Vectors::DataFrame
       }
     
   
+#' @export
+setGeneric("check", function(object) standardGeneric("check"))
 
+#' @export
+setMethod("check",  signature(object = "Omics"),
+          function(object) {
+             
+             if (length(object@ExperimentList) != length(object@modelInfo)){
+                msg <- "Data and relative methods to analyze them must be equal in length."
+                return(msg)
+             }
+             
+             if (length(object@ExperimentList) != length(object@specificArgs)){
+                msg <- "data and specificArgs must be equal in length."
+                return(msg)
+             }
+             
+             match <- !(object@modelInfo %in% availableOmicMethods())
+             if (any(match)) {
+                msg <- paste(paste(object@modelInfo[match], collapse=", "), "modelInfo not found in method. Try availableOmicMethods.")
+                return(msg)
+             }
+             
+             samplesNumber <- sapply(object@ExperimentList, ncol)
+             if (length(unique(samplesNumber))!=1)
+                return("Mismatch in sample numbers")
+             
+             samples <- lapply(object@ExperimentList, colnames)
+             if (length(samples) > 1) {
+                ref <- samples[[1]]
+                cmps <- sapply(seq(from=2, to=length(samples)), function(i) {
+                   identical(ref, samples[[i]])
+                })
+             }
+             if (!all(cmps))
+                return("Samples order mismatch")
+             
+             duplo <- sapply(object@ExperimentList, function(data) {
+                any(duplicated(row.names(data)))
+             })
+             if (any(duplo)) {
+                return(paste0("Duplicated row.names found in omics ", paste(which(duplo), collapse = ", ")))
+             }
+             
+             return(TRUE)
+          })
 
 #' @export
 setGeneric("showOmics", function(object) standardGeneric("showOmics"))
@@ -59,55 +104,7 @@ setMethod("showOmics",  signature(object = "Omics"),
             }
           })
 
-#' @export
-setGeneric("check", function(object) standardGeneric("check") )
 
-#' @export
-setMethod("check",  signature(object = "Omics"),
-   check_Omics <- function(object) {
-      if (length(object@ExpermentList@listData) != length(object@modelInfo)){
-      msg <- "Data and relative methods to analyze them must be equal in length."
-      return(msg)
-   }
-  
-   if (length(object@ExpermentList@listData) != length(object@specificArgs)){
-      msg <- "data and specificArgs must be equal in length."
-      return(msg)
-   }
-  
-   match <- !(object@modelInfo %in% availableOmicMethods())
-   if (any(match)) {
-      msg <- paste(paste(object@modelInfo[match], collapse=", "),
-                   "methods not found. Try availableOmicMethods.")
-      return(msg)
-   }
-  
-   samplesNumber <- sapply(object@ExpermentList@listData, ncol)
-   if (length(unique(samplesNumber))!=1)
-      return("Mismatch in sample numbers")
-  
-   samples <- lapply(object@ExpermentList@listData, colnames)
-   if (length(samples) > 1) {
-      ref <- samples[[1]]
-      cmps <- sapply(seq(from=2, to=length(samples)), function(i) {
-        identical(ref, samples[[i]])
-      })
-   }
-   
-   if (!all(cmps))
-    return("Samples order mismatch")
-  
-   duplo <- sapply(object@ExpermentList@listData, function(data) {
-      any(duplicated(row.names(data)))
-   })
-   
-   if (any(duplo)) {
-      return(paste0("Duplicated row.names found in omics ",
-                    paste(which(duplo), collapse = ", ")))
-   }
-  ###### PERCHE?
-  return(TRUE)
-})
 
 #' @export
 setGeneric("showModule", function(object) 
