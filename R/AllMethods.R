@@ -14,7 +14,46 @@ Omics <- function(experiments = ExperimentList(), colData = S4Vectors::DataFrame
       {
          MAE <- MultiAssayExperiment(experiments,colData)
          
+         if (length(MAE@ExperimentList) != length(modelInfo)){
+            message("Data and relative methods to analyze them must be equal in length.")
+            return()
+         }
          
+         if (length(MAE@ExperimentList) != length(specificArgs)){
+            message("data and specificArgs must be equal in length.")
+            return()
+         }
+         
+         match <- !(modelInfo %in% availableOmicMethods())
+         if (any(match)) {
+            message(paste(paste(modelInfo[match], collapse=", "), "modelInfo not found in method. Try availableOmicMethods."))
+            return()
+         }
+         
+         samplesNumber <- sapply(MAE@ExperimentList, ncol)
+         if (length(unique(samplesNumber))!=1){
+            message("Mismatch in sample numbers")
+            return()
+         }
+         
+         samples <- lapply(MAE@ExperimentList, colnames)
+         if (length(samples) > 1) {
+            ref <- samples[[1]]
+            cmps <- sapply(seq(from=2, to=length(samples)), function(i) {
+               identical(ref, samples[[i]])
+            })
+         }
+         if (!all(cmps)){
+            message("Samples order mismatch")
+            return()
+         }
+         duplo <- sapply(MAE@ExperimentList, function(data) {
+            any(duplicated(row.names(data)))
+         })
+         if (any(duplo)) {
+            message(paste0("Duplicated row.names found in omics ", paste(which(duplo), collapse = ", ")))
+            return()
+         }
          
          new("Omics",
              ExperimentList = MAE@ExperimentList,
