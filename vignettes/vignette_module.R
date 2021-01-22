@@ -110,15 +110,15 @@ sModule <- moduleSummary[moduleSummary$pathway %in% useThisPathways, , drop = T]
 ####
 #############################################
 
-if (file.exists("perms.RData")) {
-  load("perms.RData")
-} else {
-  perms <- resampling(fullMultiOmics = multiOmics, reactSmall, nperm = 100, 
-                      pathwaySubset = useThisPathways)
-  file = paste0(dirname, "/perms-", as.character(Sys.Date()), ".RData")
-  link = "perms.RData"
-  save(perms, file = file)
-  file.symlink(file, link)
-}
+# if (file.exists("perms.RData")) {
+#   load("perms.RData")
+# } else {
+#   perms <- resampling(fullMultiOmics = multiOmics, reactSmall, nperm = 100, 
+#                       pathwaySubset = useThisPathways)
+#   file = paste0(dirname, "/perms-", as.character(Sys.Date()), ".RData")
+#   link = "perms.RData"
+#   save(perms, file = file)
+#   file.symlink(file, link)
+# }
 
 
