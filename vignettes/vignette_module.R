@@ -63,6 +63,7 @@ nodesLength <- sapply(reactome, function(g) {
 })
 reactSmall <- reactome[nodesLength >= 20 & nodesLength <= 100]
 reactHuge <- reactome[nodesLength >= 10]
+reactUsed <- reactSmall[c(2,10,20,43)]
 
 pathHierarchy <- houseOfClipUtility::downloadPathwayRelationFromReactome()
 pathHierarchyGraph <- igraph::graph.data.frame(d = pathHierarchy, directed = TRUE)
@@ -83,7 +84,7 @@ genesToConsider <- row.names(pseudoExpNorm)
 if (file.exists("vignettes/multiOmicsReactome.RData")) {
   load("vignettes/multiOmicsReactome.RData")
 } else {
-  multiOmicsReactome <- lapply(reactSmall, function(g) {
+  multiOmicsReactome <- lapply(reactUsed, function(g) {
     print(g@title)  # uncomment this to see the progression along pathways
     set.seed(1234)
     fcl = multiOmicsSurvivalModuleTest(multiOmics, g, useThisGenes = genesToConsider)
