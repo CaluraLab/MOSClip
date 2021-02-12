@@ -680,70 +680,56 @@ plotModuleReport <- function(pathwayObj, MOcolors=NULL, priority_to=NULL, ...) {
   annCol <- guessOmics(colnames(summary))
   omics <- annCol[2:length(annCol)]
   
-  if (is.null(priority_to) & (!is.null(MOcolors))){
+  if (is.null(priority_to) & (!is.null(MOcolors))) {
     if (!is.null(names(MOcolors)))
       priority_to = names(MOcolors)
   }
-  
-  if (is.null(MOcolors)){
-    MOcolors <- guessOmicsColors(omics)
-  }
-  
-  if (length(MOcolors) != length(unique(omics))){
+  if (is.null(MOcolors)) {MOcolors <- guessOmicsColors(omics)}
+  if (length(MOcolors) != length(unique(omics))) {
     stop (paste0("Length of MOcolors differs from the number of omics: ",
                  paste(unique(omics), collapse = ", ")))
   }
+  if (is.null(names(MOcolors))){names(MOcolors) <- unique(omics)}
   
-  if (is.null(names(MOcolors))){
-    names(MOcolors) <- unique(omics)
+  colors <- createColors(omics, MOcolors)
+  names(colors) <- unique(omics)
+  pvalcol <- colorRamp2(c(0,1), c("#edf7f5", "#2796bd"))
+  
+  msummary <- as.matrix(summary[,2:ncol(summary)])
+  msummary <- order_by_covariates(msummary, 0, priority_to)
+  
+  cell_text <- function(j, i, x, y, width, height, fill, matr = matrix) {
+    if(length(matr)==nrow(summary)) {
+      grid.text(sprintf("%.2f", matr[i]), x, y, gp = gpar(fontsize = 10))
+    } else {
+      grid.text(sprintf("%.2f", matr[i, j]), x, y, gp = gpar(fontsize = 10))
+    }
   }
   
-  colors <- c(NA, createColors(omics, MOcolors))
-  names(colors) <- unique(annCol)
+  ta <- HeatmapAnnotation(Omics = omics, col = list(Omics = colors))
   
-  ann_columns <- data.frame(omics = factor(annCol, levels=unique(annCol)))
-  rownames(ann_columns) <- colnames(summary)
+  ht1 <- Heatmap(matrix = summary$pvalue, col = pvalueShades, cluster_rows = F,
+                 show_heatmap_legend = F, name = "Pvalue",
+                 cell_fun = cell_text)
+  dots <- list(...)
+  defargs <- list(matrix = msummary, name = "Pvalue", col = pvalueShades,
+                  cluster_rows = F, cluster_columns = F, cell_fun = cell_text,
+                  top_annotation = ta, row_names_gp = gpar(fontsize = 12),
+                  column_names_gp = gpar(fontsize = 12))
+  args <- matchArguments(dots, defargs)
   
-  ann_colors <- list(omics = colors)
+  ht2 <- do.call(Heatmap, args)
+  suppressWarnings(ht1 + ht2)
   
-  dots = list(...)
+  # ann_columns <- data.frame(omics = factor(annCol, levels=unique(annCol)))
+  # rownames(ann_columns) <- colnames(summary)
+  # ann_colors <- list(omics = colors)
   # args <- matchArguments(dots, list(display_numbers = T, color = pvalueShades,
   #                                   cluster_rows = F, cluster_cols = F, 
   #                                   gaps_col = c(1), fontsize_row=5, fontsize_col = 7,
   #                                   annotation_col = ann_columns, annotation_colors = ann_colors,
   #                                   border_color="white"))
   # 
-  # summary <- order_by_covariates(summary, 1, priority_to)
   # args$mat <- summary
   # do.call(pheatmap, args)
-  
-  ## with ComplexHeatmap
-  colors <- createColors(omics, MOcolors)
-  names(colors) <- unique(omics)
-  pvalcol <- colorRamp2(c(0,1), c("#edf7f5", "#2796bd"))
-  
-  ta <- HeatmapAnnotation(Omics = omics, col = list(Omics = colors))
-  la <- rowAnnotation(Pvalue = annotext, summary$pvalue, col = list(Pvalue = pvalcol))
-  
-  msummary <- as.matrix(summary[,2:ncol(summary)])
-  
-  cell_text1 <- function(j, i, x, y, width, height, fill) {
-    grid.text(sprintf("%.2f", summary$pvalue[i]), x, y, gp = gpar(fontsize = 10))
-  }
-  cell_text2 <- function(j, i, x, y, width, height, fill) {
-                 grid.text(sprintf("%.2f", msummary[i, j]), x, y, gp = gpar(fontsize = 10))
-  }
-  
-  args <- list(matrix = msummary, name = "Pvalue", col = pvalueShades,
-               cluster_rows = F, cluster_columns = F,
-               cell_fun = cell_text)
-  do.call(Heatmap, args)
-  
-  ht1 <- Heatmap(summary$pvalue, col = pvalueShades, cluster_rows = F,
-                 show_heatmap_legend = F, name = "Pvalue", cell_fun = cell_text1)
-  ht2 <- Heatmap(matrix = msummary, name = "Pvalue", col = pvalueShades,
-                 cluster_rows = F, cluster_columns = F, cell_fun = cell_text2,
-                 top_annotation = ta, row_names_gp = gpar(fontsize = 12),
-                 column_names_gp = gpar(fontsize = 12))
-  ht1 + ht2
 }
