@@ -82,7 +82,7 @@ filterExpr <- function(exp, samples) {
 #' @rdname resampling
 #' 
 filterMultiOmicsForSamples <- function(MO, samples) {
-  filterData <- lapply(experiments(MO), function(expr) {
+  filterData <- lapply(MO@ExperimentList, function(expr) {
     if (is.matrix(expr) || is.data.frame(expr)) {
       filterExpr(expr, samples)
     } else if (is.list(expr)) {
