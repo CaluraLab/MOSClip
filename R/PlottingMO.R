@@ -670,7 +670,7 @@ plotMultiPathwayReport <- function(multiPathwayList, top=25, MOcolors=NULL, prio
 #' @importFrom grDevices colorRampPalette
 #' @importFrom RColorBrewer brewer.pal
 #' @export
-plotModuleReport <- function(pathwayObj, MOcolors=NULL, priority_to=NULL, ...) {
+plotModuleReport <- function(pathwayObj, MOcolors=NULL, priority_to=NULL, fontsize = 12, ...) {
   
   checkmate::assertClass(pathwayObj, "MultiOmicsModules")
   
@@ -691,6 +691,7 @@ plotModuleReport <- function(pathwayObj, MOcolors=NULL, priority_to=NULL, ...) {
   }
   if (is.null(names(MOcolors))){names(MOcolors) <- unique(omics)}
   
+  omics <- omics[order(match(omics,priority_to))]
   colors <- createColors(omics, MOcolors)
   names(colors) <- unique(omics)
   pvalcol <- colorRamp2(c(0,1), c("#edf7f5", "#2796bd"))
@@ -698,24 +699,22 @@ plotModuleReport <- function(pathwayObj, MOcolors=NULL, priority_to=NULL, ...) {
   msummary <- as.matrix(summary[,2:ncol(summary)])
   msummary <- order_by_covariates(msummary, 0, priority_to)
   
-  cell_text <- function(j, i, x, y, width, height, fill, matr = matrix) {
-    if(length(matr)==nrow(summary)) {
-      grid.text(sprintf("%.2f", matr[i]), x, y, gp = gpar(fontsize = 10))
-    } else {
-      grid.text(sprintf("%.2f", matr[i, j]), x, y, gp = gpar(fontsize = 10))
-    }
+  cell_text <- function(j, i, x, y, width, height, fill) {
+    grid.text(sprintf("%.2f", msummary[i, j]), x, y, gp = gpar(fontsize = fontsize))
   }
   
   ta <- HeatmapAnnotation(Omics = omics, col = list(Omics = colors))
   
   ht1 <- Heatmap(matrix = summary$pvalue, col = pvalueShades, cluster_rows = F,
-                 show_heatmap_legend = F, name = "Pvalue",
-                 cell_fun = cell_text)
+                 show_heatmap_legend = F, name = "Pvalue", column_names_gp = gpar(fontsize = fontsize),
+                 cell_fun = function(j, i, x, y, width, height, fill) {
+                   grid.text(sprintf("%.2f", summary$pvalue[i]), x, y, gp = gpar(fontsize = fontsize))
+                 })
   dots <- list(...)
   defargs <- list(matrix = msummary, name = "Pvalue", col = pvalueShades,
                   cluster_rows = F, cluster_columns = F, cell_fun = cell_text,
-                  top_annotation = ta, row_names_gp = gpar(fontsize = 12),
-                  column_names_gp = gpar(fontsize = 12))
+                  top_annotation = ta, row_names_gp = gpar(fontsize = fontsize),
+                  column_names_gp = gpar(fontsize = fontsize))
   args <- matchArguments(dots, defargs)
   
   ht2 <- do.call(Heatmap, args)
