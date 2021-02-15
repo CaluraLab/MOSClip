@@ -1,18 +1,30 @@
 setClassUnion("characterOrNULL", c("character", "NULL"))
 
 #' @export
-Omics <- function(experiments = ExperimentList(), colData = S4Vectors::DataFrame(),
-               sampleMap = S4Vectors::DataFrame(
-                  assay = factor(),
-                  primary = character(),
-                  colname = character()),
-               metadata = list(),
-               drops = list(),
-               modelInfo= character(),
-               specificArgs= list(),
-               pathResult= list())
+Omics <- function(experiments = ExperimentList(), 
+                  colData = S4Vectors::DataFrame(),
+                     sampleMap = S4Vectors::DataFrame(
+                     assay = factor(),
+                     primary = character(),
+                     colname = character()),
+                  metadata = list(),
+                  drops = list(),
+                  modelInfo= character(),
+                  specificArgs= list(),
+                  pathResult= list())
       {
-         MAE <- MultiAssayExperiment(experiments,colData)
+         
+   if (missing(sampleMap)) {
+      if (missing(colData)){
+         MAE <- MultiAssayExperiment(experiments) 
+         } else { MAE <- MultiAssayExperiment(experiments,colData)}
+      
+   } else if (missing(colData)){
+         colData <- S4Vectors::DataFrame(
+            row.names = unique(sampleMap[["primary"]])
+         )
+      MAE <- MultiAssayExperiment(experiments, colData, sampleMap)
+   }     
          
          if (length(MAE@ExperimentList) != length(modelInfo)){
             message("Data and relative methods to analyze them must be equal in length.")
@@ -35,7 +47,7 @@ Omics <- function(experiments = ExperimentList(), colData = S4Vectors::DataFrame
             message("Mismatch in sample numbers")
             return()
          }
-         
+
          samples <- lapply(MAE@ExperimentList, colnames)
          if (length(samples) > 1) {
             ref <- samples[[1]]
@@ -65,7 +77,8 @@ Omics <- function(experiments = ExperimentList(), colData = S4Vectors::DataFrame
              pathResult = pathResult)
       }
     
-  
+
+
 #' @export
 setGeneric("check", function(object) standardGeneric("check"))
 
