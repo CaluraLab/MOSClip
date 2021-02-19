@@ -124,5 +124,18 @@ sModule <- moduleSummary[moduleSummary$pathway %in% useThisPathways, , drop = T]
 
 
 plotModuleReport(multiOmicsReactome[["PI3K Cascade"]], 
-                 fontsize_row = 14,
                  MOcolors = c(exp = "red", met = "green", cnv = "yellow", mut = "blue"))
+
+additionalA <- survAnnot
+additionalA$status[additionalA$status == 1] <- "event"
+additionalA$status[additionalA$status == 0] <- "no_event"
+additionalA$PFS <- as.factor(additionalA$status)
+additionalA$status <- NULL
+additionalA$years <- round(additionalA$days/365.24, 0)
+additionalA$days <- NULL
+plotModuleHeat(multiOmicsReactome$`PI3K Cascade`, 2, 
+               paletteNames = c(exp = "red", met = "green", cnv = "yellow"),
+               additionalAnnotations = additionalA, 
+               additionalPaletteNames = list(PFS = "yellow", years = "teal"),
+               sortBy = c("met2k", "expPC1", "PFS", "years"),
+               withSampleNames = F)

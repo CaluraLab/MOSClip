@@ -254,13 +254,13 @@ plotPathwayKM <- function(pathway, formula = "Surv(days, status) ~ PC1",
 #' @importFrom stats relevel
 #' 
 #' @export
-plotModuleHeat <- function(pathway, moduleNumber, sortBy=NULL,
-                           fileName=NULL, paletteNames = NULL,
-                           additionalAnnotations=NULL, additionalPaletteNames=NULL,
-                           withSampleNames=TRUE, 
+plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
+                           fileName = NULL, paletteNames = NULL,
+                           additionalAnnotations = NULL, additionalPaletteNames = NULL,
+                           withSampleNames = TRUE, 
                            fontsize_row = 10, fontsize_col = 1,
-                           nrowsHeatmaps=3,
-                           h = 9, w=7, discr_prop_pca=0.15, discr_prop_events=0.05) {
+                           nrowsHeatmaps = 3,
+                           h = 9, w = 7, discr_prop_pca = 0.15, discr_prop_events = 0.05) {
   
   checkmate::assertClass(pathway, "MultiOmicsModules")
   
@@ -700,8 +700,7 @@ plotModuleReport <- function(pathwayObj, MOcolors=NULL, priority_to=NULL, fontsi
   msummary <- order_by_covariates(msummary, 0, priority_to)
   
   cell_text <- function(j, i, x, y, width, height, fill) {
-    grid.text(sprintf("%.2f", msummary[i, j]), x, y, gp = gpar(fontsize = fontsize))
-  }
+    grid.text(sprintf("%.2f", msummary[i, j]), x, y, gp = gpar(fontsize = fontsize))}
   
   ta <- HeatmapAnnotation(Omics = omics, col = list(Omics = colors))
   
@@ -719,16 +718,4 @@ plotModuleReport <- function(pathwayObj, MOcolors=NULL, priority_to=NULL, fontsi
   
   ht2 <- do.call(Heatmap, args)
   suppressWarnings(ht1 + ht2)
-  
-  # ann_columns <- data.frame(omics = factor(annCol, levels=unique(annCol)))
-  # rownames(ann_columns) <- colnames(summary)
-  # ann_colors <- list(omics = colors)
-  # args <- matchArguments(dots, list(display_numbers = T, color = pvalueShades,
-  #                                   cluster_rows = F, cluster_cols = F, 
-  #                                   gaps_col = c(1), fontsize_row=5, fontsize_col = 7,
-  #                                   annotation_col = ann_columns, annotation_colors = ann_colors,
-  #                                   border_color="white"))
-  # 
-  # args$mat <- summary
-  # do.call(pheatmap, args)
 }
