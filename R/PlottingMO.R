@@ -247,6 +247,9 @@ plotPathwayKM <- function(pathway, formula = "Surv(days, status) ~ PC1",
 #' @return NULL
 #' @importFrom checkmate assertClass
 #' @importFrom pheatmap pheatmap
+#' @importFrom ComplexHeatmap Heatmap
+#' @importFrom ComplexHeatmap HeatmapAnnotation
+#' @importFrom ComplexHeatmap %v%
 #' @importFrom gridExtra arrangeGrob
 #' @importFrom grid gpar grid.newpage grid.draw rectGrob
 #' @importFrom ggplot2 ggsave
@@ -266,8 +269,9 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
   
   moduleGenes <- pathway@modules[[moduleNumber]]
   
-  involved <- guessInvolvement(pathway, moduleNumber = moduleNumber, min_prop_pca=discr_prop_events,
-                               min_prop_events=discr_prop_events)
+  involved <- guessInvolvement(pathway, moduleNumber = moduleNumber,
+                               min_prop_pca = discr_prop_events,
+                               min_prop_events = discr_prop_events)
   
   if(length(paletteNames)!=length(involved)) {
     repTimes <- ceiling(length(involved)/length(paletteNames))
@@ -275,12 +279,10 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
   }
   
   # Create annotation and sort
-  annotationFull <- formatAnnotations(involved, sortBy=NULL)
+  annotationFull <- formatAnnotations(involved, sortBy = NULL)
   idx <- which(unlist(lapply(annotationFull, class))=="numeric")
   if (length(idx)>0) {
-    for (i in idx) {
-      annotationFull[,i] <- stats::relevel(as.factor(annotationFull[,i]), ref="1")
-    }
+    for (i in idx) {annotationFull[,i] <- stats::relevel(as.factor(annotationFull[,i]), ref="1")}
   }
   
   omics <- guessOmics(colnames(annotationFull))
@@ -290,25 +292,24 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
   }
   
   if(length(paletteNames) != length(unique(omics))){
-    stop(paste0("Length of MOcolors differs from the number of omics: ", paste(unique(omics), collapse = ", ")))
+    stop(paste0("Length of MOcolors differs from the number of omics: ",
+                paste(unique(omics), collapse = ", ")))
   }
   
-  if (is.null(names(paletteNames)))
-    names(paletteNames) <- unique(omics)
+  if (is.null(names(paletteNames))) {names(paletteNames) <- unique(omics)}
   
   annotationPalettes <- paletteNames
   
   ann_col <- lapply(colnames(annotationFull), function(name) {
     omic <- guessOmic(name)
-    if (!omic %in% names(annotationPalettes))
+    if (!omic %in% names(annotationPalettes)) {
       stop(paste0(omic, " omic not found in annotationPalettes"))
-    
+    }
     discreteColor <- annotationPalettes[[omic]]
     values <- sort(unique(annotationFull[, name]))
     if (length(values)==2) {
       annot <- as.character(MOSpaletteSchema[discreteColor, c("smart", "light")])
       names(annot) <- values
-      
     } else if (length(table(annotationFull[, name]))==3) {
       annot <- as.character(MOSpaletteSchema[discreteColor, c("dark", "smart", "light")])
       names(annot) <- values
@@ -341,31 +342,26 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
         annot
       })
       names(add_ann_col) <- colnames(additionalAnnotations)
-      ann_col=c(ann_col, add_ann_col)
+      ann_col = c(ann_col, add_ann_col)
     }
   }
   
   annotationFull <- sortAnnotations(annotationFull, sortBy)
   # generate the heatmaps grobs
-  gts <- lapply(seq_along(involved), generateHeatmapGrobTable, involved=involved,
-                annotationFull=annotationFull, palettes=paletteNames,
-                annotationCol=ann_col, oldFation=FALSE,
+  gts <- lapply(seq_along(involved), generateHeatmapGrobTable, involved = involved,
+                annotationFull = annotationFull, palettes = paletteNames,
+                annotationCol = ann_col, oldFation = FALSE,
                 fontsize_row = fontsize_row, fontsize_col = fontsize_col)
   
-  hmaps <- lapply(gts, function(x) {
-    createHeatmapGrob(x)
-  })
+  hmaps <- lapply(gts, function(x) {createHeatmapGrob(x)})
   annotationGrob <- createTopAnnotationGrob(gts[[1]])
-  if (withSampleNames) {
-    sampleNamesGrob <- createSamplesNamesGrob(gts[[1]])
-  } else {
-    sampleNamesGrob <- grid::rectGrob(width = .98, height = .98,
-                                      gp=grid::gpar(lwd=0, col=NA, fill=NA))
-  }
+  if (withSampleNames) {sampleNamesGrob <- createSamplesNamesGrob(gts[[1]])
+  } else {sampleNamesGrob <- grid::rectGrob(width = .98, height = .98,
+                                            gp=grid::gpar(lwd=0, col=NA, fill=NA))}
   legendGrob <- createAnnotationLegendGrob(gts[[1]])
   layout_matrix <- createLayout(length(hmaps), nrowsHeatmaps=nrowsHeatmaps)
   grobs <- c(hmaps, list(annotationGrob), list(sampleNamesGrob), list(legendGrob))
-  myplot <- gridExtra::arrangeGrob(grobs=grobs, layout_matrix = layout_matrix)
+  myplot <- gridExtra::arrangeGrob(grobs = grobs, layout_matrix = layout_matrix)
   
   if(!is.null(fileName)) {
     ggplot2::ggsave(filename = fileName, myplot, height = h, width = w)
@@ -373,6 +369,16 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
     grid::grid.newpage()
     grid::grid.draw(myplot)
   }
+  
+  ha <- HeatmapAnnotation(df = annotationFull, col = ann_col[1:4])
+  ht_list = ha
+  for(n in seq_along(involved)){
+    Ht <- Heatmap(involved[[n]][[1]],
+                 cluster_columns = F, cluster_rows = F,
+                 show_column_names = F, col = c("white", "red"),
+                 heatmap_legend_param = list(title = NULL))
+    ht_list = ht_list %v% Ht}
+  draw(ht_list, legend_grouping = "original")
 }
 
 
