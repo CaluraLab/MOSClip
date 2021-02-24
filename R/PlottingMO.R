@@ -362,7 +362,8 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
                  col = c("#FFFFFF", as.vector(ann_col[[involved[[n]]$covsConsidered]][1])),
                  heatmap_legend_param = list(title = NULL))
     ht_list = ht_list %v% Ht}
-  suppressMessages(ComplexHeatmap::draw(ht_list))
+  suppressMessages(ComplexHeatmap::draw(ht_list, legend_grouping = "original"))
+  gb = grid.grabExpr(ComplexHeatmap::draw(ht_list, legend_grouping = "original"))
   invisible(ht_list)
 }
 
