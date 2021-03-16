@@ -21,7 +21,7 @@
 #' @importFrom survClip survivalcox survivalcoxr
 #' @export
 
-multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
+multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
                                           survFormula = "Surv(days, status) ~",
                                           autoCompleteFormula=T,
                                           useThisGenes=NULL,
@@ -38,11 +38,11 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
     stop("There is no nodes on the graph.")
   
   moduleView <- lapply(seq_along(omicsObj@ExperimentList@listData), function(i) {
-    test <- get(omicsObj@methods[i])
+    test <- get(omicsObj@modelInfo[i])
     specificArgs <- omicsObj@specificArgs[[i]]
     
     cliques=NULL
-    if (omicsObj@methods[i]=="summarizeWithPca") {
+    if (omicsObj@modelInfo[i]=="summarizeWithPca") {
       genesToUse <- intersect(row.names(omicsObj@ExperimentList@listData[[i]]),
                               genesToUse)
       graph <- graph::subGraph(genesToUse, graph)

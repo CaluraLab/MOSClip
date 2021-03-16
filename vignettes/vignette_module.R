@@ -41,8 +41,7 @@ expNorm <- betweenLaneNormalization(expression[keep, , drop = F], which = "upper
 pseudoExpNorm <- log2(expNorm + 1)
 
 methylation <- metClustValues
-methylation$MET_Cancer_Clustered <- methylation$MET_Cancer_Clustered[, patients, 
-                                                                     drop = F]
+methylation$MET_Cancer_Clustered <- methylation$MET_Cancer_Clustered[, patients, drop = F]
 
 mutation <- mutation[, patients, drop = F]
 cnv <- cnv[, patients, drop = F]
@@ -69,15 +68,18 @@ pathHierarchy <- houseOfClipUtility::downloadPathwayRelationFromReactome()
 pathHierarchyGraph <- igraph::graph.data.frame(d = pathHierarchy, directed = TRUE)
 
 
-multiOmics <- Omics(experiments = ExperimentList(expr = pseudoExpNorm, met = methylation$MET_Cancer_Clustered, 
+multiOmics <- Omics(experiments = ExperimentList(expr = pseudoExpNorm,
+                                                 met = methylation$MET_Cancer_Clustered, 
                                                  mut = mutation, cnv = cnv),
                     colData = survAnnot,
                     modelInfo = c("summarizeWithPca", "summarizeInCluster", 
                                   "summarizeToNumberOfEvents", "summarizeToNumberOfDirectionalEvents"),
-                    specificArgs = list(pcaArgs = list(name = "exp",
-                                                       shrink = "FALSE", method = "sparse", maxPCs = 3),
-                                        clusterArgs = list(name = "met",  dict = methylation$eMap, max_cluster_number = 3),
-                                        countEvent = list(name = "mut", min_prop = 0.05), cnvAgv = list(name = "cnv", min_prop = 0.05)))
+                    specificArgs = list(pcaArgs = list(name = "exp", shrink = "FALSE",
+                                                       method = "sparse", maxPCs = 3),
+                                        clusterArgs = list(name = "met",  dict = methylation$eMap,
+                                                           max_cluster_number = 3),
+                                        countEvent = list(name = "mut", min_prop = 0.05),
+                                        cnvAgv = list(name = "cnv", min_prop = 0.05)))
 
 genesToConsider <- row.names(pseudoExpNorm)
 
@@ -139,3 +141,29 @@ plotModuleHeat(multiOmicsReactome$`PI3K Cascade`, 2,
                additionalPaletteNames = list(PFS = "yellow", years = "teal"),
                sortBy = c("met2k", "expPC1", "PFS", "years"),
                withSampleNames = F)
+
+################################################################################
+### PATHWAY ANALYSIS
+
+multiOmics@specificArgs$pcaArgs$method = "topological"
+multiOmics@specificArgs$pcaArgs$shrink = TRUE
+genesToConsider <- row.names(pseudoExpNorm)
+
+if (file.exists("vignettes/multiOmicsFullHuge.RData")) {
+  load("vignettes/multiOmicsFullHuge.RData")
+} else {
+  multiOmicsFullHuge <- lapply(reactHuge, function(g) {
+    print(g@title)
+    set.seed(1234)
+    fcl = multiOmicsSurvivalPathwayTest(multiOmics, g, survAnnot, useThisGenes = genesToConsider)
+    fcl
+  })
+  file = paste0(dirname, "/multiOmicsFullHuge-", as.character(Sys.Date()), ".RData")
+  link = "multiOmicsFullHuge.RData"
+  save(multiOmicsFullHuge, file = file)
+  file.symlink(file, link)
+}
+
+plotPathwayHeat(multiOmicsFullHuge$`PI3K Cascade`, sortBy = c("met2k", "expPC1"),
+                paletteNames = c(exp = "red", met = "green", mut = "blue", cnv = "yellow"),
+                nrowsHeatmaps = 2, withSampleNames = F, fontsize_row = 6)
