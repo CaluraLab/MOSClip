@@ -142,6 +142,10 @@ plotModuleHeat(multiOmicsReactome$`PI3K Cascade`, 2,
                sortBy = c("met2k", "expPC1", "PFS", "years"),
                withSampleNames = F)
 
+plotModuleInGraph(multiOmicsReactome$`Mitochondrial protein import`, moduleNumber = 2,
+                  legendLabels = c("expr", "methylation", "cnv"),
+                  paletteNames = c(exp = "red", met = "green", mut = "blue", cnv = "yellow"))
+
 ################################################################################
 ### PATHWAY ANALYSIS
 
@@ -163,6 +167,9 @@ if (file.exists("vignettes/multiOmicsFullHuge.RData")) {
   save(multiOmicsFullHuge, file = file)
   file.symlink(file, link)
 }
+
+plotMultiPathwayReport(multiOmicsFullHuge, 10,
+                       MOcolors = c(exp = "red", mut = "blue", cnv = "yellow", met = "green"))
 
 plotPathwayHeat(multiOmicsFullHuge$`PI3K Cascade`, sortBy = c("met2k", "expPC1"),
                 paletteNames = c(exp = "red", met = "green", mut = "blue", cnv = "yellow"),

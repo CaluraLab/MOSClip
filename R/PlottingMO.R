@@ -117,23 +117,39 @@ plotPathwayHeat <- function(pathway, sortBy=NULL, fileName=NULL, paletteNames=NU
   annotationFull <- annotationFull[, rev(colnames(annotationFull))]
   
   # generate the heatmaps grobs
-  gts <- lapply(seq_along(involved), generateHeatmapGrobTable, involved=involved,
-                annotationFull=annotationFull, palettes=paletteNames,
-                annotationCol=ann_col, oldFation=FALSE, fontsize_row = fontsize_row,
-                fontsize_col = fontsize_col)
-  hmaps <- lapply(gts, function(x) {createHeatmapGrob(x)})
-  annotationGrob <- createTopAnnotationGrob(gts[[1]])
-  if (withSampleNames) {sampleNamesGrob <- createSamplesNamesGrob(gts[[1]])
-  } else {sampleNamesGrob <- grid::rectGrob(width = .98, height = .98,
-                                            gp=grid::gpar(lwd=0, col=NA, fill=NA))}
-  legendGrob <- createAnnotationLegendGrob(gts[[1]])
-  layout_matrix <- createLayout(length(hmaps), nrowsHeatmaps=nrowsHeatmaps)
-  grobs <- c(hmaps, list(annotationGrob), list(sampleNamesGrob), list(legendGrob))
-  # grobs <- grobs[!sapply(grobs, is.null)]
-  myplot <- gridExtra::arrangeGrob(grobs=grobs, layout_matrix = layout_matrix)
-  myplot <- gridExtra::arrangeGrob(grobs=grobs, layout_matrix = layout_matrix)
-  if(!is.null(fileName)) {ggplot2::ggsave(filename = fileName, myplot, height = h, width = w)
-  } else {grid::grid.newpage(); grid::grid.draw(myplot)}
+  # gts <- lapply(seq_along(involved), generateHeatmapGrobTable, involved=involved,
+  #               annotationFull=annotationFull, palettes=paletteNames,
+  #               annotationCol=ann_col, oldFation=FALSE, fontsize_row = fontsize_row,
+  #               fontsize_col = fontsize_col)
+  # hmaps <- lapply(gts, function(x) {createHeatmapGrob(x)})
+  # annotationGrob <- createTopAnnotationGrob(gts[[1]])
+  # if (withSampleNames) {sampleNamesGrob <- createSamplesNamesGrob(gts[[1]])
+  # } else {sampleNamesGrob <- grid::rectGrob(width = .98, height = .98,
+  #                                           gp=grid::gpar(lwd=0, col=NA, fill=NA))}
+  # legendGrob <- createAnnotationLegendGrob(gts[[1]])
+  # layout_matrix <- createLayout(length(hmaps), nrowsHeatmaps=nrowsHeatmaps)
+  # grobs <- c(hmaps, list(annotationGrob), list(sampleNamesGrob), list(legendGrob))
+  # # grobs <- grobs[!sapply(grobs, is.null)]
+  # myplot <- gridExtra::arrangeGrob(grobs=grobs, layout_matrix = layout_matrix)
+  # myplot <- gridExtra::arrangeGrob(grobs=grobs, layout_matrix = layout_matrix)
+  # if(!is.null(fileName)) {ggplot2::ggsave(filename = fileName, myplot, height = h, width = w)
+  # } else {grid::grid.newpage(); grid::grid.draw(myplot)}
+  ha <- HeatmapAnnotation(df = annotationFull, col = ann_col)
+  ht_list = ha
+  for(n in seq_along(involved)){
+    heatMatrix <- involved[[n]]$sigModule
+    heatMatrix <- heatMatrix[, row.names(annotationFull), drop=F]
+    row.names(heatMatrix) <- conversionToSymbols(row.names(heatMatrix), orgDbi)
+    Ht <- Heatmap(heatMatrix,
+                  cluster_columns = F, cluster_rows = F,
+                  show_column_names = F,
+                  col = c("#FFFFFF", rev(as.vector(ann_col[involved[[n]]$covsConsidered][[1]]))),
+                  heatmap_legend_param = list(title = NULL))
+    ht_list = ht_list %v% Ht}
+  # suppressMessages(ComplexHeatmap::draw(ht_list, legend_grouping = "original"))
+  gb = grid::grid.grabExpr(ComplexHeatmap::draw(ht_list, legend_grouping = "original"))
+  # invisible(ht_list)
+  return(gb)
 }
 
 #' Plot KM of the pathway by omics
@@ -485,7 +501,7 @@ plotModuleInGraph <- function(pathway, moduleNumber, orgDbi="org.Hs.eg.db",
   
   checkmate::assertClass(pathway, "MultiOmicsModules")
   
-  net <- igraph::igraph.from.graphNEL(pathway@graphNEL)
+  net <- igraph::igraph.from.graphNEL(convertPathway(reactome[[pathway@title]], NULL))
   moduleGenes <- pathway@modules[[moduleNumber]]
   net <- igraph::simplify(net, remove.multiple = T, remove.loops = T)
   color <- rep("grey", length(V(net)))
@@ -571,16 +587,15 @@ plotModuleInGraph <- function(pathway, moduleNumber, orgDbi="org.Hs.eg.db",
 #' @importFrom pheatmap pheatmap
 #' 
 #' @export
-plotMultiPathwayReport <- function(multiPathwayList, top=25, MOcolors=NULL, priority_to=NULL, ...){
-  if(!is.list(multiPathwayList))
-    stop("multiPathwayList must be a list.")
+plotMultiPathwayReport <- function(multiPathwayList, top=25, MOcolors=NULL,
+                                   priority_to=NULL, fontsize=6, ...){
+  
+  if(!is.list(multiPathwayList)) {stop("multiPathwayList must be a list.")}
   
   summary <- multiPathwayReport(multiPathwayList)
-  
   top <- min(top, NROW(summary))
   
   annCol <- guessOmics(colnames(summary))
-  # sub("(PC[0-9]+|[23]k[123]|TRUE|FALSE)$","", colnames(summary), perl=TRUE,ignore.case=FALSE)
   omics <- annCol[2:length(annCol)]
   
   if (is.null(priority_to) & (!is.null(MOcolors))){
@@ -588,38 +603,43 @@ plotMultiPathwayReport <- function(multiPathwayList, top=25, MOcolors=NULL, prio
       priority_to = names(MOcolors)
   }
   
-  if(is.null(MOcolors)){
-    # MOcolors <- names(MOSpalette)[1:length(unique(omics))]
-    MOcolors <- guessOmicsColors(omics)
-  }
+  if(is.null(MOcolors)) {MOcolors <- guessOmicsColors(omics)}
   
   if(length(MOcolors) != length(unique(omics))){
-    stop(paste0("Length of MOcolors differs from the number of omics: ", paste(unique(omics), collapse = ", ")))
+    stop(paste0("Length of MOcolors differs from the number of omics: ",
+                paste(unique(omics), collapse = ", ")))
   }
   
-  if (is.null(names(MOcolors)))
-    names(MOcolors) <- unique(omics)
+  if (is.null(names(MOcolors))) {names(MOcolors) <- unique(omics)}
   
-  # colors <- c(NA, sapply(unique(omics), function(o) MOSpalette[MOcolors[o]]))
-  colors <- c(NA, createColors(omics, MOcolors))
+  omics <- omics[order(match(omics, priority_to))]
+  colors <- createColors(omics, MOcolors)
+  names(colors) <- unique(omics)
+  pvalcol <- colorRamp2(c(0,1), c("#edf7f5", "#2796bd"))
   
-  names(colors) <- unique(annCol)
+  msummary <- as.matrix(summary[seq_len(top),2:ncol(summary)])
+  msummary <- order_by_covariates(msummary, 0, priority_to)
   
-  ann_columns <- data.frame(omics = factor(annCol))
-  rownames(ann_columns) <- colnames(summary)
+  cell_text <- function(j, i, x, y, width, height, fill) {
+    grid.text(sprintf("%.2f", msummary[i, j]), x, y, gp = gpar(fontsize = fontsize))}
   
-  ann_colors <- list(omics = colors)
-  dots = list(...)
-  args <- matchArguments(dots, list(display_numbers = T, color = pvalueShades,
-                                    cluster_rows = F, cluster_cols = F, 
-                                    gaps_col = c(1), fontsize_row=5, fontsize_col = 7,
-                                    annotation_col = ann_columns, annotation_colors = ann_colors,
-                                    border_color="white"))
+  ta <- HeatmapAnnotation(Omics = omics, col = list(Omics = colors))
   
-  summary <- order_by_covariates(summary, 1, priority_to)
-  
-  args$mat <- summary[seq_len(top),,drop=F]
-  do.call(pheatmap, args)
+  ht1 <- Heatmap(matrix = summary$pvalue[seq_len(top)],
+                 col = pvalueShades[1:round((summary$pvalue[top]*100)+1)],
+                 cluster_rows = F, show_heatmap_legend = F, name = "Pvalue",
+                 column_names_gp = gpar(fontsize = fontsize),
+                 cell_fun = function(j, i, x, y, width, height, fill) {
+                   grid.text(sprintf("%.2f", summary$pvalue[i]), x, y, gp = gpar(fontsize = fontsize))
+                 })
+  dots <- list(...)
+  defargs <- list(matrix = msummary, name = "Pvalue", col = pvalueShades,
+                  cluster_rows = F, cluster_columns = F, cell_fun = cell_text,
+                  top_annotation = ta, row_names_gp = gpar(fontsize = fontsize),
+                  column_names_gp = gpar(fontsize = fontsize))
+  args <- matchArguments(dots, defargs)
+  ht2 <- do.call(Heatmap, args)
+  suppressWarnings(ht1 + ht2)
 }
 
 #' Summarize and plot pathways' info from a MultiOmicsModule (MOM) object

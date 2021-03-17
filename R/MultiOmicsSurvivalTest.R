@@ -153,5 +153,5 @@ multiOmicsSurvivalModuleTest <- function(omicsObj, graph,
   names(alphas) <- NULL
   new("MultiOmicsModules", alphas=alphas, zlists=zlist, coxObjs=coxObjs,
       modulesView=momics, modules=modules, formulas=formulas,
-      title=pathName)
+      graphNEL=graph, title=pathName)
 }
