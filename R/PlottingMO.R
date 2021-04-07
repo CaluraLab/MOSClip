@@ -4,40 +4,32 @@
 #'
 #' @param pathway MultiOmicsPathway pathway object
 #' @param sortBy a covariate to sort by
-#' @param fileName optional filenames to save the plot
 #' @param paletteNames three palettes
 #' @param additionalAnnotations optional additional sample annotations
 #' @param additionalPaletteNames optional additional colors for annotations
-#' @param withSampleNames create also the samples names
-#' @param fontsize_row size of the fonts for rows
-#' @param fontsize_col like fontsize_row but for columns
-#' @param nrowsHeatmaps magnification respect to annotation of sample (annotations take 1 row)
-#' @param h the height of the plot
-#' @param w the width of the plot
 #' @param discr_prop_pca the minimal proportion to compute the pca classes
 #' @param discr_prop_events the minimal proportion to compute the event classes
+#' @param withSampleNames create also the samples names
+#' @param nrowsHeatmaps magnification respect to annotation of sample (annotations take 1 row)
 #'
 #' @return NULL
 #' 
 #' @importFrom checkmate assertClass
-#' @importFrom pheatmap pheatmap
-#' @importFrom gridExtra arrangeGrob
-#' @importFrom ggplot2 ggsave
 #' @importFrom grid gpar grid.newpage grid.draw rectGrob
-#' @importFrom graphics plot
+#' @importFrom ComplexHeatmap Heatmap HeatmapAnnotation '%v%' draw
 #' @importFrom stats relevel
+#' @importFrom ggplotify as.ggplot
 #' 
 #' @export
-plotPathwayHeat <- function(pathway, sortBy=NULL, fileName=NULL, paletteNames=NULL,
-                            additionalAnnotations=NULL, additionalPaletteNames=NULL,
-                            withSampleNames=TRUE, fontsize_row=10, fontsize_col=1,
-                            nrowsHeatmaps=3, orgDbi="org.Hs.eg.db", h=9, w=7,
-                            discr_prop_pca=0.15, discr_prop_events=0.05) {
+plotPathwayHeat <- function(pathway, sortBy = NULL, paletteNames = NULL,
+                            additionalAnnotations = NULL, additionalPaletteNames = NULL,
+                            discr_prop_pca = 0.15, discr_prop_events = 0.05,
+                            withSampleNames = TRUE, nrowsHeatmaps = 3, orgDbi = "org.Hs.eg.db") {
   
   checkmate::assertClass(pathway, "MultiOmicsPathway")
   
-  involved <- guessInvolvementPathway(pathway, min_prop_pca=discr_prop_events,
-                                      min_prop_events=discr_prop_events)
+  involved <- guessInvolvementPathway(pathway, min_prop_pca = discr_prop_pca,
+                                      min_prop_events = discr_prop_events)
   
   if(length(paletteNames)!=length(involved)) {
     repTimes <- ceiling(length(involved)/length(paletteNames))
@@ -45,10 +37,10 @@ plotPathwayHeat <- function(pathway, sortBy=NULL, fileName=NULL, paletteNames=NU
   }
   
   # Create annotation and sort
-  annotationFull <- formatAnnotations(involved, sortBy=NULL)
+  annotationFull <- formatAnnotations(involved, sortBy = NULL)
   idx <- which(unlist(lapply(annotationFull, class))=="numeric")
   if (length(idx)>0) {
-    for (i in idx) {annotationFull[,i] <- stats::relevel(as.factor(annotationFull[,i]), ref="1")}
+    for (i in idx) {annotationFull[,i] <- stats::relevel(as.factor(annotationFull[,i]), ref = "1")}
   }
   
   omics <- guessOmics(colnames(annotationFull))
@@ -116,40 +108,20 @@ plotPathwayHeat <- function(pathway, sortBy=NULL, fileName=NULL, paletteNames=NU
   annotationFull <- sortAnnotations(annotationFull, sortBy)
   annotationFull <- annotationFull[, rev(colnames(annotationFull))]
   
-  # generate the heatmaps grobs
-  # gts <- lapply(seq_along(involved), generateHeatmapGrobTable, involved=involved,
-  #               annotationFull=annotationFull, palettes=paletteNames,
-  #               annotationCol=ann_col, oldFation=FALSE, fontsize_row = fontsize_row,
-  #               fontsize_col = fontsize_col)
-  # hmaps <- lapply(gts, function(x) {createHeatmapGrob(x)})
-  # annotationGrob <- createTopAnnotationGrob(gts[[1]])
-  # if (withSampleNames) {sampleNamesGrob <- createSamplesNamesGrob(gts[[1]])
-  # } else {sampleNamesGrob <- grid::rectGrob(width = .98, height = .98,
-  #                                           gp=grid::gpar(lwd=0, col=NA, fill=NA))}
-  # legendGrob <- createAnnotationLegendGrob(gts[[1]])
-  # layout_matrix <- createLayout(length(hmaps), nrowsHeatmaps=nrowsHeatmaps)
-  # grobs <- c(hmaps, list(annotationGrob), list(sampleNamesGrob), list(legendGrob))
-  # # grobs <- grobs[!sapply(grobs, is.null)]
-  # myplot <- gridExtra::arrangeGrob(grobs=grobs, layout_matrix = layout_matrix)
-  # myplot <- gridExtra::arrangeGrob(grobs=grobs, layout_matrix = layout_matrix)
-  # if(!is.null(fileName)) {ggplot2::ggsave(filename = fileName, myplot, height = h, width = w)
-  # } else {grid::grid.newpage(); grid::grid.draw(myplot)}
   ha <- HeatmapAnnotation(df = annotationFull, col = ann_col)
   ht_list = ha
   for(n in seq_along(involved)){
     heatMatrix <- involved[[n]]$sigModule
     heatMatrix <- heatMatrix[, row.names(annotationFull), drop=F]
     row.names(heatMatrix) <- conversionToSymbols(row.names(heatMatrix), orgDbi)
-    Ht <- Heatmap(heatMatrix,
-                  cluster_columns = F, cluster_rows = F,
-                  show_column_names = F,
+    Ht <- Heatmap(heatMatrix, cluster_columns = F, cluster_rows = F, show_column_names = F,
                   col = c("#FFFFFF", rev(as.vector(ann_col[involved[[n]]$covsConsidered][[1]]))),
                   heatmap_legend_param = list(title = NULL))
     ht_list = ht_list %v% Ht}
-  # suppressMessages(ComplexHeatmap::draw(ht_list, legend_grouping = "original"))
-  gb = grid::grid.grabExpr(ComplexHeatmap::draw(ht_list, legend_grouping = "original"))
-  # invisible(ht_list)
-  return(gb)
+  suppressMessages(ComplexHeatmap::draw(ht_list, legend_grouping = "original"))
+  gb <- grid::grid.grabExpr(ComplexHeatmap::draw(ht_list, legend_grouping = "original"))
+  gb <- ggplotify::as.ggplot(gb)
+  invisible(gb)
 }
 
 #' Plot KM of the pathway by omics
@@ -189,7 +161,7 @@ plotPathwayKM <- function(pathway, formula = "Surv(days, status) ~ PC1",
   
   checkmate::assertClass(pathway, "MultiOmicsPathway")
   
-  involved <- guessInvolvementPathway(pathway,min_prop_pca=discr_prop_events,
+  involved <- guessInvolvementPathway(pathway,min_prop_pca=discr_prop_pca,
                                       min_prop_events=discr_prop_events)
   annotationFull <- formatAnnotations(involved, sortBy=NULL)
   daysAndStatus <- pathway@coxObj[, c("status", "days"), drop=F]
@@ -219,7 +191,7 @@ plotPathwayKM <- function(pathway, formula = "Surv(days, status) ~ PC1",
   } else {
     p
   }
-  # invisible(list(fit=fit, coxObj=coxObj))
+  # invisible(list(plot = p, fit = fit, coxObj = coxObj))
 }
 
 #' Plot heatmaps of the module by omics
@@ -229,7 +201,6 @@ plotPathwayKM <- function(pathway, formula = "Surv(days, status) ~ PC1",
 #' @param pathway MultiOmicsModule pathway object
 #' @param moduleNumber a module number
 #' @param sortBy a covariate to sort by
-#' @param fileName optional filenames to save the plot
 #' @param paletteNames three palettes
 #' @param additionalAnnotations optional additional sample annotations
 #' @param additionalPaletteNames optional additional colors for annotations
@@ -237,8 +208,6 @@ plotPathwayKM <- function(pathway, formula = "Surv(days, status) ~ PC1",
 #' @param fontsize_row size of the fonts for rows
 #' @param fontsize_col like fontsize_row but for columns
 #' @param nrowsHeatmaps magnification respect to annotation of sample (annotations take 1 row)
-#' @param h the height of the plot
-#' @param w the width of the plot
 #' @param discr_prop_pca the minimal proportion to compute the pca classes
 #' @param discr_prop_events the minimal proportion to compute the event classes
 #'
@@ -247,7 +216,6 @@ plotPathwayKM <- function(pathway, formula = "Surv(days, status) ~ PC1",
 #' @importFrom ComplexHeatmap Heatmap HeatmapAnnotation '%v%'
 #' @importFrom gridExtra arrangeGrob
 #' @importFrom grid gpar grid.newpage grid.draw rectGrob grid.grabExpr
-#' @importFrom ggplot2 ggsave
 #' @importFrom graphics plot
 #' @importFrom stats relevel
 #' @importFrom ggplotify as.ggplot
@@ -256,7 +224,7 @@ plotPathwayKM <- function(pathway, formula = "Surv(days, status) ~ PC1",
 plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL, fileName = NULL, paletteNames = NULL,
                            additionalAnnotations = NULL, additionalPaletteNames = NULL,
                            withSampleNames = TRUE, fontsize_row = 10, fontsize_col = 1,
-                           nrowsHeatmaps = 3, orgDbi = "org.Hs.eg.db", h = 9, w = 7,
+                           nrowsHeatmaps = 3, orgDbi = "org.Hs.eg.db",
                            discr_prop_pca = 0.15, discr_prop_events = 0.05) {
   
   checkmate::assertClass(pathway, "MultiOmicsModules")
@@ -264,7 +232,7 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL, fileName = NULL
   moduleGenes <- pathway@modules[[moduleNumber]]
   
   involved <- guessInvolvement(pathway, moduleNumber = moduleNumber,
-                               min_prop_pca = discr_prop_events,
+                               min_prop_pca = discr_prop_pca,
                                min_prop_events = discr_prop_events)
   
   if(length(paletteNames)!=length(involved)) {
@@ -356,7 +324,7 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL, fileName = NULL
                  col = c("#FFFFFF", as.vector(ann_col[[involved[[n]]$covsConsidered]][1])),
                  heatmap_legend_param = list(title = NULL))
     ht_list = ht_list %v% Ht}
-  # suppressMessages(ComplexHeatmap::draw(ht_list, legend_grouping = "original"))
+  suppressMessages(ComplexHeatmap::draw(ht_list, legend_grouping = "original"))
   gb = grid::grid.grabExpr(ComplexHeatmap::draw(ht_list, legend_grouping = "original"))
   # invisible(ht_list)
   return(gb)
@@ -392,16 +360,16 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL, fileName = NULL
 #' 
 #' @export
 plotModuleKM <- function(pathway, moduleNumber, formula = "Surv(days, status) ~ PC1",
-                         fileName=NULL, paletteNames=NULL, h = 9, w=7,
-                         risk.table=TRUE, pval=TRUE, size=1, inYears=FALSE,
-                         discr_prop_pca=0.15, discr_prop_events=0.05,
-                         additional_discrete=NULL,
-                         additional_continous=NULL) {
+                         fileName = NULL, paletteNames = NULL, h = 9, w = 7,
+                         risk.table = TRUE, pval = TRUE, size = 1, inYears = FALSE,
+                         discr_prop_pca = 0.15, discr_prop_events = 0.05,
+                         additional_discrete = NULL, additional_continous = NULL) {
   
   checkmate::assertClass(pathway, "MultiOmicsModules")
   
-  involved <- guessInvolvement(pathway, moduleNumber = moduleNumber, min_prop_pca=discr_prop_events,
-                               min_prop_events=discr_prop_events)
+  involved <- guessInvolvement(pathway, moduleNumber = moduleNumber,
+                               min_prop_pca = discr_prop_pca,
+                               min_prop_events = discr_prop_events)
   
   annotationFull <- formatAnnotations(involved, sortBy=NULL)
   
@@ -501,6 +469,7 @@ plotModuleInGraph <- function(pathway, moduleNumber, orgDbi="org.Hs.eg.db",
   
   checkmate::assertClass(pathway, "MultiOmicsModules")
   
+  # dentro pathway dovrebbe esserci l'oggetto graphNEL
   net <- igraph::igraph.from.graphNEL(convertPathway(reactome[[pathway@title]], NULL))
   moduleGenes <- pathway@modules[[moduleNumber]]
   net <- igraph::simplify(net, remove.multiple = T, remove.loops = T)

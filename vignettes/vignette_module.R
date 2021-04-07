@@ -146,6 +146,10 @@ plotModuleInGraph(multiOmicsReactome$`Mitochondrial protein import`, moduleNumbe
                   legendLabels = c("expr", "methylation", "cnv"),
                   paletteNames = c(exp = "red", met = "green", mut = "blue", cnv = "yellow"))
 
+plotModuleKM(multiOmicsReactome$`PI3K Cascade`, 2, 
+             formula = "Surv(days, status) ~ met2k + expPC1", paletteNames = "Paired", risk.table = T, 
+             size = 2, inYears = T)
+
 ################################################################################
 ### PATHWAY ANALYSIS
 
