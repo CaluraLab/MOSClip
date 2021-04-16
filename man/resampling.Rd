@@ -49,8 +49,6 @@ resampling(
 \item{pathwaySubset}{a list of pathways to resample}
 
 \item{nPatients}{number of patients to remove for resampling}
-
-\item{survAnnot}{survival annotation}
 }
 \value{
 a matrix

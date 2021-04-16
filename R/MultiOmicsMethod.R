@@ -160,6 +160,8 @@ createOptiomalClusterClasses <- function(datamatClique, name, max_cluster_number
   covs
 }
 
+#' @importFrom grDevices dev.off pdf
+#' 
 sinkNbClust <- function(data, min.nc=2, max.nc=6, method="ward.D2", index="silhouette"){
   if (index=="all")
     sink(file=tempfile()); pdf(file=NULL)

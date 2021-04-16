@@ -1,3 +1,6 @@
+#' @importFrom methods new
+#' @importFrom survival Surv
+#' @importFrom survClip survivalcox survivalcox
 createMOMView <- function(omicsObj, genes) {
   listCovariates <- lapply(seq_along(omicsObj@ExperimentList@listData), function(i) {
     test <- get(omicsObj@modelInfo[i])

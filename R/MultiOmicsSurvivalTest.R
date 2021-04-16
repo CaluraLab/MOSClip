@@ -4,7 +4,6 @@
 #'
 #' @param omicsObj Object of class 'Omics'
 #' @param graph a pathway in graphNEL, Pathway or geneset format.
-#' @param annot survival annotation: days and status (0,1). Row.names are samples. Additional covariates can be passed as columns (use include_from_annot).
 #' @param survFormula Formula to compute survival
 #' @param autoCompleteFormula logical. If TRUE autocomplete the survFormula using all the available covariates
 #' @param useThisGenes vector of genes used to filter pathways
@@ -38,11 +37,11 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
     stop("There is no nodes on the graph.")
   
   moduleView <- lapply(seq_along(omicsObj@ExperimentList@listData), function(i) {
-    test <- get(omicsObj@methods[i])
+    test <- omicsObj@modelInfo[i]
     specificArgs <- omicsObj@specificArgs[[i]]
     
     cliques=NULL
-    if (omicsObj@methods[i]=="summarizeWithPca") {
+    if (test=="summarizeWithPca") {
       genesToUse <- intersect(row.names(omicsObj@ExperimentList@listData[[i]]),
                               genesToUse)
       graph <- graph::subGraph(genesToUse, graph)
@@ -69,7 +68,7 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
   if (is.null(covariates))
     return(NULL)
   
-  if (!identical(row.names(annot), row.names(covariates)))
+  if (!identical(row.names(colData(omicsObj)), row.names(covariates)))
     stop("Mismatch in covariates and annot annotations rownames.")
   
   coxObj <- data.frame(omicsObj@colData, covariates)
@@ -79,7 +78,7 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
   
   add_covs <- colnames(covariates)
   if (include_from_annot) {
-    add_annot_covs <- colnames(omicsObj@colData)[!colnames(annot) %in% c("days", "status")]
+    add_annot_covs <- colnames(omicsObj@colData)[!colnames(omicsObj@colData) %in% c("days", "status")]
     add_covs <- c(add_covs, add_annot_covs)
   }
   
@@ -101,7 +100,6 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
 #'
 #' @param omicsObj Object of class 'Omics'
 #' @param graph a pathway in graphNEL, Pathway or geneset format.
-#' @param annot survival annotation: days and status (0,1). Row.names are samples. Additional covariates can be passed as columns (use include_from_annot).
 #' @param survFormula Formula to compute survival
 #' @param autoCompleteFormula logical. If TRUE autocomplete the survFormula using all the available covariates
 #' @param useThisGenes vector of genes used to filter pathways
