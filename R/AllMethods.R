@@ -1,6 +1,7 @@
 setClassUnion("characterOrNULL", c("character", "NULL"))
 
 #' @export
+#' @importFrom S4Vectors DataFrame
 Omics <- function(experiments = ExperimentList(), 
                   colData = S4Vectors::DataFrame(),
                      sampleMap = S4Vectors::DataFrame(

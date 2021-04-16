@@ -22,8 +22,6 @@ resamplingPathway(
 \item{pathwaySubset}{a list of pathways to resample}
 
 \item{nPatients}{number of patients to remove for resampling}
-
-\item{survAnnot}{survival annotation}
 }
 \value{
 list of the resampling tables of results

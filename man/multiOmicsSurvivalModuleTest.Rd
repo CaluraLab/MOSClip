@@ -31,8 +31,6 @@ multiOmicsSurvivalModuleTest(
 \item{robust}{should be used the robust mode for cox}
 
 \item{include_from_annot}{compute cox using additional covariates from annot}
-
-\item{annot}{survival annotation: days and status (0,1). Row.names are samples. Additional covariates can be passed as columns (use include_from_annot).}
 }
 \value{
 MultiOmicsModules object

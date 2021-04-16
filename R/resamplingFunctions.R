@@ -2,19 +2,19 @@
 #' 
 #' For internal use only
 #' 
-#' @inheritParams mergeCol
+#' @param li a list of summaries
 #' 
 #' @rdname resampling
 #' 
 checkOrder <- function(li) {
   ref <- li[[1]]$pathwayModule
-  all(sapply(li, function(o) all(o$pathwayModule == ref)))
+  all(vapply(li, function(o) all(o$pathwayModule == ref)))
 }
 
 #' Resolve disorder and difference of pathway module on the list
 #' 
 #' For internal use only
-#' @inheritParams mergeCol
+#' @param li a list of summaries
 #' 
 #' @rdname resampling
 #' 
@@ -58,7 +58,7 @@ checkStrenth <- function(boleanMatrix) {
 #' For internal use only
 #' 
 #' @param exp a matrix
-#' @inheritParams filterMultiOmicsForSamples
+#' @param samples the vector of samples to select
 #' 
 #' @return a filtered matrix
 #' 
@@ -78,7 +78,7 @@ filterExpr <- function(exp, samples) {
 #' @param samples the vector of samples to select
 #' 
 #' @return a filtered MultiOmics objects
-#'
+#' @importFrom methods as
 #' @rdname resampling
 #' 
 filterMultiOmicsForSamples <- function(MO, samples) {
@@ -101,7 +101,6 @@ filterMultiOmicsForSamples <- function(MO, samples) {
 #' Resampling function
 #' 
 #' @param fullMultiOmics a multiOmic object
-#' @param survAnnot survival annotation
 #' @param pathdb pathway database
 #' @param nperm number of permutation
 #' @param pathwaySubset a list of pathways to resample
@@ -142,7 +141,6 @@ resampling <- function(fullMultiOmics, pathdb, nperm=100, pathwaySubset=NULL, nP
 #' Resampling function for pathways
 #' 
 #' @param fullMultiOmics a multiOmic object
-#' @param survAnnot survival annotation
 #' @param pathdb pathway dayabase
 #' @param nperm number of permutation
 #' @param pathwaySubset a list of pathways to resample
@@ -199,7 +197,7 @@ selectStablePathwaysModules <- function(perms, moduleSummary, success=90, col="p
   
   pathwayModuleName <- moduleSummary[order(row.names(moduleSummary)),]
   
-  pvalue <- MOSClip::mergeCol(sortedPerms, col=col)
+  pvalue <- mergeCol(sortedPerms, col=col)
   row.names(pvalue) <- row.names(pathwayModuleName)
   
   allPvalues <- data.frame(pathwayModule=row.names(moduleSummary),
@@ -217,8 +215,10 @@ selectStablePathwaysModules <- function(perms, moduleSummary, success=90, col="p
 }
 
 #' Count the resampling success
-#' 
-#' @inheritParams selectStablePathwaysModules
+#'
+#' @param thr the threshold for significance
+#' @param moduleSummary summary of the modules
+#' @param col the name of the column 
 #' @param thr the threshold for significance
 #' 
 #' @return the counts of success
@@ -242,7 +242,7 @@ getPathwaysModulesSuccess <- function(perms, moduleSummary, col="pvalue", thr=0.
   if (!identical(ref, row.names(pathwayModuleName)))
     stop("moduleSummary row.names differes from perms")
   
-  pvalue <- MOSClip::mergeCol(sortedPerms, col=col)
+  pvalue <- mergeCol(sortedPerms, col=col)
   row.names(pvalue) <- row.names(pathwayModuleName)
   
   allPvalues <- data.frame(pathwayModule=row.names(moduleSummary),
@@ -259,7 +259,7 @@ getPathwaysModulesSuccess <- function(perms, moduleSummary, col="pvalue", thr=0.
 
 #' Add resampling counts to module summary
 #' 
-#' @inheritParams selectStablePathwaysModules
+#' @param moduleSummary summary of the modules
 #' @param resamplingCounts the counts of success
 #' 
 #' @return a module summary with reampling counts
