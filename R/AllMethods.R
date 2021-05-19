@@ -1,5 +1,20 @@
 setClassUnion("characterOrNULL", c("character", "NULL"))
 
+
+#' Omics class initializer function
+#' @param experiments A \code{list} or \link{ExperimentList} of all
+#' combined experiments
+#' @param colData A \code{\linkS4class{DataFrame}} or \code{data.frame} of
+#' characteristics for all biological units
+#' @param sampleMap A \code{DataFrame} or \code{data.frame} of assay names,
+#' sample identifiers, and colname samples
+#' @param metadata An optional argument of "ANY" class (usually list) for
+#' content describing the experiments
+#' @param drops A \code{list} of unmatched information
+#' (included after subsetting)
+#' @param modelInfo a list with length equal to length(data) that are modelInfo to process each dataset.
+#' @param specificArgs a list with length equal to length(data) to set additional parameters specific of the modelInfo.
+#' @param pathResult a list containing pathways result
 #' @export
 #' @importFrom S4Vectors DataFrame
 Omics <- function(experiments = ExperimentList(), 
@@ -25,28 +40,28 @@ Omics <- function(experiments = ExperimentList(),
             row.names = unique(sampleMap[["primary"]])
          )
       MAE <- MultiAssayExperiment(experiments, colData, sampleMap)
-   }     
+   } else  { MAE <- MultiAssayExperiment(experiments, colData, sampleMap)}
          
-         if (length(MAE@ExperimentList) != length(modelInfo)){
-            message("Data and relative methods to analyze them must be equal in length.")
-            return()
-         }
+   if (length(MAE@ExperimentList) != length(modelInfo)){
+            stop("Data and relative methods to analyze them must be equal in length.")
+
+   }
          
-         if (length(MAE@ExperimentList) != length(specificArgs)){
-            message("data and specificArgs must be equal in length.")
-            return()
-         }
+   if (length(MAE@ExperimentList) != length(specificArgs)){
+            stop("data and specificArgs must be equal in length.")
+            
+   }
          
-         match <- !(modelInfo %in% availableOmicMethods())
-         if (any(match)) {
-            message(paste(paste(modelInfo[match], collapse=", "), "modelInfo not found in method. Try availableOmicMethods."))
-            return()
-         }
+   match <- !(modelInfo %in% availableOmicMethods())
+   if (any(match)) {
+            stop(paste(paste(modelInfo[match], collapse=", "), "modelInfo not found in method. Try availableOmicMethods."))
+            
+   }
          
          samplesNumber <- sapply(MAE@ExperimentList, ncol)
          if (length(unique(samplesNumber))!=1){
-            message("Mismatch in sample numbers")
-            return()
+            stop("Mismatch in sample numbers")
+          
          }
 
          samples <- lapply(MAE@ExperimentList, colnames)
@@ -57,15 +72,15 @@ Omics <- function(experiments = ExperimentList(),
             })
          }
          if (!all(cmps)){
-            message("Samples order mismatch")
-            return()
+            stop("Samples order mismatch")
+           
          }
          duplo <- sapply(MAE@ExperimentList, function(data) {
             any(duplicated(row.names(data)))
          })
          if (any(duplo)) {
-            message(paste0("Duplicated row.names found in omics ", paste(which(duplo), collapse = ", ")))
-            return()
+            stop(paste0("Duplicated row.names found in omics ", paste(which(duplo), collapse = ", ")))
+           
          }
          
          new("Omics",
@@ -80,57 +95,15 @@ Omics <- function(experiments = ExperimentList(),
     
 
 
-#' @export
-setGeneric("check", function(object) standardGeneric("check"))
-
-#' @export
-setMethod("check",  signature(object = "Omics"),
-          function(object) {
-             
-             if (length(object@ExperimentList) != length(object@modelInfo)){
-                msg <- "Data and relative methods to analyze them must be equal in length."
-                return(msg)
-             }
-             
-             if (length(object@ExperimentList) != length(object@specificArgs)){
-                msg <- "data and specificArgs must be equal in length."
-                return(msg)
-             }
-             
-             match <- !(object@modelInfo %in% availableOmicMethods())
-             if (any(match)) {
-                msg <- paste(paste(object@modelInfo[match], collapse=", "), "modelInfo not found in method. Try availableOmicMethods.")
-                return(msg)
-             }
-             
-             samplesNumber <- sapply(object@ExperimentList, ncol)
-             if (length(unique(samplesNumber))!=1)
-                return("Mismatch in sample numbers")
-             
-             samples <- lapply(object@ExperimentList, colnames)
-             if (length(samples) > 1) {
-                ref <- samples[[1]]
-                cmps <- sapply(seq(from=2, to=length(samples)), function(i) {
-                   identical(ref, samples[[i]])
-                })
-             }
-             if (!all(cmps))
-                return("Samples order mismatch")
-             
-             duplo <- sapply(object@ExperimentList, function(data) {
-                any(duplicated(row.names(data)))
-             })
-             if (any(duplo)) {
-                return(paste0("Duplicated row.names found in omics ", paste(which(duplo), collapse = ", ")))
-             }
-             
-             return(TRUE)
-          })
-
+#' A generic functions showing parameter asociated with each omics
+#' @param object an object of class Omics
 #' @export
 setGeneric("showOmics", function(object) standardGeneric("showOmics"))
 
 #' @export
+#' @describeIn Omics shows model parameters
+#' @param object an object of class Omics
+
 setMethod("showOmics",  signature(object = "Omics"),
           function(object) {
             nm <- names(assays(object))
@@ -158,12 +131,15 @@ setMethod("showOmics",  signature(object = "Omics"),
           })
 
 
-
+#' A generic function showing pathway's module info
+#' @param object an object of class MultiOmicsModule
 #' @export
 setGeneric("showModule", function(object) 
    standardGeneric("showModule") )
 
 #' @export
+#' @describeIn MultiOmicsModule shows module info
+#' @param object an object of class MultiOmicsModule
 setMethod("showModule",
           signature = "MultiOmicsModules",
           definition = function(object){
@@ -193,11 +169,15 @@ setMethod("showModule",
             invisible(NULL)
           })
 
+#' A generic function showing pathway info
+#' @param object an object of class MultiOmicsPathway
 #' @export
 setGeneric("showPathway", function(object) 
    standardGeneric("showPathway") )
 
 #' @export
+#' @describeIn MultiOmicsPathway shows module info
+#' @param object an object of class MultiOmicsPathway
 setMethod("showPathway",
           signature = "MultiOmicsPathway",
           definition = function(object){
@@ -210,8 +190,9 @@ setMethod("showPathway",
 
 
 
-
-setGeneric("convertPathway", function(graph, useThisGenes) standardGeneric("convertPathway"))
+#' @export
+setGeneric("convertPathway", function(graph, useThisGenes)
+   standardGeneric("convertPathway"))
 
 #' @importFrom graph subGraph
 #' @importFrom graphite pathwayGraph

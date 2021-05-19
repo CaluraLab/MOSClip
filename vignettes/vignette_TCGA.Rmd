@@ -1,0 +1,173 @@
+---
+title: "Vignette2"
+author: "Federico Agostinis"
+date: "16/4/2021"
+output: html_document
+---
+
+# Installation
+
+First of all we need to install NewWave:
+
+```{r, eval = FALSE}
+if(!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("NewWave")
+```
+
+
+```{r}
+suppressPackageStartupMessages(
+  {library(pheatmap)
+library(RColorBrewer)
+library(graphite)
+library(EDASeq)
+library(houseOfClipUtility)
+library(biocmosclip)
+library(MultiAssayExperiment)
+library(RaggedExperiment)
+    library(org.Hs.eg.db)
+    library(TCGAutils)}
+)
+```
+
+```{r}
+
+library(curatedTCGAData)
+ass <- c("RNASeq*", "GISTIC_ThresholdedByGene",
+         "Methylation", "Mutation*")
+ACC <- curatedTCGAData(diseaseCode = c("ACC"), assays = ass, dry.run = F)
+
+
+```
+
+Selezioniamo solo i campioni che sono un tumore primario:
+
+```{r}
+tums <- TCGAsampleSelect(colnames(ACC), "01")
+ACC <- ACC[,tums, ]
+```
+
+
+```{r}
+common_samples <- Reduce(intersect, lapply(experiments(ACC), function(x)substr(colnames(x),1,12)))
+```
+
+
+
+```{r}
+ACC <- ACC[,common_samples,]
+
+ACC <- renameColname(ACC,1,substr(colnames(experiments(ACC)[[1]]),1,12))
+ACC <- renameColname(ACC,2,substr(colnames(experiments(ACC)[[2]]),1,12))
+ACC <- renameColname(ACC,3,substr(colnames(experiments(ACC)[[3]]),1,12))
+ACC <- renameColname(ACC,4,substr(colnames(experiments(ACC)[[4]]),1,12))
+```
+
+```{r}
+expression <- assay(ACC@ExperimentList$`ACC_RNASeq2GeneNorm-20160128`)
+keep = apply(expression >= 100, 1, any)
+
+```
+
+
+
+
+
+
+
+```{r}
+mut <- ACC@ExperimentList[[2]]
+smart_mut <- compactAssay(mut)
+smart_mut <- smart_mut[!rowSums(!is.na(smart_mut))==0,]
+
+res <- apply(smart_mut, 1, function(x) x[!is.na(x)])
+res <- lapply(res, function(x) x[[1]])
+res <- unlist(res)
+rownames(smart_mut)<-res
+smart_mut[!is.na(smart_mut)]<-1
+smart_mut[is.na(smart_mut)]<-0
+class(smart_mut) <- "numeric"
+smart_mut <- as.data.frame(smart_mut)
+smart_mut$names <-row.names(smart_mut)
+smart_mut$names <- gsub("\\..$","",smart_mut$names)
+smart_mut$names <- as.factor(smart_mut$names)
+final_mut <- aggregate(smart_mut[,-ncol(smart_mut)], by=list(Category=smart_mut$names), FUN=sum)
+rownames(final_mut)<- final_mut$Category
+final_mut <- final_mut[,-1]
+final_mut <- as.matrix(final_mut)
+```
+
+
+```{r}
+experiments(ACC)[[2]]<-final_mut
+```
+
+
+
+
+```{r}
+hs <- org.Hs.eg.db
+select(hs, 
+       keys = rownames(ACC),
+       columns = c("ENTREZID", "SYMBOL"),
+       keytype = "SYMBOL")
+```
+
+
+
+
+
+
+```{r}
+multiOmics <- Omics(experiments = ACC@ExperimentList,
+                    colData = ACC@colData,
+                     sampleMap = ACC@sampleMap,
+                    modelInfo = c("summarizeWithPca",
+                                  "summarizeInCluster",
+                                  "summarizeToNumberOfEvents",
+                                  "summarizeToNumberOfDirectionalEvents"),
+                    
+                    specificArgs = list(pcaArgs = list(name = "exp",
+                                                       shrink = "FALSE",
+                                                       method = "sparse",
+                                                       maxPCs = 3),
+                    clusterArgs = list(name = "met",
+                                       max_cluster_number = 3),
+                    
+                     countEvent = list(name = "mut",
+                                       min_prop = 0.05),
+                    
+                     cnvAgv = list(name = "cnv", min_prop = 0.05)))
+
+
+```
+
+
+
+
+
+
+```{r}
+ reactomeee <- pathways("hsapiens", "reactome")
+ reactome <- convertIdentifiers(reactome, "entrez")
+  
+```
+
+```{r}
+reactome <- pathways("hsapiens", "reactome")
+names <- c("PI3K Cascade","Apoptotic cleavage of cellular proteins","RAF-independent MAPK1/3 activation" ,"Mitochondrial protein import")
+reactome <- reactome[names]
+
+reactome <- convertIdentifiers(reactome, "entrez")
+
+nodesLength <- sapply(reactome, function(g) {
+  length(intersect(graphite::nodes(g), row.names(ACC@ExperimentList[[1]])))
+})
+
+
+reactUsed <-  reactome
+
+```
+
+

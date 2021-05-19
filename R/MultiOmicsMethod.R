@@ -327,8 +327,6 @@ summarizeToNumberOfDirectionalEvents <- function(data, features, name="dCount", 
                           row.names = names(positive), stringsAsFactors = F)
   colnames(collapsed) <- paste0(name, c("POS","NEG"))
   
-  # min <- ceiling(NCOL(data)*0.01)
-  # keep <- colSums(collapsed>0) >=  min | colSums(collapsed>0) <= NROW(dataClique)-min
   keep <- sapply(collapsed, check_minimal_proportion, min_prop=min_prop)
   collapsed = collapsed[, keep, drop=F]
   
@@ -389,8 +387,7 @@ summarizeToBinaryDirectionalEvents <- function(data, features, name="dirBin", bi
                           row.names = names(positive), stringsAsFactors = F)
   colnames(collapsed) <- paste0(name, c("POS","NEG"))
   
-  # if (sum(collapsed) < binaryClassMin | sum(collapsed) > NROW(dataClique)-binaryClassMin)
-  #   return(NULL)
+  
   keep <- sapply(collapsed, sum) >= binaryClassMin | sapply(collapsed, sum) <= NROW(dataClique)-binaryClassMin
   collapsed = collapsed[, keep, drop=F]
   

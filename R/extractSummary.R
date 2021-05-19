@@ -16,8 +16,7 @@
 extractSummaryFromBinary <- function(omic, n=3) {
   moduleMat <- omic$dataModule
   covs <- omic$namesCov
-  # involved <- head(mostlyMutated(moduleMat), n)
-  # sigModule <- omic$dataModule[row.names(involved), , drop=F]
+
   impact <- lapply(covs, mostlyMutated, moduleMat=t(omic$dataModule), name=omic$omicName,
                    eventThr=omic$eventThr)
   mostlyImpacted <- lapply(impact, head, n=n)
@@ -28,11 +27,6 @@ extractSummaryFromBinary <- function(omic, n=3) {
   list(sigModule=sigModule, discrete=discrete, subset=mostlyImpacted, covsConsidered=omic$namesCov)
 }
 
-# mostlyMutated <- function(moduleMat) {
-#   priority <- colSums(moduleMat, na.rm=T)
-#   priority <- data.frame(row.names = names(priority), patientsMutated=priority)
-#   priority[order(priority$patientsMutated, decreasing = T),, drop=F]
-# }
 
 #' Extract Summary CLuster from MultiOmics Objects
 #'
@@ -53,9 +47,6 @@ extractSummaryFromCluster <-function(omic, n=3) {
   moduleMat <- t(omic$dataModule)
   classes <- omic$x[,1]
   KMsigMat <- KWtest(moduleMat, classes)
-  
-  # if (is.list(KMsigMat) & !is.data.frame(KMsigMat))
-  #   stop("Something wrong 458. Contact maintainer.")
   
   if (is.null(names(omic$cls)))
     stop("cls in omic need to be a list or named vector")
@@ -200,7 +191,6 @@ extractSummaryFromNumberOfEvents <- function(omic, moduleCox, n=3, minprop=0.1, 
   mostlyImpactedGenes <- unlist(lapply(mostlyImpacted, row.names))
   sigModule <- omic$dataModule[mostlyImpactedGenes, , drop=F]
   
-  # involved <- moduleMat[mostlyImpactedGenes, , drop=F]
   covariates <- tapply(covNames, mostlyImpactedGenes,  function(x) x)
   involved <- data.frame(covariates, stringsAsFactors = F)
   

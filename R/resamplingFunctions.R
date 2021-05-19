@@ -166,7 +166,6 @@ resamplingPathway <- function(fullMultiOmics, pathdb, nperm=100, pathwaySubset=N
     multiOmics <- fullMultiOmics[,pts]
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
-      # print(g@title)
       set.seed(1234)
       fcl = multiOmicsSurvivalPathwayTest(multiOmics, g, useThisGenes = genesToConsider)
       fcl

@@ -72,7 +72,6 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
     stop("Mismatch in covariates and annot annotations rownames.")
   
   coxObj <- data.frame(omicsObj@colData, covariates)
-  # createDiscreteClasses(coxObj, covariates)
   
   formula = survFormula
   

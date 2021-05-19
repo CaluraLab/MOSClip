@@ -49,11 +49,6 @@ multiPathwayModuleReport <- function(multiPathwayModuleList, priority_to=NULL) {
   multiMatrixRes <- lapply(n_temp, function(name,list){summary <- formatModuleReport(list[[name]]);
                                        data.frame(pathway=name, module=row.names(summary), summary,
                                         row.names=NULL, stringsAsFactors = F) }, multiPathwayModuleList)
-  # multiMatrixRes <- lapply(multiPathwayModuleList, function(p) {
-  #   summary <- formatModuleReport(p)
-  #   data.frame(pathway=p@title, module=row.names(summary), summary,
-  #              row.names=NULL, stringsAsFactors = F)
-  # })
   resDF <- mergeAll(multiMatrixRes)
   resDF <- resDF[order(resDF$pvalue), ]
   rownames(resDF) <- apply(resDF,1, function(r) paste(r["pathway"],r["module"],sep="."))
@@ -62,6 +57,8 @@ multiPathwayModuleReport <- function(multiPathwayModuleList, priority_to=NULL) {
   
   return(resDF)
 }
+
+
 
 formatModuleReport <- function(smObj){
   alphas <- smObj@alphas
@@ -104,7 +101,8 @@ mergeAll <- function(list) {
 }
 
 order_by_covariates <- function(dataF, skip_first_cols, priority_to=NULL) {
-  # priority_to <- c("exp","cnv", "met", "mut")
+ 
+  
   if (is.null(priority_to))
     return(dataF)
   
