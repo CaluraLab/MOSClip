@@ -12,7 +12,6 @@
 #' \item{covsConsidered}{the name of the considered omic}
 #'
 #' @export
-
 extractSummaryFromBinary <- function(omic, n=3) {
   moduleMat <- omic$dataModule
   covs <- omic$namesCov

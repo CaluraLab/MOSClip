@@ -14,12 +14,13 @@ setClassUnion("characterOrNULL", c("character", "NULL"))
 #' @slot title the name of the pathway.
 #' @name MultiOmicsModule-class
 #' @rdname MultiOmicsModule-class
-#' 
-setClass(Class ="MultiOmicsModules", 
+#'
+setClass(Class ="MultiOmicsModules",
          slots = c(alphas  = "numeric",
                    zlists  = "list",
                    coxObjs = "list",
                    modulesView  = "list",
+                   usedGenes = "list",
                    modules     = "list",
                    formulas = "list",
                    title = "characterOrNULL"))
@@ -36,18 +37,21 @@ setClass(Class ="MultiOmicsModules",
 #'
 #' @name MultiOmicsPathway-class
 #' @rdname MultiOmicsPathway-class
-#' 
+#'
 
 
-setClass(Class ="MultiOmicsPathway", 
+setClass(Class ="MultiOmicsPathway",
          slots = c(pvalue = "numeric",
                    zlist = "numeric",
                    coxObj = "data.frame",
                    pathView = "list",
+                   usedGenes = "list",
                    formula = "character",
                    title = "characterOrNULL"))
 
-
+# setClass(Class ="SinglePath", package = "biocmosclip",
+#          slots = c(global = "MultiOmicsPathway",
+#                    modules = "MultiOmicsModules"))
 
 #' This class is the storage for the different omic datasets that we need to analyze.
 #'
@@ -56,11 +60,11 @@ setClass(Class ="MultiOmicsPathway",
 #'
 #' @name Omics-class
 #' @rdname Omics-class
-#' 
+#'
 #' @export
 #' @import MultiAssayExperiment
 Omics <- setClass(Class = "Omics", package = "biocmosclip",
-                  
+
                   slots = c(modelInfo = "character",
                             specificArgs = "list",
                             pathResult = "list"),

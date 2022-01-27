@@ -1,6 +1,17 @@
+#' Create the list of covariates that are going to be tested
+#' 
 #' @importFrom methods new
 #' @importFrom survival Surv
 #' @importFrom survClip survivalcox survivalcox
+#' @return list with 
+#'   1 reduced representation of the omics
+#'   2 sdev
+#'   3 loadings or eigenvector
+#'   4 data module ## Consider adding here only genes)
+#'   5 Method
+#'   6 namesCov
+#'   7 OmicName
+#'   
 createMOMView <- function(omicsObj, genes) {
   listCovariates <- lapply(seq_along(omicsObj@ExperimentList@listData), function(i) {
     test <- get(omicsObj@modelInfo[i])
@@ -11,7 +22,7 @@ createMOMView <- function(omicsObj, genes) {
     do.call(test, args)
   })
   
-  listCovariates[!sapply(listCovariates, is.null)]
+  listCovariates[!sapply(listCovariates, is.null)] # remove sapply
 }
 
 
@@ -40,9 +51,9 @@ MOMSurvTest <- function(genes, omicsObj,
   additionalCovariates <- lapply(moView, function(mo) {
     mo$x
   })
-  moduleData <- lapply(moView, function(mo) {
-    mo$dataModule
-  })
+  
+  moduleData <- lapply(moView, function(mo) mo$dataModule)
+  usedGenes <- lapply(moView, function(mo) mo$usedGenes)
   
   additionalCovariates <- do.call(cbind, additionalCovariates)
   
@@ -70,9 +81,11 @@ MOMSurvTest <- function(genes, omicsObj,
     scox <- suppressWarnings(survClip::survivalcox(coxObj, formula)) ### Check warnings
   }
   
-  scox$moView <- moView
+  scox$moView <- moView # consider removing
   scox$formula <- formula
-  scox$moduleData <- moduleData
+  scox$moduleData <- moduleData # consider removing
+  scox$usedGenes <- usedGenes
+  
   scox
 }
 

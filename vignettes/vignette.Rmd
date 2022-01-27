@@ -47,6 +47,7 @@ mutation <- mutations$data
 row.names(mutation) <- paste0("ENTREZID:", row.names(mutation))
 names(metClustValues$eMap) <- paste0("ENTREZID:", row.names(metClustValues$eMap))
 row.names(cnv) <- paste0("ENTREZID:", row.names(cnv))
+cnv <- as.matrix(cnv)
 
 survAnnot <- na.omit(survAnnotations)
 patients <- row.names(survAnnot)
@@ -96,7 +97,6 @@ reactUsed <-  reactome
 ```
 
 
-
 ```{r}
 pathHierarchy <- houseOfClipUtility::downloadPathwayRelationFromReactome()
 pathHierarchyGraph <- igraph::graph.data.frame(d = pathHierarchy, directed = TRUE)
@@ -104,9 +104,9 @@ pathHierarchyGraph <- igraph::graph.data.frame(d = pathHierarchy, directed = TRU
 
 
 ```{r}
-multiOmics <- Omics(experiments = ExperimentList(expr = pseudoExpNorm,
-                                                 met = methylation$MET_Cancer_Clustered, 
-                                                 mut = mutation, cnv = cnv),
+multiOmics <- Omics(experiments = ExperimentList(list(expr = pseudoExpNorm,
+                                                      met = methylation$MET_Cancer_Clustered, 
+                                                      mut = mutation, cnv = cnv)),
                     colData = survAnnot,
                     modelInfo = c("summarizeWithPca", "summarizeInCluster", 
                                   "summarizeToNumberOfEvents", "summarizeToNumberOfDirectionalEvents"),
@@ -119,6 +119,25 @@ multiOmics <- Omics(experiments = ExperimentList(expr = pseudoExpNorm,
 
 genesToConsider <- row.names(pseudoExpNorm)
 ```
+
+# Single pathway
+
+```{r}
+
+g <- reactUsed[[1]]
+g_modules <- multiOmicsSurvivalModuleTest(multiOmics, g, useThisGenes = genesToConsider)
+g_pathway <- multiOmicsSurvivalPathwayTest(multiOmics, g, useThisGenes = genesToConsider)
+
+g_modules@modulesView[[1]] # omics oververview
+g_modules@usedGenes
+names(g_modules@modulesView[[1]][[1]]) # omic summary (x, sdev, loadings, dataModule, method, namesCov, omicName")
+names(g_modules@modulesView[[1]][[2]]) # omics summary ("x, dataModule, namesCov, cls, method, omicName")
+
+g_pathway@pathView[[1]] # omics oververview
+paste(names(g_pathway@pathView[[1]]), collapse = ", ") # x, sdev, loadings, dataModule, method, namesCov, omicName
+
+```
+
 
 ```{r}
 

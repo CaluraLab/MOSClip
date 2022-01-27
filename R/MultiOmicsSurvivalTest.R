@@ -36,19 +36,22 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
   if (length(genesToUse)== 0)
     stop("There is no nodes on the graph.")
 
+  # cicle over the datasets (expression, methylation ...)
   moduleView <- lapply(seq_along(omicsObj@ExperimentList@listData), function(i) {
 
     test <- get(omicsObj@modelInfo[i])
     specificArgs <- omicsObj@specificArgs[[i]]
 
+    # Inizialize cliques to null
     cliques=NULL
-    if (omicsObj@modelInfo[i]=="summarizeWithPca") {
+    if (test=="summarizeWithPca") {
+      # compute cliques
       genesToUse <- intersect(row.names(omicsObj@ExperimentList@listData[[i]]),
                               genesToUse)
       graph <- graph::subGraph(genesToUse, graph)
       cliques <- houseOfClipUtility::extractCliquesFromDag(graph)
     }
-
+    # create the argument list
     args <- list(data=omicsObj@ExperimentList@listData[[i]],
                  features=genesToUse, cliques=cliques)
 
@@ -58,11 +61,14 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
     do.call(test, args)
   })
 
-  moduleView <- moduleView[!sapply(moduleView, is.null)]
 
-  covariates <- lapply(moduleView, function(mo) mo$x)
+  moduleView <- moduleView[!sapply(moduleView, is.null)] # change sapply in vapply
 
-  moduleData <- lapply(moduleView, function(mo) mo$dataModule)
+  covariates <- lapply(moduleView, function(mo) mo$x) # extract all the vocariates
+
+  moduleData <- lapply(moduleView, function(mo) mo$dataModule) # extract all the intersting values of the pathways
+
+  usedGenes <- lapply(moduleView, function(mo) mo$usedGenes) ##
 
   covariates <- do.call(cbind, covariates)
 
@@ -91,7 +97,7 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
     scox <- suppressWarnings(survClip::survivalcox(coxObj, formula)) ### Check warnings
   }
   new("MultiOmicsPathway", pvalue=scox$pvalue, zlist=scox$zlist, coxObj=scox$coxObj,
-      pathView=moduleView, formula=formula, title=pathName)
+      pathView=moduleView, usedGenes=usedGenes, formula=formula, title=pathName)
 }
 
 #' Compute Multi Omics Survival in Pathway Modules
@@ -145,11 +151,13 @@ multiOmicsSurvivalModuleTest <- function(omicsObj, graph,
   momics   <- lapply(results, function(x) x$moView)
   coxObjs  <- lapply(results, function(x) x$coxObj)
   moduleData <- lapply(results, function(x) x$moduleData)
+  usedGenes  <- lapply(results, function(x) x$usedGenes)
   modules  <- cliques
   formulas <- lapply(results, function(x) x$formula)
 
   names(alphas) <- NULL
   new("MultiOmicsModules", alphas=alphas, zlists=zlist, coxObjs=coxObjs,
-      modulesView=momics, modules=modules, formulas=formulas,
-      graphNEL=graph, title=pathName)
+
+      modulesView=momics, usedGenes=usedGenes, modules=modules, formulas=formulas,
+      title=pathName)
 }
