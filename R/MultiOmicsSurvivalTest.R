@@ -20,70 +20,71 @@
 #' @importFrom survClip survivalcox survivalcoxr
 #' @export
 
-multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
+multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
                                           survFormula = "Surv(days, status) ~",
                                           autoCompleteFormula=T,
                                           useThisGenes=NULL,
                                           pathName=NULL, robust=FALSE,
                                           include_from_annot=F) {
-  
+
   if (is.null(pathName) && is(graph, "Pathway")) {
     pathName <- graph@title
   }
-  
+
   graph <- convertPathway(graph, useThisGenes)
   genesToUse <- graph::nodes(graph)
   if (length(genesToUse)== 0)
     stop("There is no nodes on the graph.")
-  
+
   moduleView <- lapply(seq_along(omicsObj@ExperimentList@listData), function(i) {
-    test <- omicsObj@modelInfo[i]
+
+    test <- get(omicsObj@modelInfo[i])
     specificArgs <- omicsObj@specificArgs[[i]]
-    
+
     cliques=NULL
-    if (test=="summarizeWithPca") {
+    if (omicsObj@modelInfo[i]=="summarizeWithPca") {
       genesToUse <- intersect(row.names(omicsObj@ExperimentList@listData[[i]]),
                               genesToUse)
       graph <- graph::subGraph(genesToUse, graph)
       cliques <- houseOfClipUtility::extractCliquesFromDag(graph)
     }
-    
+
     args <- list(data=omicsObj@ExperimentList@listData[[i]],
                  features=genesToUse, cliques=cliques)
-    
+
     if (!is.null(specificArgs))
       args <- c(args, specificArgs)
-    
+
     do.call(test, args)
   })
-  
+
   moduleView <- moduleView[!sapply(moduleView, is.null)]
-  
+
   covariates <- lapply(moduleView, function(mo) mo$x)
-  
+
   moduleData <- lapply(moduleView, function(mo) mo$dataModule)
-  
+
   covariates <- do.call(cbind, covariates)
-  
+
   if (is.null(covariates))
     return(NULL)
-  
+
   if (!identical(row.names(colData(omicsObj)), row.names(covariates)))
     stop("Mismatch in covariates and annot annotations rownames.")
-  
+
   coxObj <- data.frame(omicsObj@colData, covariates)
-  
+
   formula = survFormula
-  
+
   add_covs <- colnames(covariates)
   if (include_from_annot) {
     add_annot_covs <- colnames(omicsObj@colData)[!colnames(omicsObj@colData) %in% c("days", "status")]
     add_covs <- c(add_covs, add_annot_covs)
   }
-  
+
   if (autoCompleteFormula)
     formula = paste0(survFormula, paste(add_covs, collapse="+"))
-  
+
   if (robust) {
     scox <- suppressWarnings(survClip::survivalcoxr(coxObj, formula)) ### Check warnings
   } else {
@@ -112,25 +113,25 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
 #' @importFrom houseOfClipUtility extractCliquesFromDag
 #' @importFrom methods new is
 #' @importFrom survival Surv
-#' 
+#'
 #' @export
 multiOmicsSurvivalModuleTest <- function(omicsObj, graph,
                                          survFormula = "Surv(days, status) ~",
                                          autoCompleteFormula=T, useThisGenes=NULL,
                                          pathName=NULL, robust=FALSE, include_from_annot=F) {
-  
+
   if (is(graph, "character"))
     stop("Module test can not handle gene list.")
-  
+
   if (is.null(pathName) & is(graph, "Pathway"))
     pathName <- graph@title
-  
+
   graph <- convertPathway(graph, useThisGenes)
-  
+
   genes <- graph::nodes(graph)
   if (length(genes)== 0)
     stop("There is no intersection between expression feature names and the node names on the graph.")
-  
+
   # create the modules
   cliques <- houseOfClipUtility::extractCliquesFromDag(graph)
 
@@ -138,7 +139,7 @@ multiOmicsSurvivalModuleTest <- function(omicsObj, graph,
                     survFormula = survFormula,
                     autoCompleteFormula=autoCompleteFormula,
                     robust=robust, include_from_annot=include_from_annot)
-  
+
   alphas   <- as.numeric(sapply(results, extractPvalues))
   zlist    <- lapply(results, function(x) x$zlist)
   momics   <- lapply(results, function(x) x$moView)
@@ -146,9 +147,9 @@ multiOmicsSurvivalModuleTest <- function(omicsObj, graph,
   moduleData <- lapply(results, function(x) x$moduleData)
   modules  <- cliques
   formulas <- lapply(results, function(x) x$formula)
-  
+
   names(alphas) <- NULL
   new("MultiOmicsModules", alphas=alphas, zlists=zlist, coxObjs=coxObjs,
       modulesView=momics, modules=modules, formulas=formulas,
-      title=pathName)
+      graphNEL=graph, title=pathName)
 }
