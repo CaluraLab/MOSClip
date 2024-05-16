@@ -16,8 +16,7 @@ plotModuleHeat(
   fontsize_row = 10,
   fontsize_col = 1,
   nrowsHeatmaps = 3,
-  h = 9,
-  w = 7,
+  orgDbi = "org.Hs.eg.db",
   discr_prop_pca = 0.15,
   discr_prop_events = 0.05
 )
@@ -28,8 +27,6 @@ plotModuleHeat(
 \item{moduleNumber}{a module number}
 
 \item{sortBy}{a covariate to sort by}
-
-\item{fileName}{optional filenames to save the plot}
 
 \item{paletteNames}{three palettes}
 
@@ -44,10 +41,6 @@ plotModuleHeat(
 \item{fontsize_col}{like fontsize_row but for columns}
 
 \item{nrowsHeatmaps}{magnification respect to annotation of sample (annotations take 1 row)}
-
-\item{h}{the height of the plot}
-
-\item{w}{the width of the plot}
 
 \item{discr_prop_pca}{the minimal proportion to compute the pca classes}
 

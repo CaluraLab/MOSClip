@@ -7,18 +7,14 @@
 plotPathwayHeat(
   pathway,
   sortBy = NULL,
-  fileName = NULL,
   paletteNames = NULL,
   additionalAnnotations = NULL,
   additionalPaletteNames = NULL,
-  withSampleNames = TRUE,
-  fontsize_row = 10,
-  fontsize_col = 1,
-  nrowsHeatmaps = 3,
-  h = 9,
-  w = 7,
   discr_prop_pca = 0.15,
-  discr_prop_events = 0.05
+  discr_prop_events = 0.05,
+  withSampleNames = TRUE,
+  nrowsHeatmaps = 3,
+  orgDbi = "org.Hs.eg.db"
 )
 }
 \arguments{
@@ -26,29 +22,19 @@ plotPathwayHeat(
 
 \item{sortBy}{a covariate to sort by}
 
-\item{fileName}{optional filenames to save the plot}
-
 \item{paletteNames}{three palettes}
 
 \item{additionalAnnotations}{optional additional sample annotations}
 
 \item{additionalPaletteNames}{optional additional colors for annotations}
 
-\item{withSampleNames}{create also the samples names}
-
-\item{fontsize_row}{size of the fonts for rows}
-
-\item{fontsize_col}{like fontsize_row but for columns}
-
-\item{nrowsHeatmaps}{magnification respect to annotation of sample (annotations take 1 row)}
-
-\item{h}{the height of the plot}
-
-\item{w}{the width of the plot}
-
 \item{discr_prop_pca}{the minimal proportion to compute the pca classes}
 
 \item{discr_prop_events}{the minimal proportion to compute the event classes}
+
+\item{withSampleNames}{create also the samples names}
+
+\item{nrowsHeatmaps}{magnification respect to annotation of sample (annotations take 1 row)}
 }
 \description{
 Given the pathway, it creates the heatmaps of the mostly involved genes for each omic.

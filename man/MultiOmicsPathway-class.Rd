@@ -16,9 +16,9 @@ This class organize the results of the Multi Omics Module Survival Test analysis
 }
 \section{Methods (by generic)}{
 \itemize{
-\item \code{showPathway}: shows module info
-}}
+\item \code{showPathway(MultiOmicsPathway)}: shows module info
 
+}}
 \section{Slots}{
 
 \describe{

@@ -7,6 +7,7 @@
 multiOmicsSurvivalPathwayTest(
   omicsObj,
   graph,
+  annot,
   survFormula = "Surv(days, status) ~",
   autoCompleteFormula = T,
   useThisGenes = NULL,

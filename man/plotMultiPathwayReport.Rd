@@ -9,6 +9,7 @@ plotMultiPathwayReport(
   top = 25,
   MOcolors = NULL,
   priority_to = NULL,
+  fontsize = 6,
   ...
 )
 }

@@ -28,9 +28,9 @@ This class is the storage for the different omic datasets that we need to analyz
 }
 \section{Methods (by generic)}{
 \itemize{
-\item \code{showOmics}: shows model parameters
-}}
+\item \code{showOmics(Omics)}: shows model parameters
 
+}}
 \section{Slots}{
 
 \describe{
