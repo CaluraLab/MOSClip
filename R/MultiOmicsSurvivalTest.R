@@ -16,7 +16,6 @@
 #' @importFrom graph nodes
 #' @importFrom methods new is
 #' @importFrom survival Surv
-#' @importFrom survClip survivalcox survivalcoxr
 #' @export
 
 multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
@@ -91,9 +90,9 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
     formula = paste0(survFormula, paste(add_covs, collapse="+"))
 
   if (robust) {
-    scox <- suppressWarnings(survClip::survivalcoxr(coxObj, formula)) ### Check warnings
+    scox <- suppressWarnings(survivalcoxr(coxObj, formula)) ### Check warnings
   } else {
-    scox <- suppressWarnings(survClip::survivalcox(coxObj, formula)) ### Check warnings
+    scox <- suppressWarnings(survivalcox(coxObj, formula)) ### Check warnings
   }
   new("MultiOmicsPathway", pvalue=scox$pvalue, zlist=scox$zlist, coxObj=scox$coxObj,
       pathView=moduleView, usedGenes=usedGenes, formula=formula, title=pathName)

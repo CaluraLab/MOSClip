@@ -17,11 +17,10 @@ Authors@R:
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: Allows to combine multiple omics dimension to perform pathway survival analysis. There are two main mode: multiOmicsSurvivalPathwayTest and muoltiOmicsSurvivalModuleTest. The latter method allows the user to dig inside the pathways itself.
 License: AGPL-3
-Imports: MultiAssayExperiment,methods, survClip, survminer, graph, houseOfClipUtility,
+Imports: MultiAssayExperiment,methods, survminer, graph,
   graphite, AnnotationDbi, checkmate, ggplot2, gridExtra, igraph,
   pheatmap, survival, RColorBrewer, RCy3, SuperExactTest,
   reshape, NbClust, S4Vectors, grDevices, graphics, stats, utils
-Remotes: github::cavei/houseOfClipUtility, github::cavei/survClip
 Suggests: RUnit, BiocGenerics, MASS, BiocStyle, org.Hs.eg.db, knitr, EDAseq, rmarkdown,testthat (>= 3.0.0)
 Encoding: UTF-8
 LazyData: true
