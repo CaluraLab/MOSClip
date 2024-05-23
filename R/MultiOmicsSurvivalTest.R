@@ -14,7 +14,6 @@
 #' @return MultiOmicsPathway object
 #'
 #' @importFrom graph nodes
-#' @importFrom houseOfClipUtility extractCliquesFromDag
 #' @importFrom methods new is
 #' @importFrom survival Surv
 #' @importFrom survClip survivalcox survivalcoxr
@@ -49,7 +48,7 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
       genesToUse <- intersect(row.names(omicsObj@ExperimentList@listData[[i]]),
                               genesToUse)
       graph <- graph::subGraph(genesToUse, graph)
-      cliques <- houseOfClipUtility::extractCliquesFromDag(graph)
+      cliques <- extractCliquesFromDag(graph)
     }
     # create the argument list
     args <- list(data=omicsObj@ExperimentList@listData[[i]],
@@ -116,7 +115,6 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
 #' @return MultiOmicsModules object
 #'
 #' @importFrom graph nodes
-#' @importFrom houseOfClipUtility extractCliquesFromDag
 #' @importFrom methods new is
 #' @importFrom survival Surv
 #'
@@ -139,7 +137,7 @@ multiOmicsSurvivalModuleTest <- function(omicsObj, graph,
     stop("There is no intersection between expression feature names and the node names on the graph.")
 
   # create the modules
-  cliques <- houseOfClipUtility::extractCliquesFromDag(graph)
+  cliques <- extractCliquesFromDag(graph)
 
   results <- lapply(cliques, MOMSurvTest, omicsObj=omicsObj,
                     survFormula = survFormula,

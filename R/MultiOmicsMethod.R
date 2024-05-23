@@ -32,20 +32,20 @@ summarizeToBinaryEvents <- function(data, features, name="bin",
                                     binaryClassMin=10, cliques=NULL) {
   if (is.null(data))
     return(NULL)
-  
+
   genes <- intersect(row.names(data), features)
   if (length(genes)==0)
     return(NULL)
-  
+
   dataClique <- t(data[genes, , drop=F])
   if (ncol(dataClique)==0)
     return(NULL)
-  
+
   collapsed <- apply(dataClique>0, 1, any, na.rm=T)
-  
+
   if (sum(collapsed) < binaryClassMin | sum(collapsed) > NROW(dataClique)-binaryClassMin)
     return(NULL)
-  
+
   collapsed <- data.frame(collapsed, row.names = names(collapsed), stringsAsFactors = F)
   colnames(collapsed) <- name
   list(x=collapsed, dataModule=t(dataClique), usedGenes=genes, namesCov=name,
@@ -68,25 +68,25 @@ summarizeToBinaryEvents <- function(data, features, name="bin",
 summarizeToNumberOfEvents <- function(data, features, name="event", min_prop=0.1, cliques=NULL) {
   if (is.null(data))
     return(NULL)
-  
+
   genes <- intersect(row.names(data), features)
   if (length(genes)==0)
     return(NULL)
-  
+
   dataClique <- t(data[genes, , drop=F])
   if (ncol(dataClique)==0)
     return(NULL)
-  
+
   collapsed <- apply(dataClique>0, 1, sum, na.rm=T)
-  
+
   # min <- ceiling(NCOL(data)*0.01)
   # if (sum(collapsed) <  min | (sum(collapsed)) > NROW(dataClique)-min)
   #   return(NULL)
-  
+
   keep <- check_minimal_proportion(collapsed, min_prop=min_prop)
   if (!keep)
     return(NULL)
-  
+
   collapsed <- data.frame(collapsed, row.names = names(collapsed), stringsAsFactors = F)
   colnames(collapsed) <- name
   list(x=collapsed, dataModule=t(dataClique), usedGenes=genes, namesCov=name, method="count", omicName=name,
@@ -96,7 +96,7 @@ summarizeToNumberOfEvents <- function(data, features, name="event", min_prop=0.1
 #' Summarize Using Cluster Analysis
 #'
 #' Given a matrix it summarize in classes
-#' 
+#'
 #' The user can define a maximum of classes. The function
 #' guess the optimal number of clusters using NbClust methods.
 #'
@@ -114,7 +114,7 @@ summarizeToNumberOfEvents <- function(data, features, name="event", min_prop=0.1
 summarizeInCluster <- function(data, features, name="clu", dictionary=NULL, max_cluster_number=3, cliques=NULL) {
   if (is.null(data) || (ncol(data)==0) || !(is.matrix(data)))
     return(NULL)
-  
+
   if (is.null(dictionary)) {
     genes <- intersect(rownames(data), features)
     if (length(genes)==0)
@@ -133,24 +133,22 @@ summarizeInCluster <- function(data, features, name="clu", dictionary=NULL, max_
       return(NULL)
     datamatClique <- t(data[clusters, , drop=F])
   }
-  
+
   if (ncol(datamatClique)==0)
     return(NULL)
-  
-  features <- colnames(datamatClique)
-  
+
   ## CREATE CLUSTERS
   if (TRUE){
     covs <- createOptiomalClusterClasses(datamatClique, name, max_cluster_number = max_cluster_number)
   } else {
     covs <- createClusterClassesOld(datamatClique, name)
   }
-  
+
   if (any(table(covs[[1]])<2)){
     warning("Not meaningful class separation\n")
     return(NULL)
   }
-  
+
   collapse=covs
   list(x=collapse, dataModule=t(datamatClique), usedGenes=features, namesCov=names(covs), cls=used, method="cluster", omicName=name)
 }
@@ -164,29 +162,29 @@ createOptiomalClusterClasses <- function(datamatClique, name, max_cluster_number
 }
 
 #' @importFrom grDevices dev.off pdf
-#' 
+#'
 sinkNbClust <- function(data, min.nc=2, max.nc=6, method="ward.D2", index="silhouette"){
   if (index=="all")
     sink(file=tempfile()); pdf(file=NULL)
-  
+
   nb <- NbClust(data=data, min.nc=min.nc, max.nc=max.nc, method=method, index=index)
-  
+
   if (index=="all")
     sink(); dev.off()
-  
+
   return(nb)
 }
 
 createClusterClassesOld <- function(datamatClique, name){
   warning("you are using an old way to evaluate cluster...\n
           this function will be deprecated soon...")
-  
+
   md <- dist(datamatClique, method = "euclidean")
   if (any(is.na(md)))
     return(NULL)
   hc <- hclust(md, method="ward.D2")
   # clusters <- kmeans(datamatClique, centers=2) # provioamo a implementare anche il Kmeans?
-  
+
   if (ncol(datamatClique)<4){
     covs <- data.frame(factor(cutree(hc, k = 2)), stringsAsFactors = T)
     names(covs) <- paste0(name,"2k")
@@ -199,7 +197,7 @@ createClusterClassesOld <- function(datamatClique, name){
 
 #' Summarize Using Cluster Analysis with no dictionary to translate the matrix ids
 #'
-#' Given a quantitative matrix it clusters the samples 
+#' Given a quantitative matrix it clusters the samples
 #'
 #' @param data a data matrix
 #' @param features a vector with the features to analyze
@@ -212,25 +210,25 @@ createClusterClassesOld <- function(datamatClique, name){
 summarizeInClusterWithoutDictionary <- function(data, features, name="clu", cliques=NULL) {
   warning("function summarizeInClusterWithoutDictionary has been deprecated...\n
           use summarizeInCluster")
-  
+
   if (is.null(data) | (ncol(data)==0) | !(is.matrix(data)))
     return(NULL)
   genes <- intersect(rownames(data), features)
-  
+
   if (length(genes)==0)
     return(NULL)
-  
+
   datamatClique <- t(data[genes, ,drop=FALSE])
-  
+
   used <- colnames(datamatClique)
   names(used) <- colnames(datamatClique)
-  
+
   md <- dist(datamatClique, method = "euclidean")
   if (any(is.na(md)))
     return(NULL)
   hc <- hclust(md, method="ward.D2")
   # clusters <- kmeans(datamatClique, centers=2) # TO DO: add kmeans
-  
+
   if (ncol(datamatClique)<4){
     covs <- data.frame(factor(cutree(hc, k = 2)), stringsAsFactors = T)
     names(covs) <- paste0(name,"2k")
@@ -238,13 +236,13 @@ summarizeInClusterWithoutDictionary <- function(data, features, name="clu", cliq
     covs <- data.frame(factor(cutree(hc, k = 3)), stringsAsFactors = T)
     names(covs) <- paste0(name,"3k")
   }
-  
+
   if (any(table(covs[[1]])<2)){
     # warning("Not meaningful class separation\n")
     return(NULL)
   }
-  
-  list(x=covs, dataModule=t(datamatClique), usedGenes=genes, namesCov=names(covs), cls=used, method="cluster", omicName=name)
+
+  list(x=covs, dataModule=t(datamatClique), namesCov=names(covs), cls=used, method="cluster", omicName=name)
 }
 
 #' Summarize Using PCA
@@ -262,20 +260,19 @@ summarizeInClusterWithoutDictionary <- function(data, features, name="clu", cliq
 #'
 #' @return NULL
 #' @importFrom stats sd
-#' @importFrom houseOfClipUtility computePCs
 #' @export
 summarizeWithPca <- function(data, features, name="pca", shrink=FALSE, method="regular", cliques=NULL, maxPCs=3, loadThr=0.6) {
   if (is.null(data))
     return(NULL)
-  
+
   genes <- intersect(row.names(data), features)
   if (length(genes)==0)
     return(NULL)
-  
+
   dataClique <- t(data[genes, , drop=F])
   if (ncol(dataClique)==0)
     return(NULL)
-  
+
   if (NCOL(dataClique)!=1) {
     pcs <- computePCs(dataClique, shrink=shrink, method=method, cliques=cliques, maxPCs=maxPCs)
     colnames(pcs$x) <- paste0(name,colnames(pcs$x))
@@ -285,7 +282,7 @@ summarizeWithPca <- function(data, features, name="pca", shrink=FALSE, method="r
     colnames(dataClique) <- paste0(name,"PC1")
     pcs <- list(x=dataClique, sdev=sd(dataClique), loadings=1)
   }
-  
+
   pcs$dataModule <- t(dataClique)
   pcs$usedGenes <- genes
   pcs$method="pca"
@@ -312,32 +309,31 @@ summarizeToNumberOfDirectionalEvents <- function(data, features, name="dCount", 
                                                  min_prop=0.1, cliques=NULL) {
   if (is.null(data))
     return(NULL)
-  
+
   genes <- intersect(row.names(data), features)
   if (length(genes)==0)
     return(NULL)
-  
+
   dataClique <- t(data[genes, , drop=F])
   if (ncol(dataClique)==0)
     return(NULL)
-  
+
   posDataClique <- extractPositivePortion(dataClique)
   negDataClique <- extractPositivePortion(dataClique, invert=TRUE)
-  
+
   positive <- apply(posDataClique >= eventThr, 1, sum, na.rm=T)
   negative <- apply(negDataClique >= eventThr, 1, sum, na.rm=T)
-  
+
   collapsed <- data.frame(positive=positive, negative=negative,
                           row.names = names(positive), stringsAsFactors = F)
   colnames(collapsed) <- paste0(name, c("POS","NEG"))
-  
+
   keep <- sapply(collapsed, check_minimal_proportion, min_prop=min_prop)
   collapsed = collapsed[, keep, drop=F]
-  
+
   if (NCOL(collapsed) == 0)
     return(NULL)
-  
-  list(x=collapsed, dataModule=t(dataClique), usedGenes=genes, namesCov=names(collapsed),
+  list(x=collapsed, dataModule=t(dataClique), namesCov=names(collapsed),
        method="directedCount", omicName=name, eventThr=eventThr, min_prop=min_prop)
 }
 
@@ -347,10 +343,10 @@ check_minimal_proportion <- function(x, min_prop=0.1){
   max <- quantile(x, probs=c(1-min_prop))
   if ((min==min(x)) && (max==min(x)))
     return(FALSE)
-  
+
   if ((min==max(x)) && (max==max(x)))
     return(FALSE)
-  
+
   TRUE
 }
 
@@ -368,36 +364,35 @@ check_minimal_proportion <- function(x, min_prop=0.1){
 #' @return NULL
 #'
 #' @export
-summarizeToBinaryDirectionalEvents <- function(data, features, name="dirBin", binaryClassMin=10, 
+summarizeToBinaryDirectionalEvents <- function(data, features, name="dirBin", binaryClassMin=10,
                                                eventThr=2, cliques=NULL) {
   if (is.null(data))
     return(NULL)
-  
+
   genes <- intersect(row.names(data), features)
   if (length(genes)==0)
     return(NULL)
-  
+
   dataClique <- t(data[genes, , drop=F])
   if (ncol(dataClique)==0)
     return(NULL)
-  
+
   posDataClique <- extractPositivePortion(dataClique)
   negDataClique <- extractPositivePortion(dataClique, invert=TRUE)
-  
+
   positive <- apply(posDataClique >= eventThr, 1, any, na.rm=T)
   negative <- apply(negDataClique >= eventThr, 1, any, na.rm=T)
-  
+
   collapsed <- data.frame(positive=positive, negative=negative,
                           row.names = names(positive), stringsAsFactors = F)
   colnames(collapsed) <- paste0(name, c("POS","NEG"))
-  
-  
+
+
   keep <- sapply(collapsed, sum) >= binaryClassMin | sapply(collapsed, sum) <= NROW(dataClique)-binaryClassMin
   collapsed = collapsed[, keep, drop=F]
-  
+
   if (NCOL(collapsed) == 0)
     return(NULL)
-  
-  list(x=collapsed, dataModule=t(dataClique), usedGenes=genes, namesCov=names(collapsed),
+  list(x=collapsed, dataModule=t(dataClique), namesCov=names(collapsed),
        method="directedBinary", omicName=name, eventThr=eventThr)
 }
