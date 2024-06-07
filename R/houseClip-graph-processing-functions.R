@@ -22,15 +22,16 @@
 #'
 extractCliquesFromDag <- function(dag, root=NULL) {
   checkmate::assertClass(dag, "graphNEL")
-  idag <- igraph::igraph.from.graphNEL(dag)
-  if (sum(diag(igraph::as_adjacency_matrix(idag)))!=0){
-    dag <- removeSelfLoops(dag) # Done
+  idag <- igraph::graph_from_graphnel(dag)
+  if (sum(Matrix::diag(igraph::as_adjacency_matrix(idag)))!=0){
+    dag <- removeSelfLoops(dag)
+    idag <- igraph::graph_from_graphnel(dag)
   }
 
-  if (gRbase::is.DAG(dag)) {
-    moral <- gRbase::moralize(dag)
+  if (gRbase::is.DAG(idag)) {
+    moral <- gRbase::moralize(idag)
   } else {
-    moral <- mmmoralize(dag)
+    moral <- mmmoralize(idag)
   }
 
   tg    <- gRbase::triangulate(moral)
