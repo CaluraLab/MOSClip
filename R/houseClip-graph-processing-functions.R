@@ -83,8 +83,7 @@ removeSelfLoops <- function(graph){
 #' @rdname graph-processing
 #'
 mmmoralize <- function(graph) {
-  g <- igraph::igraph.from.graphNEL(graph)
-  m <- igraph::as_adjacency_matrix(g, sparse=F)
+  m <- igraph::as_adjacency_matrix(graph, sparse=F)
   m <- gRbase::moralizeMAT(m)
   g <- igraph::graph_from_adjacency_matrix(m, mode="directed")
   g
