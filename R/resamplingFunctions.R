@@ -7,8 +7,8 @@
 #' @rdname resampling
 #' 
 checkOrder <- function(li) {
-  ref <- li[[1]]$pathwayModule
-  all(vapply(li, function(o) all(o$pathwayModule == ref)))
+  ref <- rownames(li[[1]])
+  all(vapply(li, function(o) all(rownames(o) == ref), logical(1)))
 }
 
 #' Resolve disorder and difference of pathway module on the list
