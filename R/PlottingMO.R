@@ -457,7 +457,7 @@ plotModuleKM <- function(pathway, moduleNumber, formula = "Surv(days, status) ~ 
 #'
 #' @return NULL
 #' @importFrom checkmate assertClass
-#' @importFrom igraph V V<- simplify igraph.from.graphNEL
+#' @importFrom igraph V V<- simplify graph_from_graphnel
 #' @importFrom AnnotationDbi select
 #' @importFrom graphics plot legend
 #' @importFrom grDevices dev.off pdf rainbow
@@ -470,7 +470,7 @@ plotModuleInGraph <- function(pathway, moduleNumber, orgDbi="org.Hs.eg.db",
   checkmate::assertClass(pathway, "MultiOmicsModules")
   
   # dentro pathway dovrebbe esserci l'oggetto graphNEL
-  net <- igraph::igraph.from.graphNEL(convertPathway(reactome[[pathway@title]], NULL))
+  net <- igraph::graph_from_graphnel(convertPathway(reactome[[pathway@title]], NULL))
   moduleGenes <- pathway@modules[[moduleNumber]]
   net <- igraph::simplify(net, remove.multiple = T, remove.loops = T)
   color <- rep("grey", length(V(net)))
