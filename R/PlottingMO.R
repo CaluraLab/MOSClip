@@ -321,7 +321,7 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL, fileName = NULL
     Ht <- Heatmap(heatMatrix,
                  cluster_columns = F, cluster_rows = F,
                  show_column_names = F,
-                 col = c("#FFFFFF", as.vector(ann_col[[involved[[n]]$covsConsidered]][1])),
+                 col = c("#FFFFFF", as.vector(ann_col[[involved[[n]]$covsConsidered[1]]])),
                  heatmap_legend_param = list(title = NULL))
     ht_list = ht_list %v% Ht}
   suppressMessages(ComplexHeatmap::draw(ht_list, legend_grouping = "original"))
