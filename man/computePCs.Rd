@@ -2,7 +2,6 @@
 % Please edit documentation in R/houseClip-pca-functions.R
 \name{computePCs}
 \alias{computePCs}
-\alias{topoCompPCs}
 \alias{sparseCompPCs}
 \alias{compPCs}
 \title{compute PCs.}
@@ -14,8 +13,6 @@ computePCs(
   cliques = NULL,
   maxPCs = 3
 )
-
-topoCompPCs(exp, shrink, cliques, k)
 
 sparseCompPCs(exp, shrink, k)
 
@@ -35,11 +32,6 @@ compPCs(exp, shrink, k)
 \item{k}{the number of components to use}
 }
 \value{
-a list with the following elements:
-\item{x}{the computed PCs}
-\item{sdev}{the standard deviation captured by the PCs}
-\item{loadings}{the loadings}
-
 a list with the following elements:
 \item{x}{the computed PCs}
 \item{sdev}{the standard deviation captured by the PCs}
