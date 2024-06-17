@@ -3,7 +3,7 @@
 #' For internal use only. Estimate Covariance from one matrix
 #'
 #' @param expr a numeric matrix
-#' @inheritParams estimateCov
+#' @param shrink logical wheter to shrink the matrix
 #'
 #' @return a covariance matrix
 #' @importFrom stats cov
@@ -16,6 +16,7 @@ estimateExprCov <- function(expr, shrink) {
   else
     cov(expr)
 }
+
 
 #' Make positive and definite covariance matrix
 #'
