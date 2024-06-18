@@ -1,8 +1,7 @@
 
-library(houseOfClipUtility)
 library(graphite)
-pathHierarchy <- houseOfClipUtility::downloadPathwayRelationFromReactome()
-pathHierarchyGraph <- igraph::graph.data.frame(d = pathHierarchy, directed = TRUE)
+pathHierarchy <- downloadPathwayRelationFromReactome()
+pathHierarchyGraph <- igraph::graph_from_data_frame(d = pathHierarchy, directed = TRUE)
 
 
 pathwayName = c("Circadian Clock", "Signaling Pathways")

@@ -321,7 +321,7 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL, fileName = NULL
     Ht <- Heatmap(heatMatrix,
                  cluster_columns = F, cluster_rows = F,
                  show_column_names = F,
-                 col = c("#FFFFFF", as.vector(ann_col[[involved[[n]]$covsConsidered]][1])),
+                 col = c("#FFFFFF", as.vector(ann_col[[involved[[n]]$covsConsidered[1]]])),
                  heatmap_legend_param = list(title = NULL))
     ht_list = ht_list %v% Ht}
   suppressMessages(ComplexHeatmap::draw(ht_list, legend_grouping = "original"))
@@ -457,7 +457,7 @@ plotModuleKM <- function(pathway, moduleNumber, formula = "Surv(days, status) ~ 
 #'
 #' @return NULL
 #' @importFrom checkmate assertClass
-#' @importFrom igraph V V<- simplify igraph.from.graphNEL
+#' @importFrom igraph V V<- simplify graph_from_graphnel
 #' @importFrom AnnotationDbi select
 #' @importFrom graphics plot legend
 #' @importFrom grDevices dev.off pdf rainbow
@@ -470,7 +470,7 @@ plotModuleInGraph <- function(pathway, moduleNumber, orgDbi="org.Hs.eg.db",
   checkmate::assertClass(pathway, "MultiOmicsModules")
   
   # dentro pathway dovrebbe esserci l'oggetto graphNEL
-  net <- igraph::igraph.from.graphNEL(convertPathway(reactome[[pathway@title]], NULL))
+  net <- igraph::graph_from_graphnel(convertPathway(reactome[[pathway@title]], NULL))
   moduleGenes <- pathway@modules[[moduleNumber]]
   net <- igraph::simplify(net, remove.multiple = T, remove.loops = T)
   color <- rep("grey", length(V(net)))

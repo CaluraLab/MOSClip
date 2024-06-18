@@ -42,6 +42,8 @@ Omics <- function(experiments = ExperimentList(),
          )
       MAE <- MultiAssayExperiment(experiments, colData, sampleMap)
    }
+  
+  else { MAE <- MultiAssayExperiment(experiments, colData, sampleMap) }
 
    if (length(MAE@ExperimentList) != length(modelInfo)){
       message("Data and relative methods to analyze them must be equal in length.")

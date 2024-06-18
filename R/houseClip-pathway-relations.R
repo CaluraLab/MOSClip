@@ -14,7 +14,7 @@
 #' @export
 downloadPathwayRelationFromReactome <- function(url=NULL, speciesAbbr = "HSA") {
   if (is.null(url)) {
-    url = system.file("extdata", "ReactomePathwaysRelation.txt", package = "houseOfClipUtility",
+    url = system.file("ReactomePathwaysRelation.txt", package = "biocmosclip",
                       mustWork = TRUE)
     # ReactomePathwaysRelation <- NULL
     # data(ReactomePathwaysRelation)

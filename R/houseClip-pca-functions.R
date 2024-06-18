@@ -45,8 +45,6 @@ computePCs <- function(exp, shrink=FALSE, method=c("regular", "topological", "sp
 #'   \item{sdev}{the standard deviation captured by the PCs}
 #'   \item{loadings}{the loadings}
 #'
-#' @rdname computePCs
-#'
 #' @importFrom qpgraph qpIPF
 #' @export
 #'
