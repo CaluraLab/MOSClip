@@ -1,6 +1,7 @@
 Package: biocmosclip
 Title: Multi Omics Survival Clip
 Version: 0.98.0
+Depends: R (>= 3.5.0)
 Authors@R: 
     person(given = "Paolo",
            family = "Martini",
