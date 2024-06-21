@@ -1,7 +1,7 @@
 setClassUnion("characterOrNULL", c("character", "NULL"))
 
 
-#' Multi Omics Modules.
+#' Multi Omics Module.
 #'
 #' This class organize the results of the Multi Omics Module Survival Test analysis.
 #'
@@ -16,7 +16,7 @@ setClassUnion("characterOrNULL", c("character", "NULL"))
 #' @name MultiOmicsModule-class
 #' @rdname MultiOmicsModule-class
 #'
-setClass(Class ="MultiOmicsModules",
+setClass(Class ="MultiOmicsModule",
          slots = c(alphas  = "numeric",
                    zlists  = "list",
                    coxObjs = "list",
