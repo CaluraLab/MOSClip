@@ -21,8 +21,10 @@ License: AGPL-3
 Imports: MultiAssayExperiment,methods, survminer, graph,
   graphite, AnnotationDbi, checkmate, ggplot2, gridExtra, igraph,
   pheatmap, survival, RColorBrewer, RCy3, SuperExactTest,
-  reshape, NbClust, S4Vectors, grDevices, graphics, stats, utils
-Suggests: RUnit, BiocGenerics, MASS, BiocStyle, org.Hs.eg.db, knitr, EDAseq, rmarkdown,testthat (>= 3.0.0)
+  reshape, NbClust, S4Vectors, grDevices, graphics, stats, utils, 
+  ComplexHeatmap, FactoMineR, circlize, corpcor, coxrobust,
+  elasticnet, gRbase, ggplotify, qpgraph
+Suggests: RUnit, BiocGenerics, MASS, BiocStyle, org.Hs.eg.db, knitr, EDASeq, rmarkdown,testthat (>= 3.0.0)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
