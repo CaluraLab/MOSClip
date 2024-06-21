@@ -143,7 +143,7 @@ setGeneric("showModule", function(object)
 #' @describeIn MultiOmicsModule shows module info
 #' @param object an object of class MultiOmicsModule
 setMethod("showModule",
-          signature = "MultiOmicsModules",
+          signature = "MultiOmicsModule",
           definition = function(object){
             sthis <- seq_len(min(length(object@alphas), 3))
             sthis <- order(object@alphas)[sthis]
