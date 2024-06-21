@@ -53,6 +53,8 @@ setClass(Class ="MultiOmicsPathway",
 #          slots = c(global = "MultiOmicsPathway",
 #                    modules = "MultiOmicsModules"))
 
+#' Omics.
+#' 
 #' This class is the storage for the different omic datasets that we need to analyze.
 #'
 #' @slot modelInfo a list with length equal to length(data) that are modelInfo to process each dataset.
