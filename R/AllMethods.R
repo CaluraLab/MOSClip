@@ -17,7 +17,7 @@ setClassUnion("characterOrNULL", c("character", "NULL"))
 #' @param pathResult a list containing pathways result
 #' @export
 #' @importFrom S4Vectors DataFrame
-Omics <- function(experiments = ExperimentList(),
+makeOmics <- function(experiments = ExperimentList(),
                   colData = S4Vectors::DataFrame(),
                   sampleMap = S4Vectors::DataFrame(
                      assay = factor(),
