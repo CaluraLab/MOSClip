@@ -1,7 +1,7 @@
 setClassUnion("characterOrNULL", c("character", "NULL"))
 
 
-#' Multi Omics Module.
+#' Multi Omics Modules.
 #'
 #' This class organize the results of the Multi Omics Module Survival Test analysis.
 #'
@@ -13,14 +13,15 @@ setClassUnion("characterOrNULL", c("character", "NULL"))
 #' @slot formulas a list, for each module the character of the formula used in the coxph.
 #' @slot title the name of the pathway.
 #' @slot analysis The type of analysis done: survival or two-class.
-#' @name MultiOmicsModule-class
-#' @rdname MultiOmicsModule-class
+
+#' @name MultiOmicsModules-class
+#' @rdname MultiOmicsModules-class
 #'
-setClass(Class ="MultiOmicsModule",
+setClass(Class ="MultiOmicsModules",
          slots = c(alphas  = "numeric",
                    zlists  = "list",
                    coxObjs = "list",
-                   modulesView  = "list",
+                   #modulesView  = "list",
                    usedGenes = "list",
                    modules     = "list",
                    formulas = "list",

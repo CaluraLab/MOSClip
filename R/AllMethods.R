@@ -134,16 +134,16 @@ setMethod("showOmics",  signature(object = "Omics"),
 
 
 #' A generic function showing pathway's module info
-#' @param object an object of class MultiOmicsModule
+#' @param object an object of class MultiOmicsModules
 #' @export
 setGeneric("showModule", function(object)
    standardGeneric("showModule") )
 
 #' @export
-#' @describeIn MultiOmicsModule shows module info
-#' @param object an object of class MultiOmicsModule
+#' @describeIn MultiOmicsModules shows module info
+#' @param object an object of class MultiOmicsModules
 setMethod("showModule",
-          signature = "MultiOmicsModule",
+          signature = "MultiOmicsModules",
           definition = function(object){
             sthis <- seq_len(min(length(object@alphas), 3))
             sthis <- order(object@alphas)[sthis]
