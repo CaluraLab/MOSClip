@@ -333,7 +333,7 @@ summarizeToNumberOfDirectionalEvents <- function(data, features, name="dCount", 
 
   if (NCOL(collapsed) == 0)
     return(NULL)
-  list(x=collapsed, dataModule=t(dataClique), namesCov=names(collapsed),
+  list(x=collapsed, dataModule=t(dataClique), usedGenes=genes, namesCov=names(collapsed),
        method="directedCount", omicName=name, eventThr=eventThr, min_prop=min_prop)
 }
 
@@ -393,6 +393,6 @@ summarizeToBinaryDirectionalEvents <- function(data, features, name="dirBin", bi
 
   if (NCOL(collapsed) == 0)
     return(NULL)
-  list(x=collapsed, dataModule=t(dataClique), namesCov=names(collapsed),
+  list(x=collapsed, dataModule=t(dataClique), usedGenes=genes, namesCov=names(collapsed),
        method="directedBinary", omicName=name, eventThr=eventThr)
 }
