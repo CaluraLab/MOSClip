@@ -7,7 +7,7 @@
 showModule(object)
 }
 \arguments{
-\item{object}{an object of class MultiOmicsModule}
+\item{object}{an object of class MultiOmicsModules}
 }
 \description{
 A generic function showing pathway's module info
