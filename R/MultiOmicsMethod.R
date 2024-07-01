@@ -150,7 +150,7 @@ summarizeInCluster <- function(data, features, name="clu", dictionary=NULL, max_
   }
 
   collapse=covs
-  list(x=collapse, dataModule=t(datamatClique), usedGenes=features, namesCov=names(covs), cls=used, method="cluster", omicName=name)
+  list(x=collapse, dataModule=t(datamatClique), usedGenes=names(used), namesCov=names(covs), cls=used, method="cluster", omicName=name)
 }
 
 createOptiomalClusterClasses <- function(datamatClique, name, max_cluster_number, index_method="silhouette") {
