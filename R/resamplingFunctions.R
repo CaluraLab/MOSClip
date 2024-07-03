@@ -115,7 +115,7 @@ resampling <- function(fullMultiOmics, pathdb, nperm=100, pathwaySubset=NULL, nP
   patients <- row.names(fullMultiOmics@colData)
   patientsPerms <- lapply(seq_len(nperm), function(x) sample(patients, length(patients)-nPatients))
   
-  genesToConsider <- row.names(experiments(multiOmics)[[1]])
+  genesToConsider <- row.names(experiments(fullMultiOmics)[[1]])
   rePathSmall <- pathdb
   if (!is.null(pathwaySubset))
     rePathSmall <- pathdb[pathwaySubset] #ext the sig pathways in the first pass
