@@ -28,7 +28,9 @@ formatAnnotations <- function(listOfMostlyInvolvedGenesInOmics, sortBy) {
   })
   annotationFull <- do.call(cbind, annotationFull)
   if (is.null(sortBy)) {
-    annotationFull <- annotationFull[order(annotationFull[, 1], annotationFull[, ncol(annotationFull)]), , drop=F]
+    annotationFull <- annotationFull[
+      order(annotationFull[, 1],annotationFull[, ncol(annotationFull)]), ,
+      drop=F]
   } else {
     ord <- getMultiColOrder(annotationFull, sortBy)
     annotationFull <- annotationFull[ord, , drop=F]

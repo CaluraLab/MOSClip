@@ -12,6 +12,7 @@ setClassUnion("characterOrNULL", c("character", "NULL"))
 #' @slot modules a list woth the genes that belong to the module.
 #' @slot formulas a list, for each module the character of the formula used in the coxph.
 #' @slot title the name of the pathway.
+#' @slot analysis The type of analysis done: survival or two-class.
 #' @name MultiOmicsModule-class
 #' @rdname MultiOmicsModule-class
 #'
@@ -23,7 +24,8 @@ setClass(Class ="MultiOmicsModules",
                    usedGenes = "list",
                    modules     = "list",
                    formulas = "list",
-                   title = "characterOrNULL"))
+                   title = "characterOrNULL",
+                   analysis = "characterOrNULL"))
 
 #' Multi Omics Pathway.
 #'
@@ -34,6 +36,7 @@ setClass(Class ="MultiOmicsModules",
 #' @slot coxObj a data.frame used for the coxph model.
 #' @slot pathView a list, for each omic the pathway data, the method used and the covariate analyzed.
 #' @slot title the name of the pathway.
+#' @slot analysis The type of analysis done: survival or two-class.
 #'
 #' @name MultiOmicsPathway-class
 #' @rdname MultiOmicsPathway-class
@@ -47,7 +50,8 @@ setClass(Class ="MultiOmicsPathway",
                    pathView = "list",
                    usedGenes = "list",
                    formula = "character",
-                   title = "characterOrNULL"))
+                   title = "characterOrNULL",
+                   analysis = "characterOrNULL"))
 
 # setClass(Class ="SinglePath", package = "biocmosclip",
 #          slots = c(global = "MultiOmicsPathway",

@@ -150,10 +150,13 @@ resampling <- function(fullMultiOmics, pathdb, nperm=100, pathwaySubset=NULL, nP
 #' 
 #' @export
 #' 
-resamplingPathway <- function(fullMultiOmics, pathdb, nperm=100, pathwaySubset=NULL, nPatients=3) {
+resamplingPathway <- function(fullMultiOmics, pathdb, nperm=100,
+                              pathwaySubset=NULL, nPatients=3) {
   set.seed(1234)
+  nPatients <- as.numeric(nPatients)
   patients <- row.names(fullMultiOmics@colData)
-  patientsPerms <- lapply(seq_len(nperm), function(x) sample(patients, length(patients)-nPatients))
+  patientsPerms <- lapply(seq_len(nperm), function(x) 
+    sample(patients, length(patients)-nPatients))
   
   genesToConsider <- row.names(experiments(multiOmics)[[1]])
   rePathSmall <- pathdb

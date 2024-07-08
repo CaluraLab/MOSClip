@@ -104,39 +104,66 @@ KWtest <- function(moduleMat, classes) {
 #' @export
 #'
 
-extractSummaryFromPCA <- function(omic, moduleCox, loadThr=0.6, atleast=1, minprop=0.1) {
+extractSummaryFromPCA <- function(omic, moduleCox, analysis, loadThr=0.6,
+                                  atleast=1, minprop=0.1) {
   covs <- omic$namesCov
   lds <- omic$loadings
-  discretePC <- createDiscreteClasses(coxObj=moduleCox, covs, minprop=minprop)
+  
+  discretePC <- createDiscreteClasses(coxObj=moduleCox, covs, analysis,
+                                      minprop=minprop)
   topLoad <- extractHighLoadingsGenes(lds, thr=loadThr, atleast=atleast)
   sigModule <- omic$dataModule[row.names(topLoad), , drop=F]
   list(sigModule=sigModule, discrete=discretePC, subset=topLoad, covsConsidered=covs)
 }
 
 #' @importFrom survminer surv_cutpoint surv_categorize
-createDiscreteClasses <- function(coxObj, covs, labels= c("low", "high"), minprop=0.1) {
-
+createDiscreteClasses <- function(coxObj, covs, analysis,
+                                  labels= c("low", "high"), minprop=0.1) {
+  
   diff <- setdiff(covs, colnames(coxObj))
   if (length(diff) != 0) {
     stop(paste0(paste(diff, collapse=", "), " not in coxObj."))
   }
-
-  check <- sapply(coxObj[, covs, drop=F], check_minimal_proportion, min_prop=minprop)
+  
+  check <- vapply(coxObj[, covs, drop=F], check_minimal_proportion,
+                  c(min_prop=minprop))
   if (any(!check)){
     stop(paste0("minprop ", minprop, " is too high. Try a smaller one"))
   }
-  sc <- surv_cutpoint(coxObj, time="days", event="status", variables = covs, minprop=minprop)
-  surv_categorize(sc, labels=labels)
+  
+  if (analysis == "survival") {
+    sc <- surv_cutpoint(coxObj, time="days", event="status", variables = covs,
+                        minprop=minprop)
+    surv_categorize(sc, labels=labels)
+  } else if (analysis == "twoClass") {
+    covs_classified <- lapply(covs, function(cov) {
+      median_value <- median(as.numeric(coxObj[[cov]]), na.rm = TRUE)
+      ifelse(coxObj[[cov]] >= median_value, "high", "low")
+    })
+    sc <- coxObj
+    sc[covs] <- covs_classified
+    return(sc)
+  } else {
+    stop(paste0("Type of analysis ", analysis,
+                " not valid. Check results object"))
+  }
 }
 
 #' @importFrom survminer surv_cutpoint surv_categorize
-retrieveNumericClasses <- function(coxObj, covs) {
+retrieveNumericClasses <- function(coxObj, covs, analysis) {
   diff <- setdiff(covs, colnames(coxObj))
   if (length(diff) != 0) {
     stop(paste0(paste(diff, collapse=", "), " not in coxObj."))
   }
-
-  coxObj[, c("days", "status", covs), drop=F]
+  
+  if (analysis == "survival") {
+    coxObj[, c("days", "status", covs), drop=F]
+  } else if (analysis == "twoClass") {
+    coxObj[, covs, drop=F]
+  } else {
+    stop(paste0("Type of analysis ", analysis,
+                " not valid. Check results object"))
+  }
 }
 
 extractHighLoadingsGenes <- function(loadings, thr, atleast=1) {
@@ -179,14 +206,17 @@ collapse <- function(list) {
 #' \item{covsConsidered}{the name of the considered omic}
 #'
 #' @export
-extractSummaryFromNumberOfEvents <- function(omic, moduleCox, n=3, minprop=0.1, labels=c("few","many")) {
+extractSummaryFromNumberOfEvents <- function(omic, moduleCox, analysis, n=3,
+                                             minprop=0.1,
+                                             labels=c("few","many")) {
   covs <- omic$namesCov
   moduleMat=omic$dataModule
-  discreteClass <- createDiscreteClasses(coxObj=moduleCox, covs, labels=labels,
-                                         minprop=minprop)
-  numericClass <- retrieveNumericClasses(coxObj=moduleCox, covs)
+  discreteClass <- createDiscreteClasses(coxObj=moduleCox, covs, analysis,
+                                          labels=labels, minprop=minprop)
+  numericClass <- retrieveNumericClasses(coxObj=moduleCox, covs, analysis)
 
-  impact <- lapply(covs, mostlyMutated, moduleMat=t(omic$dataModule), name=omic$omicName,
+  impact <- lapply(covs, mostlyMutated, moduleMat=t(omic$dataModule),
+                   name=omic$omicName,
                    eventThr = omic$eventThr)
 
   mostlyImpacted <- lapply(impact, head, n=n)

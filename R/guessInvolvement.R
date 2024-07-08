@@ -22,16 +22,19 @@ guessInvolvement <- function(pathway, moduleNumber, loadThr=0.6, n=3, atleast=1,
                              min_prop_pca=0.1, min_prop_events=0.1) {
   moduleCox <- pathway@coxObjs[[moduleNumber]]
   omics <- pathway@modulesView[[moduleNumber]]
+  analysis <- pathway@analysis
   
   lapply(omics, function(omic) {
     if(omic$method=="pca") {
-      extractSummaryFromPCA(omic, moduleCox, loadThr, atleast, minprop=min_prop_pca)
+      extractSummaryFromPCA(omic, moduleCox, analysis, loadThr, atleast,
+                            minprop=min_prop_pca)
     } else if (omic$method=="cluster") {
       extractSummaryFromCluster(omic, n)
     } else if (omic$method %in% c("binary", "directedBinary")) {
       extractSummaryFromBinary(omic, n)
     } else if (omic$method %in% c("count", "directedCount")) {
-      extractSummaryFromNumberOfEvents(omic, moduleCox, n=3, minprop=min_prop_events)
+      extractSummaryFromNumberOfEvents(omic, moduleCox, analysis, n=3,
+                                       minprop=min_prop_events)
     } else {
       stop("Unsupported method.")
     }
@@ -62,16 +65,19 @@ guessInvolvementPathway <- function(pathway, loadThr=0.6, n=3, atleast=1,
                                     min_prop_pca=0.1, min_prop_events=0.1) {
   moduleCox <- pathway@coxObj
   omics <- pathway@pathView
+  analysis <- pathway@analysis
   
   lapply(omics, function(omic) {
     if(omic$method=="pca") {
-      extractSummaryFromPCA(omic, moduleCox, loadThr, atleast, minprop=min_prop_pca)
+      extractSummaryFromPCA(omic, moduleCox, analysis, loadThr, atleast,
+                            minprop=min_prop_pca)
     } else if (omic$method=="cluster") {
       extractSummaryFromCluster(omic, n)
     } else if (omic$method %in% c("binary", "directedBinary")) {
       extractSummaryFromBinary(omic, n)
     } else if (omic$method %in% c("count", "directedCount")) {
-      extractSummaryFromNumberOfEvents(omic, moduleCox, n=3, minprop=min_prop_events)
+      extractSummaryFromNumberOfEvents(omic, moduleCox, analysis, n=3,
+                                       minprop=min_prop_events)
     } else {
       stop("Unsupported method.")
     }

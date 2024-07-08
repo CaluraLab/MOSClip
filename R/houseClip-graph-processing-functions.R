@@ -34,7 +34,7 @@ extractCliquesFromDag <- function(dag, root=NULL) {
     moral <- mmmoralize(idag)
   }
 
-  tg    <- gRbase::triangulate(moral)
+  tg <- gRbase::triangulate(moral)
   ripped <- gRbase::rip(tg, root=root)
   if (length(ripped)==0)
     return(NULL)
