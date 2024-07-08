@@ -94,8 +94,9 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
   } else {
     scox <- suppressWarnings(survivalcox(coxObj, formula)) ### Check warnings
   }
-  new("MultiOmicsPathway", pvalue=scox$pvalue, zlist=scox$zlist, coxObj=scox$coxObj,
-      pathView=moduleView, usedGenes=usedGenes, formula=formula, title=pathName)
+  new("MultiOmicsPathway", pvalue=scox$pvalue, zlist=scox$zlist,
+      coxObj=scox$coxObj, pathView=moduleView, usedGenes=usedGenes,
+      formula=formula, title=pathName, analysis="survival")
 }
 
 #' Compute Multi Omics Survival in Pathway Modules
@@ -154,7 +155,6 @@ multiOmicsSurvivalModuleTest <- function(omicsObj, graph,
 
   names(alphas) <- NULL
   new("MultiOmicsModules", alphas=alphas, zlists=zlist, coxObjs=coxObjs,
-
-      modulesView=momics, usedGenes=usedGenes, modules=modules, formulas=formulas,
-      title=pathName)
+      modulesView=momics, usedGenes=usedGenes, modules=modules,
+      formulas=formulas, title=pathName, analysis = "survival")
 }
