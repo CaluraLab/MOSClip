@@ -596,7 +596,6 @@ plotMultiPathwayReport <- function(multiPathwayList, top=25, MOcolors=NULL,
   omics <- omics[order(match(omics, priority_to))]
   colors <- createColors(omics, MOcolors)
   names(colors) <- unique(omics)
-  pvalcol <- colorRamp2(c(0,1), c("#edf7f5", "#2796bd"))
   
   msummary <- as.matrix(summary[seq_len(top),2:ncol(summary)])
   msummary <- order_by_covariates(msummary, 0, priority_to)
@@ -614,11 +613,12 @@ plotMultiPathwayReport <- function(multiPathwayList, top=25, MOcolors=NULL,
                    grid.text(sprintf("%.2f", summary$pvalue[i]), x, y, gp = gpar(fontsize = fontsize))
                  })
   dots <- list(...)
-  defargs <- list(matrix = msummary, name = "Pvalue", col = pvalueShades,
+  defargs <- list(matrix = msummary, name = "p-Value", col = pvalueShades,
                   cluster_rows = F, cluster_columns = F, cell_fun = cell_text,
                   top_annotation = ta, row_names_gp = gpar(fontsize = fontsize),
                   column_names_gp = gpar(fontsize = fontsize))
   args <- matchArguments(dots, defargs)
+  
   ht2 <- do.call(Heatmap, args)
   suppressWarnings(ht1 + ht2)
 }
