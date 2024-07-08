@@ -66,7 +66,10 @@ plotPathwayHeat <- function(pathway, sortBy = NULL, paletteNames = NULL,
     discreteColor <- annotationPalettes[[omic]]
     values <- sort(unique(annotationFull[, name]))
     if (!is.null(levels(values))) {values <- levels(values)}
-    if (length(values)==2) {
+    if (length(values)==1) {
+      annot <- as.character(MOSpaletteSchema[discreteColor, c("smart")])
+      names(annot) <- values
+    } else if (length(values)==2) {
       annot <- as.character(MOSpaletteSchema[discreteColor, c("smart", "light")])
       names(annot) <- values
     } else if (length(table(annotationFull[, name]))==3) {
@@ -208,7 +211,6 @@ plotPathwayKM <- function(pathway, formula = "Surv(days, status) ~ PC1",
 #' @param fontsize_row size of the fonts for rows
 #' @param fontsize_col like fontsize_row but for columns
 #' @param nrowsHeatmaps magnification respect to annotation of sample (annotations take 1 row)
-#' @param discr_prop_pca the minimal proportion to compute the pca classes
 #' @param discr_prop_events the minimal proportion to compute the event classes
 #'
 #' @return NULL
@@ -221,11 +223,14 @@ plotPathwayKM <- function(pathway, formula = "Surv(days, status) ~ PC1",
 #' @importFrom ggplotify as.ggplot
 #' 
 #' @export
-plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL, fileName = NULL, paletteNames = NULL,
-                           additionalAnnotations = NULL, additionalPaletteNames = NULL,
-                           withSampleNames = TRUE, fontsize_row = 10, fontsize_col = 1,
-                           nrowsHeatmaps = 3, orgDbi = "org.Hs.eg.db",
-                           discr_prop_pca = 0.15, discr_prop_events = 0.05) {
+plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
+                           fileName = NULL, paletteNames = NULL,
+                           additionalAnnotations = NULL,
+                           additionalPaletteNames = NULL,
+                           withSampleNames = TRUE, fontsize_row = 10,
+                           fontsize_col = 1, nrowsHeatmaps = 3,
+                           orgDbi = "org.Hs.eg.db", discr_prop_pca = 0.15,
+                           discr_prop_events = 0.05) {
   
   checkmate::assertClass(pathway, "MultiOmicsModules")
   
@@ -269,14 +274,17 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL, fileName = NULL
     }
     discreteColor <- annotationPalettes[[omic]]
     values <- sort(unique(annotationFull[, name]))
-    if (length(values)==2) {
+    if (length(values)==1) {
+      annot <- as.character(MOSpaletteSchema[discreteColor, c("smart")])
+      names(annot) <- values
+    } else if (length(values)==2) {
       annot <- as.character(MOSpaletteSchema[discreteColor, c("smart", "light")])
       names(annot) <- values
     } else if (length(table(annotationFull[, name]))==3) {
       annot <- as.character(MOSpaletteSchema[discreteColor, c("dark", "smart", "light")])
       names(annot) <- values
     } else {
-      stop("I'm puzzled too much values to map")
+      stop("I'm puzzled too many values to map")
     }
     annot
   })
@@ -464,18 +472,21 @@ plotModuleKM <- function(pathway, moduleNumber, formula = "Surv(days, status) ~ 
 #' 
 #' @export
 plotModuleInGraph <- function(pathway, moduleNumber, orgDbi="org.Hs.eg.db",
-                              paletteNames=NULL, legendLabels=NULL, fileName=NULL,
-                              discr_prop_pca=0.15, discr_prop_events=0.05) {
+                              paletteNames=NULL, legendLabels=NULL,
+                              fileName=NULL, discr_prop_pca=0.15,
+                              discr_prop_events=0.05) {
   
   checkmate::assertClass(pathway, "MultiOmicsModules")
   
   # dentro pathway dovrebbe esserci l'oggetto graphNEL
-  net <- igraph::graph_from_graphnel(convertPathway(reactome[[pathway@title]], NULL))
+  net <- igraph::graph_from_graphnel(
+    convertPathway(reactome[[pathway@title]], NULL))
   moduleGenes <- pathway@modules[[moduleNumber]]
   net <- igraph::simplify(net, remove.multiple = T, remove.loops = T)
   color <- rep("grey", length(V(net)))
   color[names(V(net)) %in% moduleGenes] <- "tomato"
-  involved <- guessInvolvement(pathway, moduleNumber = moduleNumber,min_prop_pca=discr_prop_events,
+  involved <- guessInvolvement(pathway, moduleNumber = moduleNumber,
+                               min_prop_pca=discr_prop_events,
                                min_prop_events=discr_prop_events)
   mark.groups=lapply(involved, function(x) {
     row.names(x$subset)
@@ -500,7 +511,8 @@ plotModuleInGraph <- function(pathway, moduleNumber, orgDbi="org.Hs.eg.db",
     if (!is.null(names(paletteNames))) {
       mismatch <- setdiff(group.names, names(paletteNames))
       if (length(mismatch)>0)
-        stop(paste0("Missing palet for omics:" , paste(mismatch, collapse = ", ")))
+        stop(paste0("Missing palet for omics:" , paste(mismatch,
+                                                       collapse = ", ")))
       paletteNames <- paletteNames[group.names]
     }
     
