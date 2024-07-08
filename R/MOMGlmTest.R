@@ -31,8 +31,8 @@ MOMglmTest <- function(genes, omicsObj, classAnnot,
                        nullModel = "classes ~ 1") {
 
   # check if topological method has been used # Refactor
-  for (i in seq_along(omicsObj@data)) {
-    if (omicsObj@methods[i] == "summarizeWithPca") {
+  for (i in seq_along(omicsObj@ExperimentList@listData)) {
+    if (omicsObj@modelInfo[i] == "summarizeWithPca") {
       if (omicsObj@specificArgs[[i]]$method=="topological") {
         stop("Topological: not valid method for module analysis.")
       }
