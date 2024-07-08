@@ -123,7 +123,8 @@ annotePathwayToFather <- function(pathways, graphiteDB, hierarchy) {
 #' @importFrom reshape melt
 #' @export
 computeOmicsIntersections <- function(multiPathwayReportData, pvalueThr=0.05,
-                                      zscoreThr=0.05, resampligThr = NULL, excludeColumns=NULL){
+                                      zscoreThr=0.05, resampligThr = NULL,
+                                      excludeColumns=NULL){
 
   checkReportFormat(multiPathwayReportData)
   checkColumnsExclusion(multiPathwayReportData, excludeColumns)
@@ -132,15 +133,18 @@ computeOmicsIntersections <- function(multiPathwayReportData, pvalueThr=0.05,
   checkPvalueThresholdFormat(zscoreThr, "zscoreThr")
 
   universeSize <- NROW(multiPathwayReportData)
-  multiPathwayReportDataSig <- multiPathwayReportData[multiPathwayReportData[,"pvalue"] <= pvalueThr,]
+  multiPathwayReportDataSig <- multiPathwayReportData[
+    multiPathwayReportData[,"pvalue"] <= pvalueThr,]
 
   if (!is.null(resampligThr)) {
     if (is.null(multiPathwayReportDataSig$resamplingCount))
       stop("resamplingCount column not found. Try addResamplingCounts")
-    multiPathwayReportDataSig <- multiPathwayReportDataSig[multiPathwayReportDataSig[,"resamplingCount"] >= resampligThr,]
+    multiPathwayReportDataSig <- multiPathwayReportDataSig[
+      multiPathwayReportDataSig[,"resamplingCount"] >= resampligThr,]
   }
 
-  MOlistPval <- pvalueSummary(multiPathwayReportDataSig, excludeColumns = excludeColumns, as.list=TRUE)
+  MOlistPval <- pvalueSummary(multiPathwayReportDataSig,
+                              excludeColumns = excludeColumns, as.list=TRUE)
 
   MOlistPathSig <- lapply(MOlistPval, function(pp) {
     names(which(pp <= zscoreThr))})
@@ -210,17 +214,20 @@ match_pathway_to_fathers <- function(omicClass, omicsClasses2pathways, omicsClas
 #' @importFrom stats na.omit
 #' @export
 #'
-pvalueSummary <- function(multiPathwayReportData, excludeColumns=NULL, as.list=FALSE){
+pvalueSummary <- function(multiPathwayReportData, excludeColumns=NULL,
+                          as.list=FALSE){
   checkReportFormat(multiPathwayReportData)
   checkColumnsExclusion(multiPathwayReportData, excludeColumns)
 
-  columnsNotExcluded <- colnames(multiPathwayReportData)[!(colnames(multiPathwayReportData) %in% excludeColumns)]
+  columnsNotExcluded <- colnames(multiPathwayReportData)[
+    !(colnames(multiPathwayReportData) %in% excludeColumns)]
   multiPathwayReportData <- multiPathwayReportData[,columnsNotExcluded, drop=F]
 
 
   colClasses <- sapply(multiPathwayReportData, class)
   if(any(unique(colClasses) != "numeric")){
-    notNumericColumns <- colnames(multiPathwayReportData)[colClasses != "numeric"]
+    notNumericColumns <- colnames(multiPathwayReportData)[
+      colClasses != "numeric"]
     stop(paste0("Data malformed. ",
                 "The following columns are not numeric.
                 You should consider the use of excludeColumns argument: ",
@@ -230,13 +237,15 @@ pvalueSummary <- function(multiPathwayReportData, excludeColumns=NULL, as.list=F
   covarColumns <- !(colnames(multiPathwayReportData) %in% "pvalue")
   multiPathwayReportDataSig <- multiPathwayReportData[,covarColumns, drop=F]
 
-  malformedCoulums <- apply(multiPathwayReportDataSig, 2, function(col) any(na.omit(col) > 1 | na.omit(col) < 0))
+  malformedColumns <- apply(multiPathwayReportDataSig, 2,
+                            function(col) 
+                              any(na.omit(col) > 1 | na.omit(col) < 0))
 
-  if (any(malformedCoulums)) {
     stop(paste0("Data malformed. The following columns are not pvalues
                 since they have values greater than 1 or lower than 0.
                 You should consider the use of excludeColumns argument: ",
-                paste(colnames(multiPathwayReportDataSig)[malformedCoulums], collapse = ", ")
+                paste(colnames(multiPathwayReportDataSig)[malformedCoulums],
+                      collapse = ", ")
     ))
   }
 
