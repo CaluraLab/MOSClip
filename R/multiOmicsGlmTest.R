@@ -31,22 +31,22 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
   if (length(genesToUse)== 0)
     stop("There is no nodes on the graph.")
 
-  moduleView <- lapply(seq_along(omicsObj@data), function(i) {
-    test <- get(omicsObj@methods[i])
+  moduleView <- lapply(seq_along(omicsObj@ExperimentList@listData), function(i) { 
+    test <- get(omicsObj@modelInfo[i]) 
     specificArgs <- omicsObj@specificArgs[[i]]
 
     cliques=NULL
-    if (omicsObj@methods[i]=="summarizeWithPca") {
-      genesToUse <- intersect(row.names(omicsObj@data[[i]]), genesToUse)
+    if (omicsObj@modelInfo[i]=="summarizeWithPca") {
+      genesToUse <- intersect(row.names(omicsObj@ExperimentList@listData[[i]]),
+                              genesToUse)
       graph <- graph::subGraph(genesToUse, graph)
       cliques <- extractCliquesFromDag(graph)
-    }
-    args <- list(data=omicsObj@data[[i]], features=genesToUse, cliques=cliques)
+    } 
+    args <- list(data=omicsObj@ExperimentList@listData[[i]],
+                 features=genesToUse, cliques=cliques)
     if (!is.null(specificArgs))
       args <- c(args, specificArgs)
-    do.call(test, args)
   })
-
   moduleView <- moduleView[!sapply(moduleView, is.null)]
   covariates <- lapply(moduleView, function(mo) {
     mo$x
@@ -55,7 +55,6 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
   moduleData <- lapply(moduleView, function(mo) {
     mo$dataModule
   })
-  covariates <- do.call(cbind, covariates)
 
   if (is.null(covariates))
     return(NULL)
@@ -65,10 +64,7 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
 
   dataTest <- data.frame(classAnnot, covariates)
 
-  # nullModelFormula <- paste0(baseFormula,"1")
-  nullModelFormula <- nullModel
 
-  dependentVar <- all.vars(as.formula(nullModelFormula))[1]
   if(!(dependentVar %in% colnames(dataTest)))
     stop(paste0("Data does not contain the model dependent variable: ",dependentVar))
 
@@ -84,14 +80,16 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
 
   fullModelFormula = baseFormula
   if (autoCompleteFormula)
-    fullModelFormula = paste0(baseFormula, paste(colnames(covariates), collapse="+"))
+    fullModelFormula = paste0(baseFormula,
+                             paste(colnames(covariates), collapse="+"))
 
   res <- suppressWarnings(glmTest(dataTest, fullModelFormula, nullModelFormula))
 
   new("MultiOmicsPathway", pvalue=res$pvalue, zlist=res$zlist, coxObj=res$data,
-      pathView=moduleView, formula=fullModelFormula, graphNEL=graph, title=pathName)
+      pathView=moduleView, formula=fullModelFormula, title=pathName,
+      analysis="twoClass")
 }
-
+# no graphNEL slot, add it?
 ###****************************fine Pathway***************************
 
 
@@ -146,9 +144,11 @@ multiOmicsTwoClassesModuleTest <- function(omicsObj, graph, classAnnot,
   coxObjs <- lapply(results, function(x) x$dataTest)
   momics   <- lapply(results, function(x) x$moView)
   formulas <- lapply(results, function(x) x$formula)
+  analysis <- "twoClass"
 
   names(alphas) <- NULL
   new("MultiOmicsModules", alphas=alphas, zlists=zlists, coxObjs=coxObjs,
-      modulesView=momics, modules=cliques, formulas=formulas,
-      graphNEL=graph, title=pathName)
+      modulesView=momics, modules=cliques, formulas=formulas, title=pathName,
+      analysis=analysis)
 }
+# NO graphNEL slot
