@@ -241,6 +241,7 @@ pvalueSummary <- function(multiPathwayReportData, excludeColumns=NULL,
                             function(col) 
                               any(na.omit(col) > 1 | na.omit(col) < 0))
 
+  if (any(malformedColumns)) {
     stop(paste0("Data malformed. The following columns are not pvalues
                 since they have values greater than 1 or lower than 0.
                 You should consider the use of excludeColumns argument: ",
