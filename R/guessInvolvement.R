@@ -62,19 +62,21 @@ guessInvolvement <- function(pathway, moduleNumber, loadThr=0.6, n=3, atleast=1,
 #'
 #' @export
 guessInvolvementPathway <- function(pathway, loadThr=0.6, n=3, atleast=1,
-                                    min_prop_pca=0.1, min_prop_events=0.1) {
-  moduleCox <- pathway@coxObj
+                                     min_prop_pca=0.1, min_prop_events=0.1) {
+  
+  multiOmicObj <- get(pathway@multiOmicObj)
   omics <- pathway@pathView
+  moduleCox <- createCoxObj(multiOmicObj@colData, moView=omics)
   analysis <- pathway@analysis
   
   lapply(omics, function(omic) {
     if(omic$method=="pca") {
-      extractSummaryFromPCA(omic, moduleCox, analysis, loadThr, atleast,
-                            minprop=min_prop_pca)
+      extractSummaryFromPCA(omic, multiOmicObj, moduleCox, analysis, loadThr, 
+                            atleast, minprop=min_prop_pca)
     } else if (omic$method=="cluster") {
-      extractSummaryFromCluster(omic, n)
+      extractSummaryFromCluster(omic, multiOmicObj, n)
     } else if (omic$method %in% c("binary", "directedBinary")) {
-      extractSummaryFromBinary(omic, n)
+      extractSummaryFromBinary(omic, multiOmicObj, n)
     } else if (omic$method %in% c("count", "directedCount")) {
       extractSummaryFromNumberOfEvents(omic, moduleCox, analysis, n=3,
                                        minprop=min_prop_events)
