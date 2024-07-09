@@ -20,13 +20,12 @@ setClassUnion("characterOrNULL", c("character", "NULL"))
 setClass(Class ="MultiOmicsModules",
          slots = c(alphas  = "numeric",
                    zlists  = "list",
-                   coxObjs = "list",
                    modulesView  = "list",
-                   usedGenes = "list",
                    modules     = "list",
-                   formulas = "list",
-                   title = "characterOrNULL",
-                   analysis = "characterOrNULL"))
+                   analysis = "characterOrNULL",
+                   multiOmicObj = "characterOrNULL",
+                   title = "characterOrNULL"))
+
 
 #' Multi Omics Pathway.
 #'
@@ -42,17 +41,14 @@ setClass(Class ="MultiOmicsModules",
 #' @name MultiOmicsPathway-class
 #' @rdname MultiOmicsPathway-class
 #'
-
-
 setClass(Class ="MultiOmicsPathway",
          slots = c(pvalue = "numeric",
                    zlist = "numeric",
-                   coxObj = "data.frame",
                    pathView = "list",
-                   usedGenes = "list",
-                   formula = "character",
-                   title = "characterOrNULL",
-                   analysis = "characterOrNULL"))
+                   analysis = "characterOrNULL",
+                   multiOmicObj = "characterOrNULL",
+                   title = "characterOrNULL"))
+
 
 # setClass(Class ="SinglePath", package = "biocmosclip",
 #          slots = c(global = "MultiOmicsPathway",
