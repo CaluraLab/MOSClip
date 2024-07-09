@@ -146,15 +146,14 @@ multiOmicsSurvivalModuleTest <- function(omicsObj, graph,
   alphas   <- as.numeric(sapply(results, extractPvalues))
   zlist    <- lapply(results, function(x) x$zlist)
   momics   <- lapply(results, function(x) x$moView)
-  coxObjs  <- lapply(results, function(x) x$coxObj)
-  moduleData <- lapply(results, function(x) x$moduleData)
-  usedGenes  <- lapply(results, function(x) x$usedGenes)
   modules  <- cliques
-  formulas <- lapply(results, function(x) x$formula)
 
   names(alphas) <- NULL
-  new("MultiOmicsModules", alphas=alphas, zlists=zlist, coxObjs=coxObjs,
-
-      modulesView=momics, usedGenes=usedGenes, modules=modules, formulas=formulas,
+  new("MultiOmicsModules", 
+      alphas=alphas, 
+      zlists=zlist, 
+      modulesView=momics, 
+      modules=modules, 
+      multiOmicObj=deparse(substitute(omicsObj)),
       title=pathName)
 }
