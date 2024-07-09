@@ -69,7 +69,7 @@ setClass(Class ="MultiOmicsPathway",
 Omics <- setClass(Class = "Omics", package = "biocmosclip",
 
                   slots = c(modelInfo = "character",
-                            specificArgs = "list",
-                            pathResult = "list"),
+                            specificArgs = "list"),
                   contains = "MultiAssayExperiment"
 )
+
