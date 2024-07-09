@@ -26,8 +26,8 @@ makeOmics <- function(experiments = ExperimentList(),
                   metadata = list(),
                   drops = list(),
                   modelInfo= character(),
-                  specificArgs= list(),
-                  pathResult= list())
+                  specificArgs= list())
+                  #pathResult= list())
    {
    if (missing(sampleMap)) {
       if (missing(colData)){
@@ -91,8 +91,7 @@ makeOmics <- function(experiments = ExperimentList(),
        sampleMap = MAE@sampleMap,
        metadata = MAE@metadata,
        modelInfo = modelInfo,
-       specificArgs = specificArgs,
-       pathResult = pathResult)
+       specificArgs = specificArgs)
 }
 
 
