@@ -27,7 +27,6 @@ makeOmics <- function(experiments = ExperimentList(),
                   drops = list(),
                   modelInfo= character(),
                   specificArgs= list())
-                  #pathResult= list())
    {
    if (missing(sampleMap)) {
       if (missing(colData)){
