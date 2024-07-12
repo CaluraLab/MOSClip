@@ -30,15 +30,23 @@ dummy_cnv_like_dataset <- function(seed=1234) {
   genesSize <- c(3,2)
   patientsRatio <- list(c(150,50), c(75,125))
   
-  lowValues <- sample(c(-1,0,0,0,1,1), patientsRatio[[1]][1]*genesSize[1],replace = T)
-  highValues <- sample(c(-2,0,0,0,0,2,2), patientsRatio[[1]][2]*genesSize[1], replace = T)
-  lowValues2nd <- sample(c(-2,0,0,0,0,0,2), patientsRatio[[2]][1]*genesSize[2], replace = T)
-  highValues2nd <- sample(c(-1,0,0,0,0,0,1), patientsRatio[[2]][2]*genesSize[2], replace = T)
+  lowValues <- sample(c(-1,0,0,0,1,1), patientsRatio[[1]][1]*genesSize[1],
+                      replace = T)
+  highValues <- sample(c(-2,0,0,0,0,2,2), patientsRatio[[1]][2]*genesSize[1],
+                       replace = T)
+  lowValues2nd <- sample(c(-2,0,0,0,0,0,2), patientsRatio[[2]][1]*genesSize[2],
+                         replace = T)
+  highValues2nd <- sample(c(-1,0,0,0,0,0,1), patientsRatio[[2]][2]*genesSize[2],
+                          replace = T)
   
-  fake_cnv <- rbind(cbind(matrix(lowValues, ncol=patientsRatio[[1]][1], nrow=genesSize[1]),
-                          matrix(highValues, ncol=patientsRatio[[1]][2], nrow=genesSize[1])),
-                    cbind(matrix(lowValues2nd, ncol=patientsRatio[[2]][1], nrow=genesSize[2]),
-                          matrix(highValues2nd, ncol=patientsRatio[[2]][2], nrow=genesSize[2]))
+  fake_cnv <- rbind(cbind(matrix(lowValues, ncol=patientsRatio[[1]][1],
+                                 nrow=genesSize[1]),
+                          matrix(highValues, ncol=patientsRatio[[1]][2],
+                                 nrow=genesSize[1])),
+                    cbind(matrix(lowValues2nd, ncol=patientsRatio[[2]][1],
+                                 nrow=genesSize[2]),
+                          matrix(highValues2nd, ncol=patientsRatio[[2]][2],
+                                 nrow=genesSize[2]))
   )
   
   row.names(fake_cnv) <- paste0("gene_", seq_len(NROW(fake_cnv)))
@@ -52,7 +60,8 @@ cnvCountPos <- rowSums(omic$dataModule >=2)
 cnvCountNeg <- rowSums(omic$dataModule <=-2)
 ordCnvCountPos <- cnvCountPos[order(cnvCountPos, decreasing = T)]
 ordCnvCountNeg <- cnvCountNeg[order(cnvCountNeg, decreasing = T)]
-ordCnvGene <- unique(c(head(names(ordCnvCountPos), 3), head(names(ordCnvCountNeg), 3)))
+ordCnvGene <- unique(c(head(names(ordCnvCountPos), 3),
+                       head(names(ordCnvCountNeg), 3)))
 
 discrete2class <- data.frame(lapply(omic$x, as.numeric))
 row.names(discrete2class) <- row.names(omic$x)
