@@ -61,7 +61,7 @@ MOMSurvTest <- function(genes, omicsObj,
     scox <- suppressWarnings(survivalcox(coxObj, formula)) ### Check warnings
   }
 
-  scox$moView <- lapply(moView, function(x) x[-c(which(names(x)=="dataModule"))]) # consider removing
+  scox$moView <- moView
 
   scox
 }
