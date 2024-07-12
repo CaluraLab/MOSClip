@@ -1,4 +1,11 @@
-
+#' Create Cox Object
+#' 
+#' Create the coxObj from the covariates used in the test
+#'
+#' @param colData colData from multiOmic object
+#' @param moView modulesView or pathView from multiOmicsModules or multiOmicsPathway object
+#'
+#' @return data.frame, samples in the rows, covariates in the columns
 createCoxObj <- function(colData, moView){
   
   additionalCovariates <- lapply(moView, function(mo) {mo$x})
@@ -15,7 +22,14 @@ createCoxObj <- function(colData, moView){
 }
 
 
-
+#' Create Data Module
+#' 
+#' Extract sub-matrix for the genes of a module or pathway from data matrix of a specific omic
+#'
+#' @param omic modulesView or pathView object 
+#' @param multiOmicObj object of class 'Omics'
+#' 
+#' @return matrix, genes in the rows, samples in the columns
 createDataModule <- function(omic, multiOmicObj){
   if (omic$omicName == "met"){
     genes <- unname(unlist(omic$cls))
