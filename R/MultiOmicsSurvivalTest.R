@@ -61,7 +61,7 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
 
   pathView <- pathView[!vapply(pathView, is.null, logical(1))]
 
-  coxObj <- createCoxObj(omicsObj, pathView)
+  coxObj <- createCoxObj(omicsObj@colData, pathView)
   add_covs <- unlist(lapply(pathView, function(mo) {mo$namesCov}))
   if (include_from_annot) {
     add_annot_covs <- colnames(omicsObj@colData)[!colnames(omicsObj@colData) %in% c("days", "status")]
