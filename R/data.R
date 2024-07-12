@@ -1,6 +1,7 @@
 
 ## Colors
-MOSpalette <- c ("#E33402", "#04B880", "#3871CC", "#E5C002", "#8C04B6", "#01B7BF")
+MOSpalette <- c ("#E33402", "#04B880", "#3871CC", "#E5C002", "#8C04B6",
+                 "#01B7BF")
 names(MOSpalette) <- c("red","green","blue","yellow","violet","teal")
 
 MOSpaletteSchema <- data.frame(

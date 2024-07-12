@@ -31,7 +31,8 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
   if (length(genesToUse)== 0)
     stop("There is no nodes on the graph.")
 
-  moduleView <- lapply(seq_along(omicsObj@ExperimentList@listData), function(i) { 
+  moduleView <- lapply(seq_along(omicsObj@ExperimentList@listData),
+                       function(i) { 
     test <- get(omicsObj@modelInfo[i]) 
     specificArgs <- omicsObj@specificArgs[[i]]
 
@@ -66,7 +67,8 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
 
 
   if(!(dependentVar %in% colnames(dataTest)))
-    stop(paste0("Data does not contain the model dependent variable: ",dependentVar))
+    stop(paste0("Data does not contain the model dependent variable: ",
+                dependentVar))
 
   twoClasses <- unique(dataTest[,dependentVar])
   if(length(twoClasses) != 2)
@@ -128,7 +130,8 @@ multiOmicsTwoClassesModuleTest <- function(omicsObj, graph, classAnnot,
 
   genes <- graph::nodes(graph)
   if (length(genes)== 0)
-    stop("There is no intersection between expression feature names and the node names on the graph.")
+    stop("There is no intersection between expression feature names and
+         the node names in the graph.")
 
   # create the modules
   cliques <- extractCliquesFromDag(graph)

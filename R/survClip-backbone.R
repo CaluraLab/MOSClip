@@ -98,5 +98,6 @@ coxrsummary <- function(x) {
   # cat("\nExtended Wald test=", x$ewald.test, " on ", df, " df,", " p=",
   #     1 - pchisq(x$ewald.test, df), "\n\n", sep="")
 
-  list(wald=wald, partial=partialLikelihood, extWakd=extWald, robust=robustEstimator)
+  list(wald=wald, partial=partialLikelihood, extWakd=extWald,
+       robust=robustEstimator)
 }

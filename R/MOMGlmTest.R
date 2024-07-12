@@ -8,7 +8,8 @@
 #' @importFrom stats glm poisson pchisq deviance df.residual na.omit
 glmTest <- function(data, fullModelFormula, nullModelFormula){
 
-  glmRes <- glm(as.formula(fullModelFormula), family="binomial", data=na.omit(data))
+  glmRes <- glm(as.formula(fullModelFormula), family="binomial",
+                data=na.omit(data))
   glmSummary <- summary(glmRes)
   zlist <- glmSummary$coefficients[,"Pr(>|z|)"][-1]
   names(zlist) <- row.names(glmSummary$coefficients)[-1]
@@ -34,7 +35,7 @@ MOMglmTest <- function(genes, omicsObj, classAnnot,
   for (i in seq_along(omicsObj@ExperimentList@listData)) {
     if (omicsObj@modelInfo[i] == "summarizeWithPca") {
       if (omicsObj@specificArgs[[i]]$method=="topological") {
-        stop("Topological: not valid method for module analysis.")
+        stop("Invalid method for module analysis: topological")
       }
     }
   }
@@ -63,7 +64,8 @@ MOMglmTest <- function(genes, omicsObj, classAnnot,
 
   dependentVar <- all.vars(as.formula(nullModelFormula))[1]
   if(!(dependentVar %in% colnames(dataTest)))
-    stop(paste0("Data does not contain the model dependent variable: ",dependentVar))
+    stop(paste0("Data does not contain the model dependent variable: ",
+                dependentVar))
 
   twoClasses <- unique(dataTest[,dependentVar])
   if(length(twoClasses) != 2)
@@ -79,7 +81,8 @@ MOMglmTest <- function(genes, omicsObj, classAnnot,
 
   fullModelFormula = baseFormula
   if (autoCompleteFormula)
-    fullModelFormula = paste0(baseFormula, paste(colnames(additionalCovariates), collapse="+"))
+    fullModelFormula = paste0(baseFormula, paste(colnames(additionalCovariates),
+                                                 collapse="+"))
 
   res <- suppressWarnings(glmTest(dataTest, fullModelFormula, nullModelFormula))
 

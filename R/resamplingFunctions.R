@@ -170,7 +170,8 @@ resamplingPathway <- function(fullMultiOmics, pathdb, nperm=100,
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
       set.seed(1234)
-      fcl = multiOmicsSurvivalPathwayTest(multiOmics, g, useThisGenes = genesToConsider)
+      fcl = multiOmicsSurvivalPathwayTest(multiOmics, g,
+                                          useThisGenes = genesToConsider)
       fcl
     })
     multiPathwayReport(multiOmicsReactome)
@@ -192,7 +193,8 @@ resamplingPathway <- function(fullMultiOmics, pathdb, nperm=100,
 #' @importFrom graphics abline
 #' @export
 #' 
-selectStablePathwaysModules <- function(perms, moduleSummary, success=90, col="pvalue") {
+selectStablePathwaysModules <- function(perms, moduleSummary, success=90,
+                                        col="pvalue") {
   sortedPerms <- lapply(perms, function(x) {
     x[order(row.names(x)), ]
   })
@@ -203,13 +205,17 @@ selectStablePathwaysModules <- function(perms, moduleSummary, success=90, col="p
   row.names(pvalue) <- row.names(pathwayModuleName)
   
   allPvalues <- data.frame(pathwayModule=row.names(moduleSummary),
-                           pvalue = moduleSummary$pvalue, pvalue[row.names(moduleSummary), ],
+                           pvalue = moduleSummary$pvalue,
+                           pvalue[row.names(moduleSummary), ],
                            stringsAsFactors = F)
   sortedAllPvalues <- allPvalues[order(allPvalues$pvalue), ]
   sortedPerms <- as.matrix(sortedAllPvalues[,-c(1:2)])
   resampligSuccess <- apply(sortedPerms <= 0.05, 1, sum)
   
-  plot(-log10(sortedAllPvalues$pvalue), resampligSuccess, xlab="-log10(pvalue)", ylab="resampling success"); abline(v = -log10(0.05), col=2) ; abline(h=success, col=4)
+  plot(-log10(sortedAllPvalues$pvalue), resampligSuccess, xlab="-log10(pvalue)",
+       ylab="resampling success");
+  abline(v = -log10(0.05), col=2) ;
+  abline(h=success, col=4)
   sigModuleNames <- names(which(resampligSuccess >= success))
   ms <- moduleSummary[row.names(moduleSummary) %in% sigModuleNames, ]
   ms$pathwayModule <- NULL
@@ -228,7 +234,8 @@ selectStablePathwaysModules <- function(perms, moduleSummary, success=90, col="p
 #' @rdname evaluateResampling
 #' @export
 #'
-getPathwaysModulesSuccess <- function(perms, moduleSummary, col="pvalue", thr=0.05) {
+getPathwaysModulesSuccess <- function(perms, moduleSummary, col="pvalue",
+                                      thr=0.05) {
   sortedPerms <- lapply(perms, function(x) {
     x[order(row.names(x)), ]
   })
@@ -236,7 +243,7 @@ getPathwaysModulesSuccess <- function(perms, moduleSummary, col="pvalue", thr=0.
   ref <- row.names(sortedPerms[[1]])
   lapply(sortedPerms, function(x) {
     if (!(identical(ref, row.names(x))))
-      stop("Perms row.names differs")
+      stop("Perms row.names are different")
   })
   
   pathwayModuleName <- moduleSummary[order(row.names(moduleSummary)),]
@@ -248,7 +255,8 @@ getPathwaysModulesSuccess <- function(perms, moduleSummary, col="pvalue", thr=0.
   row.names(pvalue) <- row.names(pathwayModuleName)
   
   allPvalues <- data.frame(pathwayModule=row.names(moduleSummary),
-                           pvalue = moduleSummary$pvalue, pvalue[row.names(moduleSummary), ],
+                           pvalue = moduleSummary$pvalue,
+                           pvalue[row.names(moduleSummary), ],
                            stringsAsFactors = F)
   
   sortedAllPvalues <- allPvalues[order(allPvalues$pvalue), ]
@@ -273,8 +281,10 @@ addResamplingCounts <- function(moduleSummary, resamplingCounts) {
   moduleSummary$resamplingCount <- 0
   notFound <- setdiff(names(resamplingCounts),row.names(moduleSummary))
   if (length(notFound)>0)
-    stop(paste0("Modules ", paste(notFound, collapse = ", ", " were not found in the module Summary")))
+    stop(paste0("Modules ", paste(notFound, collapse = ", ",
+                                  " were not found in the module Summary")))
   
-  moduleSummary[names(resamplingCounts), "resamplingCount"] <- as.numeric(resamplingCounts)
+  moduleSummary[names(resamplingCounts), 
+                "resamplingCount"] <- as.numeric(resamplingCounts)
   moduleSummary
 }

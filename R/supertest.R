@@ -56,22 +56,25 @@ runSupertest <- function(multiPathwayReportData, pvalueThr=0.05,
 
   plot <- plot[1]
   if(!(plot %in% c('circular','landscape','noplot')))
-    stop("Plot argument should be one of circular, landscape or noplot." )
+    stop("Plot argument should be either circular, landscape or noplot." )
 
   sort.by <- sort.by[1]
   if(plot != "noplot" & (!(sort.by %in% c('set','size','degree','p-value'))))
-    stop("sort.by argument should be one of set, size, degree or p-value.")
+    stop("sort.by argument should be either set, size, degree or p-value.")
 
   universeSize <- NROW(multiPathwayReportData)
-  multiPathwayReportDataSig <- multiPathwayReportData[multiPathwayReportData[,"pvalue"] <= pvalueThr,]
+  multiPathwayReportDataSig <- multiPathwayReportData[
+    multiPathwayReportData[,"pvalue"] <= pvalueThr,]
 
   if (!is.null(resampligThr)) {
     if (is.null(multiPathwayReportDataSig$resamplingCount))
       stop("resamplingCount column not found. Try addResamplingCounts")
-    multiPathwayReportDataSig <- multiPathwayReportDataSig[multiPathwayReportDataSig[,"resamplingCount"] >= resampligThr,]
+    multiPathwayReportDataSig <- multiPathwayReportDataSig[
+      multiPathwayReportDataSig[,"resamplingCount"] >= resampligThr,]
   }
 
-  MOlistPval <- pvalueSummary(multiPathwayReportDataSig, excludeColumns = excludeColumns, as.list=TRUE)
+  MOlistPval <- pvalueSummary(multiPathwayReportDataSig,
+                              excludeColumns = excludeColumns, as.list=TRUE)
 
   MOlistPathSig <- lapply(MOlistPval, function(pp) {
     names(which(pp <= zscoreThr))})
@@ -181,7 +184,8 @@ stripModulesFromPathways <- function(pathways) {
 #'
 #' @export
 #'
-match_pathway_to_fathers <- function(omicClass, omicsClasses2pathways, omicsClasses2fathers) {
+match_pathway_to_fathers <- function(omicClass, omicsClasses2pathways,
+                                     omicsClasses2fathers) {
   if (!(omicClass %in% names(omicsClasses2pathways)))
     stop(paste0("Omic not found in class2pathways:", omicClass))
   if (!(omicClass %in% names(omicsClasses2fathers)))
@@ -190,11 +194,14 @@ match_pathway_to_fathers <- function(omicClass, omicsClasses2pathways, omicsClas
   if (is.null(omicsClasses2fathers[[omicClass]])){
     valid_set=character()
   } else {
-    valid_set <- intersect(omicsClasses2pathways[[omicClass]], omicsClasses2fathers[[omicClass]])
+    valid_set <- intersect(omicsClasses2pathways[[omicClass]],
+                           omicsClasses2fathers[[omicClass]])
   }
   leave_out <- setdiff(omicsClasses2pathways[[omicClass]], valid_set)
   if (length(leave_out)>0)
-    warning(paste0("the following pathway were excluded becuase no id was found; ", paste(leave_out, collapse = ", ")))
+    warning(paste0(
+      "The following pathways were excluded because no id was found; ",
+      paste(leave_out, collapse = ", ")))
 
   select_path <- omicsClasses2pathways[[omicClass]] %in% valid_set
   select_father <- omicsClasses2fathers[[omicClass]] %in% valid_set
@@ -230,7 +237,7 @@ pvalueSummary <- function(multiPathwayReportData, excludeColumns=NULL,
       colClasses != "numeric"]
     stop(paste0("Data malformed. ",
                 "The following columns are not numeric.
-                You should consider the use of excludeColumns argument: ",
+                Consider using excludeColumns argument: ",
                 paste(notNumericColumns, collapse = ", ")))
   }
 
@@ -243,8 +250,8 @@ pvalueSummary <- function(multiPathwayReportData, excludeColumns=NULL,
 
   if (any(malformedColumns)) {
     stop(paste0("Data malformed. The following columns are not pvalues
-                since they have values greater than 1 or lower than 0.
-                You should consider the use of excludeColumns argument: ",
+                (values greater than 1 or lower than 0).
+                Consider using excludeColumns argument: ",
                 paste(colnames(multiPathwayReportDataSig)[malformedCoulums],
                       collapse = ", ")
     ))
@@ -269,7 +276,7 @@ checkReportFormat <-function(multiPathwayReportData) {
     stop("Data malformed. There is not a overall pvalue column.")
 
   if(is.null(grep(omicsRegexp, colnames(multiPathwayReportData))))
-    stop("Data malformed. There are no columns of with covariates as colnames.")
+    stop("Data malformed. Covariates names not in colnames")
 }
 
 checkColumnsExclusion <- function(multiPathwayReportData, excludeColumns) {
@@ -277,15 +284,15 @@ checkColumnsExclusion <- function(multiPathwayReportData, excludeColumns) {
     return()
 
   if (any(!(excludeColumns %in% colnames(multiPathwayReportData))))
-    stop("Data malformed. Not all the colnames in excludeColumns are in the data.")
+    stop("Data malformed. excludeColumns not present in data")
 
   if("pvalue" %in% excludeColumns)
-    stop("You can not exclude the overall pvalue column, it is a required column.")
+    stop("You cannot exclude the overall pvalue column.")
 }
 
 checkPvalueThresholdFormat <- function(thr, name="thr") {
   if(!is.numeric(thr))
     stop(paste0(name, " should be numeric."))
   else if((thr > 1) | (thr < 0))
-    stop(paste0(name, " should be a number included between 0 and 1."))
+    stop(paste0(name, " should be a number between 0 and 1."))
 }

@@ -35,8 +35,8 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
     stop("There is no nodes on the graph.")
 
   # cicle over the datasets (expression, methylation ...)
-  moduleView <- lapply(seq_along(omicsObj@ExperimentList@listData), function(i) {
-
+  moduleView <- lapply(seq_along(omicsObj@ExperimentList@listData),
+                       function(i) {
     test <- get(omicsObj@modelInfo[i])
     specificArgs <- omicsObj@specificArgs[[i]]
 
@@ -62,11 +62,11 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
 
   moduleView <- moduleView[!sapply(moduleView, is.null)] # change sapply in vapply
 
-  covariates <- lapply(moduleView, function(mo) mo$x) # extract all the vocariates
+  covariates <- lapply(moduleView, function(mo) mo$x)
 
-  moduleData <- lapply(moduleView, function(mo) mo$dataModule) # extract all the intersting values of the pathways
+  moduleData <- lapply(moduleView, function(mo) mo$dataModule)
 
-  usedGenes <- lapply(moduleView, function(mo) mo$usedGenes) ##
+  usedGenes <- lapply(moduleView, function(mo) mo$usedGenes)
 
   covariates <- do.call(cbind, covariates)
 
@@ -82,7 +82,8 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
 
   add_covs <- colnames(covariates)
   if (include_from_annot) {
-    add_annot_covs <- colnames(omicsObj@colData)[!colnames(omicsObj@colData) %in% c("days", "status")]
+    add_annot_covs <- colnames(omicsObj@colData)[
+      !colnames(omicsObj@colData) %in% c("days", "status")]
     add_covs <- c(add_covs, add_annot_covs)
   }
 
@@ -121,11 +122,13 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
 #' @export
 multiOmicsSurvivalModuleTest <- function(omicsObj, graph,
                                          survFormula = "Surv(days, status) ~",
-                                         autoCompleteFormula=T, useThisGenes=NULL,
-                                         pathName=NULL, robust=FALSE, include_from_annot=F) {
+                                         autoCompleteFormula=T,
+                                         useThisGenes=NULL,
+                                         pathName=NULL, robust=FALSE,
+                                         include_from_annot=F) {
 
   if (is(graph, "character"))
-    stop("Module test can not handle gene list.")
+    stop("Module test cannot handle gene list.")
 
   if (is.null(pathName) & is(graph, "Pathway"))
     pathName <- graph@title
@@ -134,7 +137,8 @@ multiOmicsSurvivalModuleTest <- function(omicsObj, graph,
 
   genes <- graph::nodes(graph)
   if (length(genes)== 0)
-    stop("There is no intersection between expression feature names and the node names on the graph.")
+    stop("There is no intersection between expression
+         feature names and the node names in the graph.")
 
   # create the modules
   cliques <- extractCliquesFromDag(graph)
