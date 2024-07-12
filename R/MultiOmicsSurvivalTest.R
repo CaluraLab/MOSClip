@@ -77,8 +77,10 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
   } else {
     scox <- suppressWarnings(survivalcox(coxObj, formula)) ### Check warnings
   }
-  new("MultiOmicsPathway", pvalue=scox$pvalue, zlist=scox$zlist,
-      pathView=lapply(pathView, function(x) x[-c(which(names(x)=="dataModule"))]),
+  new("MultiOmicsPathway", 
+      pvalue=scox$pvalue, 
+      zlist=scox$zlist, 
+      pathView=pathView, 
       analysis="survival", 
       multiOmicObj=deparse(substitute(omicsObj)),
       title=pathName)
