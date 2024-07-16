@@ -23,6 +23,22 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
                                             nullModel = "classes ~ 1",
                                             pathName=NULL) {
 
+  baseFormula_input <- strsplit(baseFormula, " ")[[1]]
+  if (!(baseFormula_input[1] %in% colnames(classAnnot))){
+    stop("Invalid formula. Class column not found in classAnnot")
+  } else if (length(baseFormula_input) == 1 | baseFormula_input[2] != "~") {
+    stop("Invalid formula. Formula should be written as: 'classes ~'")
+  }
+  
+  nullModel_input <- strsplit(nullModel, " ")[[1]]
+  if (!(nullModel_input[1] %in% colnames(classAnnot))){
+    stop("Invalid formula. Class column not found in classAnnot")
+  } else if (length(nullModel_input) == 1) {
+    stop("Formula is too short. Formula should be written as 'classes ~ 1")
+  } else if (nullModel_input[2] != "~" | nullModel_input[3] != "1") {
+    stop("Invalid formula. Formula should be written as: 'classes ~'")
+  }
+  
   if (is.null(pathName) && is(graph, "Pathway"))
     pathName <- graph@title
 
@@ -81,7 +97,7 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
   }
 
   fullModelFormula = baseFormula
-  if (autoCompleteFormula)
+  if (autoCompleteFormula) # i'd remove that or change because we r not doing survival 4 2 class
     fullModelFormula = paste0(baseFormula,
                              paste(colnames(covariates), collapse="+"))
 
@@ -122,6 +138,22 @@ multiOmicsTwoClassesModuleTest <- function(omicsObj, graph, classAnnot,
 
   if (is(graph, "character"))
     stop("Module test can not handle gene list.")
+  
+  baseFormula_input <- strsplit(baseFormula, " ")[[1]]
+  if (!(baseFormula_input[1] %in% colnames(classAnnot))){
+    stop("Invalid formula. Class column not found in classAnnot")
+  } else if (length(baseFormula_input) == 1 | baseFormula_input[2] != "~") {
+    stop("Invalid formula. Formula should be written as: 'classes ~'")
+  }
+  
+  nullModel_input <- strsplit(nullModel, " ")[[1]]
+  if (!(nullModel_input[1] %in% colnames(classAnnot))){
+    stop("Invalid null formula. Class column not found in classAnnot")
+  } else if (length(nullModel_input) == 1) {
+    stop("Null formula is too short. Formula should be written as 'classes ~ 1")
+  } else if (nullModel_input[2] != "~" | nullModel_input[3] != "1") {
+    stop("Invalid null formula. Formula should be written as: 'classes ~'")
+  }
 
   if (is.null(pathName) & is(graph, "Pathway"))
     pathName <- graph@title
@@ -129,7 +161,7 @@ multiOmicsTwoClassesModuleTest <- function(omicsObj, graph, classAnnot,
   graph <- convertPathway(graph, useThisGenes)
 
   genes <- graph::nodes(graph)
-  if (length(genes)== 0)
+  if (length(genes) == 0)
     stop("There is no intersection between expression feature names and
          the node names in the graph.")
 
