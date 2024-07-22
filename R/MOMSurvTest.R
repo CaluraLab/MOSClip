@@ -6,10 +6,10 @@
 #'   1 reduced representation of the omics
 #'   2 sdev
 #'   3 loadings or eigenvector
-#'   4 data module ## Consider adding here only genes)
-#'   5 Method
+#'   4 usedGenes
+#'   5 method
 #'   6 namesCov
-#'   7 OmicName
+#'   7 omicName
 #'
 createMOMView <- function(omicsObj, genes) {
   listCovariates <- lapply(seq_along(omicsObj@ExperimentList@listData), function(i) {
@@ -21,7 +21,7 @@ createMOMView <- function(omicsObj, genes) {
     do.call(test, args)
   })
 
-  listCovariates[!sapply(listCovariates, is.null)] # remove sapply
+  listCovariates[!vapply(listCovariates, is.null, logical(1))] 
 }
 
 
