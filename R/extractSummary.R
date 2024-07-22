@@ -103,17 +103,17 @@ KWtest <- function(moduleMat, classes) {
 #'
 #' @export
 #'
-extractSummaryFromPCA <- function(omic, moduleCox, analysis, loadThr=0.6,
-                                  atleast=1, minprop=0.1) {
+extractSummaryFromPCA <- function(omic, multiOmicObj, moduleCox, analysis, 
+                                  loadThr=0.6, atleast=1, minprop=0.1) {
   covs <- omic$namesCov
   lds <- omic$loadings
-  
   discretePC <- createDiscreteClasses(coxObj=moduleCox, covs, analysis,
                                       minprop=minprop)
   topLoad <- extractHighLoadingsGenes(lds, thr=loadThr, atleast=atleast)
   moduleMat <- createDataModule(omic, multiOmicObj)
   sigModule <- moduleMat[row.names(topLoad), , drop=F]
-  list(sigModule=sigModule, discrete=discretePC, subset=topLoad, covsConsidered=covs)
+  list(sigModule=sigModule, discrete=discretePC, subset=topLoad, 
+       covsConsidered=covs)
 }
 
 #' @importFrom survminer surv_cutpoint surv_categorize
