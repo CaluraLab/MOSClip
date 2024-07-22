@@ -206,29 +206,17 @@ collapse <- function(list) {
 #' \item{covsConsidered}{the name of the considered omic}
 #'
 #' @export
-<<<<<<< HEAD
-extractSummaryFromNumberOfEvents <- function(omic, moduleCox, analysis, n=3,
-                                             minprop=0.1,
+extractSummaryFromNumberOfEvents <- function(omic, multiOmicObj, moduleCox, 
+                                             analysis, n=3, minprop=0.1,
                                              labels=c("few","many")) {
   covs <- omic$namesCov
-  moduleMat=omic$dataModule
+  moduleMat <- createDataModule(omic, multiOmicObj)
   discreteClass <- createDiscreteClasses(coxObj=moduleCox, covs, analysis,
                                           labels=labels, minprop=minprop)
   numericClass <- retrieveNumericClasses(coxObj=moduleCox, covs, analysis)
 
-  impact <- lapply(covs, mostlyMutated, moduleMat=t(omic$dataModule),
-                   name=omic$omicName,
-=======
-extractSummaryFromNumberOfEvents <- function(omic, multiOmicObj, moduleCox, n=3, minprop=0.1, labels=c("few","many")) {
-  covs <- omic$namesCov
-  moduleMat <- createDataModule(omic, multiOmicObj)
-  discreteClass <- createDiscreteClasses(coxObj=moduleCox, covs, labels=labels,
-                                         minprop=minprop)
-  numericClass <- retrieveNumericClasses(coxObj=moduleCox, covs)
-
-  impact <- lapply(covs, mostlyMutated, moduleMat=t(moduleMat), name=omic$omicName,
->>>>>>> d05b9c8 (modify extractSummary functions in order to use createDataModule function)
-                   eventThr = omic$eventThr)
+  impact <- lapply(covs, mostlyMutated, moduleMat=t(moduleMat),
+                   name=omic$omicName, eventThr = omic$eventThr)
 
   mostlyImpacted <- lapply(impact, head, n=n)
   names(mostlyImpacted) <- covs
