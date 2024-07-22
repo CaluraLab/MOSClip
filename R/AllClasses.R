@@ -13,7 +13,6 @@ setClassUnion("characterOrNULL", c("character", "NULL"))
 #' @slot formulas a list, for each module the character of the formula used in the coxph.
 #' @slot title the name of the pathway.
 #' @slot analysis The type of analysis done: survival or two-class.
-
 #' @name MultiOmicsModules-class
 #' @rdname MultiOmicsModules-class
 #'
@@ -37,7 +36,6 @@ setClass(Class ="MultiOmicsModules",
 #' @slot pathView a list, for each omic the pathway data, the method used and the covariate analyzed.
 #' @slot title the name of the pathway.
 #' @slot analysis The type of analysis done: survival or two-class.
-#'
 #' @name MultiOmicsPathway-class
 #' @rdname MultiOmicsPathway-class
 #'

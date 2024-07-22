@@ -112,6 +112,7 @@ extractSummaryFromPCA <- function(omic, multiOmicObj, moduleCox, analysis,
   topLoad <- extractHighLoadingsGenes(lds, thr=loadThr, atleast=atleast)
   moduleMat <- createDataModule(omic, multiOmicObj)
   sigModule <- moduleMat[row.names(topLoad), , drop=F]
+
   list(sigModule=sigModule, discrete=discretePC, subset=topLoad, 
        covsConsidered=covs)
 }

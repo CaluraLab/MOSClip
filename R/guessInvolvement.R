@@ -74,13 +74,14 @@ guessInvolvementPathway <- function(pathway, loadThr=0.6, n=3, atleast=1,
     if(omic$method=="pca") {
       extractSummaryFromPCA(omic, multiOmicObj, moduleCox, analysis, loadThr, 
                             atleast, minprop=min_prop_pca)
+
     } else if (omic$method=="cluster") {
       extractSummaryFromCluster(omic, multiOmicObj, n)
     } else if (omic$method %in% c("binary", "directedBinary")) {
       extractSummaryFromBinary(omic, multiOmicObj, n)
     } else if (omic$method %in% c("count", "directedCount")) {
-      extractSummaryFromNumberOfEvents(omic, moduleCox, analysis, n=3,
-                                       minprop=min_prop_events)
+      extractSummaryFromNumberOfEvents(omic, multiOmicObj, moduleCox, analysis, 
+                                       n=3, minprop=min_prop_events)
     } else {
       stop("Unsupported method.")
     }
