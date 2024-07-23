@@ -134,7 +134,8 @@ multiOmicsTwoClassesModuleTest <- function(omicsObj, graph, classAnnot,
 
   genes <- graph::nodes(graph)
   if (length(genes)== 0)
-    stop("There is no intersection between expression feature names and the node names on the graph.")
+    stop("There is no intersection between expression feature names and 
+         the node names on the graph.")
 
   # create the modules
   cliques <- extractCliquesFromDag(graph)
@@ -147,14 +148,18 @@ multiOmicsTwoClassesModuleTest <- function(omicsObj, graph, classAnnot,
 
   alphas   <- as.numeric(sapply(results, extractPvalues))
   zlists    <- lapply(results, function(x) x$zlist)
-  coxObjs <- lapply(results, function(x) x$dataTest)
   momics   <- lapply(results, function(x) x$moView)
-  formulas <- lapply(results, function(x) x$formula)
   analysis <- "twoClass"
 
   names(alphas) <- NULL
-  new("MultiOmicsModules", alphas=alphas, zlists=zlists, coxObjs=coxObjs,
-      modulesView=momics, modules=cliques, formulas=formulas, title=pathName,
-      analysis=analysis)
+  new("MultiOmicsModules", 
+      alphas=alphas, 
+      zlists=zlists, 
+      modulesView=momics, 
+      modules=cliques, 
+      analysis=analysis,
+      multiOmicObj=deparse(substitute(omicsObj)), 
+      title=pathName
+      )
 }
 # NO graphNEL slot
