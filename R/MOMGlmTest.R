@@ -21,7 +21,7 @@ glmTest <- function(data, fullModelFormula, nullModelFormula){
                    lower.tail=FALSE)
 
 
-  return(list(pvalue=pvalue, zlist=zlist, data=data))
+  return(list(pvalue=pvalue, zlist=zlist))
 }
 
 #' @importFrom methods new
@@ -84,7 +84,5 @@ MOMglmTest <- function(genes, omicsObj, classAnnot,
   res <- suppressWarnings(glmTest(dataTest, fullModelFormula, nullModelFormula))
 
   res$moView <- moView
-  res$formula <- fullModelFormula
-  res$dataTest <- dataTestOut
   res
 }
