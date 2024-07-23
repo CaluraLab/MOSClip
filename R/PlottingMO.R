@@ -167,7 +167,9 @@ plotPathwayKM <- function(pathway, formula = "Surv(days, status) ~ PC1",
   involved <- guessInvolvementPathway(pathway,min_prop_pca=discr_prop_pca,
                                       min_prop_events=discr_prop_events)
   annotationFull <- formatAnnotations(involved, sortBy=NULL)
-  daysAndStatus <- pathway@coxObj[, c("status", "days"), drop=F]
+  multiOmicObj <- get(pathway@multiOmicObj)
+  coxObj <- createCoxObj(multiOmicObj@colData, pathway@pathView)
+  daysAndStatus <- coxObj[, c("status", "days"), drop=F]
   
   if (inYears)
     daysAndStatus$days <- daysAndStatus$days/365.24
@@ -379,35 +381,37 @@ plotModuleKM <- function(pathway, moduleNumber, formula = "Surv(days, status) ~ 
                                min_prop_pca = discr_prop_pca,
                                min_prop_events = discr_prop_events)
   
+  multiOmicObj <- get(pathway@multiOmicObj)
+  coxObj <- createCoxObj(multiOmicObj@colData, pathway@modulesView[[moduleNumber]])
   annotationFull <- formatAnnotations(involved, sortBy=NULL)
   
   days_status_names <- c("status", "days")
   
-  daysAndStatus <- pathway@coxObjs[[moduleNumber]][, days_status_names, drop=F]
+  daysAndStatus <- coxObj[, days_status_names, drop=F]
   if (inYears)
     daysAndStatus$days <- daysAndStatus$days/365.24
   
   additional_clinic = NULL
   if (!is.null(additional_discrete)){
-    not_found <- setdiff(additional_discrete, colnames(pathway@coxObjs[[moduleNumber]]))
+    not_found <- setdiff(additional_discrete, colnames(coxObj))
     if (length(not_found) > 0)
       stop(paste0("Some discrete variables were not found: ", paste(not_found, collapse = ", ", "\n"),
-                  "We found the following variables: ", paste(colnames(pathway@coxObjs[[moduleNumber]]),
+                  "We found the following variables: ", paste(colnames(coxObj),
                                                               collapse = ", ")))
     
     fixed_covs <- setdiff(additional_discrete, colnames(annotationFull))
-    additional_clinic <- pathway@coxObjs[[moduleNumber]][row.names(daysAndStatus), fixed_covs, drop=F]
+    additional_clinic <- coxObj[row.names(daysAndStatus), fixed_covs, drop=F]
   }
   
   if (!is.null(additional_continous)){
-    not_found <- setdiff(additional_continous, colnames(pathway@coxObjs[[moduleNumber]]))
+    not_found <- setdiff(additional_continous, colnames(coxObj))
     if (length(not_found) > 0)
       stop(paste0("Some continous variables were not found: ", paste(not_found, collapse = ", ", "\n"),
-                  "We found the following variables: ", paste(colnames(pathway@coxObjs[[moduleNumber]]),
+                  "We found the following variables: ", paste(colnames(coxObj),
                                                               collapse = ", ")))
     
     fixed_covs <- setdiff(additional_continous, colnames(annotationFull))
-    df <- cbind(daysAndStatus, pathway@coxObjs[[moduleNumber]][row.names(daysAndStatus), fixed_covs, drop=F])
+    df <- cbind(daysAndStatus, coxObj[row.names(daysAndStatus), fixed_covs, drop=F])
     discretized_covs <- createDiscreteClasses(df, fixed_covs)
     
     if (!is.null(additional_clinic)){
