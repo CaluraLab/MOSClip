@@ -8,14 +8,15 @@
 #' @importFrom stats glm poisson pchisq deviance df.residual na.omit
 glmTest <- function(data, fullModelFormula, nullModelFormula){
 
-  glmRes <- glm(as.formula(fullModelFormula), family="binomial", data=na.omit(data))
+  glmRes <- glm(as.formula(fullModelFormula), family="binomial", 
+                data=na.omit(data))
   glmSummary <- summary(glmRes)
   zlist <- glmSummary$coefficients[,"Pr(>|z|)"][-1]
   names(zlist) <- row.names(glmSummary$coefficients)[-1]
 
   # test
-  fullModel=glm(as.formula(fullModelFormula), family=poisson, data=data)  # full model
-  nullModel=glm(as.formula(nullModelFormula), family=poisson, data=data) # null model
+  fullModel=glm(as.formula(fullModelFormula), family=poisson, data=data)  
+  nullModel=glm(as.formula(nullModelFormula), family=poisson, data=data) 
   pvalue <- pchisq(deviance(nullModel)-deviance(fullModel),
                    df.residual(nullModel)-df.residual(fullModel),
                    lower.tail=FALSE)
@@ -79,7 +80,8 @@ MOMglmTest <- function(genes, omicsObj, classAnnot,
 
   fullModelFormula = baseFormula
   if (autoCompleteFormula)
-    fullModelFormula = paste0(baseFormula, paste(colnames(additionalCovariates), collapse="+"))
+    fullModelFormula = paste0(baseFormula, paste(colnames(additionalCovariates), 
+                                                 collapse="+"))
 
   res <- suppressWarnings(glmTest(dataTest, fullModelFormula, nullModelFormula))
 
