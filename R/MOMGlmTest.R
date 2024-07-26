@@ -54,8 +54,14 @@ MOMglmTest <- function(genes, omicsObj, classAnnot,
   if (is.null(additionalCovariates))
     return(NULL)
 
-  if (!identical(row.names(classAnnot), row.names(additionalCovariates)))
-    stop("Mismatch in covariates and annotations row names.")
+  if (!identical(row.names(classAnnot), row.names(additionalCovariates))) {
+    if (all(row.names(classAnnot) %in% row.names(additionalCovariates))) {
+      res <- resolveAndOrder(list(classAnnot = classAnnot, 
+                                  additionalCovariates = additionalCovariates))
+      classAnnot = res$classAnnot
+      additionalCovariates = res$additionalCovariates 
+      } 
+    else {stop("Mismatch in covariates and annotations row names.") }}
 
   dataTest <- data.frame(classAnnot, additionalCovariates)
 
@@ -64,7 +70,8 @@ MOMglmTest <- function(genes, omicsObj, classAnnot,
 
   dependentVar <- all.vars(as.formula(nullModelFormula))[1]
   if(!(dependentVar %in% colnames(dataTest)))
-    stop(paste0("Data does not contain the model dependent variable: ",dependentVar))
+    stop(paste0("Data does not contain the model dependent variable: ", 
+                dependentVar))
 
   twoClasses <- unique(dataTest[,dependentVar])
   if(length(twoClasses) != 2)

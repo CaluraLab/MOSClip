@@ -57,9 +57,18 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
   if (is.null(covariates))
     return(NULL)
 
-  if (!identical(row.names(classAnnot), row.names(covariates)))
-    stop("Mismatch in covariates and classes annotations rownames.")
+  #if (nrow(classAnnot) != nrow(covariates))
+   # warning("Mismatch in the number of samples.")
 
+  if (!identical(row.names(classAnnot), row.names(covariates))) {
+    if (all(row.names(classAnnot) %in% row.names(covariates))) {
+      res <- resolveAndOrder(list(classAnnot = classAnnot, 
+                                  covariates = covariates))
+      classAnnot = res$classAnnot
+      covariates = res$covariates 
+    } 
+    else {stop("Mismatch in covariates and classes annotations row names.") }}
+  
   dataTest <- data.frame(classAnnot, covariates)
   
   nullModelFormula <- nullModel
@@ -145,6 +154,9 @@ multiOmicsTwoClassesModuleTest <- function(omicsObj, graph, classAnnot,
                     baseFormula=baseFormula,
                     autoCompleteFormula=autoCompleteFormula,
                     nullModel=nullModel)
+  
+  #if (nrow(classAnnot) != nrow(multiOmics@colData))
+   # warning("Mismatch in the number of samples")
 
   alphas   <- as.numeric(sapply(results, extractPvalues))
   zlists    <- lapply(results, function(x) x$zlist)
