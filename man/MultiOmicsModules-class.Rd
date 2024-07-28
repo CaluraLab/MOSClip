@@ -35,5 +35,7 @@ This class organize the results of the Multi Omics Module Survival Test analysis
 \item{\code{formulas}}{a list, for each module the character of the formula used in the coxph.}
 
 \item{\code{title}}{the name of the pathway.}
+
+\item{\code{analysis}}{The type of analysis done: survival or two-class.}
 }}
 

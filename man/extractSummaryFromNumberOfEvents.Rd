@@ -6,7 +6,9 @@
 \usage{
 extractSummaryFromNumberOfEvents(
   omic,
+  multiOmicObj,
   moduleCox,
+  analysis,
   n = 3,
   minprop = 0.1,
   labels = c("few", "many")

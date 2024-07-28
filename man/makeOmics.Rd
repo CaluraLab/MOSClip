@@ -12,8 +12,7 @@ makeOmics(
   metadata = list(),
   drops = list(),
   modelInfo = character(),
-  specificArgs = list(),
-  pathResult = list()
+  specificArgs = list()
 )
 }
 \arguments{

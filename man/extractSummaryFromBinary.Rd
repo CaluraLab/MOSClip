@@ -4,7 +4,7 @@
 \alias{extractSummaryFromBinary}
 \title{Extract Summary Binary from MultiOmics Objects}
 \usage{
-extractSummaryFromBinary(omic, n = 3)
+extractSummaryFromBinary(omic, multiOmicObj, n = 3)
 }
 \arguments{
 \item{omic}{a summarized omic}
