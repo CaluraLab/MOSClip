@@ -23,7 +23,7 @@ resolveAndOrder <- function(li) {
   for (i in seq_along(li)){
     ref <- intersect(row.names(li[[i]]),ref)
   }
-  lapply(li, function(o) o[match(ref, row.names(o)),])
+  lapply(li, function(o) o[match(ref, row.names(o)), , drop=FALSE])
 }
 
 #' Merge given column from a list of summaries
