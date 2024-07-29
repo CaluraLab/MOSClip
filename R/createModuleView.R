@@ -1,3 +1,30 @@
+#' Create the list of covariates that are going to be tested
+#'
+#' @importFrom methods new
+#' @importFrom survival Surv
+#' @return list with
+#'   1 reduced representation of the omics
+#'   2 sdev
+#'   3 loadings or eigenvector
+#'   4 usedGenes
+#'   5 method
+#'   6 namesCov
+#'   7 omicName
+#'
+createMOMView <- function(omicsObj, genes) {
+  listCovariates <- lapply(seq_along(omicsObj@ExperimentList@listData), function(i) {
+    test <- get(omicsObj@modelInfo[i])
+    specificArgs <- omicsObj@specificArgs[[i]]
+    args <- list(data=omicsObj@ExperimentList@listData[[i]], features=genes)
+    if (!is.null(specificArgs))
+      args <- c(args, specificArgs)
+    do.call(test, args)
+  })
+  
+  listCovariates[!vapply(listCovariates, is.null, logical(1))] 
+}
+
+
 #' Create Cox Object
 #' 
 #' Create the coxObj from the covariates used in the test
