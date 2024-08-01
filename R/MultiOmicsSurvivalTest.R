@@ -46,6 +46,9 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
       # compute cliques
       genesToUse <- intersect(row.names(omicsObj@ExperimentList@listData[[i]]),
                               genesToUse)
+      if (length(genesToUse) == 0)
+        stop("Genes not found in graph nodes")
+      
       graph <- graph::subGraph(genesToUse, graph)
       cliques <- extractCliquesFromDag(graph)
     }
