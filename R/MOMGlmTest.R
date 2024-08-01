@@ -21,7 +21,6 @@ glmTest <- function(data, fullModelFormula, nullModelFormula){
                    df.residual(nullModel)-df.residual(fullModel),
                    lower.tail=FALSE)
 
-
   return(list(pvalue=pvalue, zlist=zlist, data=data))
 }
 
