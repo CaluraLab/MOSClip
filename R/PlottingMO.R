@@ -226,6 +226,7 @@ plotPathwayKM <- function(pathway, formula = "Surv(days, status) ~ PC1",
 #' @param fontsize_row size of the fonts for rows
 #' @param fontsize_col like fontsize_row but for columns
 #' @param nrowsHeatmaps magnification respect to annotation of sample (annotations take 1 row)
+#' @param discr_prop_pca the minimal proportion to compute the pca classes
 #' @param discr_prop_events the minimal proportion to compute the event classes
 #'
 #' @return NULL
