@@ -12,16 +12,15 @@
 #' \item{covsConsidered}{the name of the considered omic}
 #'
 #' @export
-extractSummaryFromBinary <- function(omic, n=3) {
-  moduleMat <- omic$dataModule
+extractSummaryFromBinary <- function(omic, multiOmicObj, n=3) {
+  moduleMat <- createDataModule(omic, multiOmicObj)
   covs <- omic$namesCov
 
   # involved <- head(mostlyMutated(moduleMat), n)
   # sigModule <- omic$dataModule[row.names(involved), , drop=F]
 
-  impact <- lapply(covs, mostlyMutated, moduleMat=t(omic$dataModule),
-                   name=omic$omicName,
-                   eventThr=omic$eventThr)
+  impact <- lapply(covs, mostlyMutated, moduleMat=t(moduleMat),
+                   name=omic$omicName,eventThr=omic$eventThr)
   mostlyImpacted <- lapply(impact, head, n=n)
   involved <- unique(unlist(lapply(mostlyImpacted, row.names)))
   sigModule <- moduleMat[involved, , drop=F]
@@ -52,10 +51,10 @@ extractSummaryFromBinary <- function(omic, n=3) {
 #' \item{covsConsidered}{the name of the considered omic}
 #' @importFrom utils head
 #' @export
-extractSummaryFromCluster <-function(omic, n=3) {
-  moduleMat <- t(omic$dataModule)
+extractSummaryFromCluster <-function(omic, multiOmicObj, n=3) {
+  moduleMat <- createDataModule(omic, multiOmicObj)
   classes <- omic$x[,1]
-  KMsigMat <- KWtest(moduleMat, classes)
+  KMsigMat <- KWtest(t(moduleMat), classes)
 
   # if (is.list(KMsigMat) & !is.data.frame(KMsigMat))
   #   stop("Something wrong 458. Contact maintainer.")
@@ -70,7 +69,7 @@ extractSummaryFromCluster <-function(omic, n=3) {
   names(genes) <- g[,2]
 
   involved <- head(KMsigMat, n)
-  sigModule <- omic$dataModule[row.names(involved), , drop=F]
+  sigModule <- moduleMat[row.names(involved), , drop=F]
   topGenes <- genes[row.names(involved)]
   topGenes <- tapply(names(topGenes), topGenes, paste, collapse=";")
 
@@ -107,16 +106,16 @@ KWtest <- function(moduleMat, classes) {
 #'
 #' @export
 #'
-
-extractSummaryFromPCA <- function(omic, moduleCox, analysis, loadThr=0.6,
-                                  atleast=1, minprop=0.1) {
+extractSummaryFromPCA <- function(omic, multiOmicObj, moduleCox, analysis, 
+                                  loadThr=0.6, atleast=1, minprop=0.1) {
   covs <- omic$namesCov
   lds <- omic$loadings
-  
   discretePC <- createDiscreteClasses(coxObj=moduleCox, covs, analysis,
                                       minprop=minprop)
   topLoad <- extractHighLoadingsGenes(lds, thr=loadThr, atleast=atleast)
-  sigModule <- omic$dataModule[row.names(topLoad), , drop=F]
+  moduleMat <- createDataModule(omic, multiOmicObj)
+  sigModule <- moduleMat[row.names(topLoad), , drop=F]
+
   list(sigModule=sigModule, discrete=discretePC, subset=topLoad,
        covsConsidered=covs)
 }
@@ -213,29 +212,27 @@ collapse <- function(list) {
 #' \item{covsConsidered}{the name of the considered omic}
 #'
 #' @export
-extractSummaryFromNumberOfEvents <- function(omic, moduleCox, analysis, n=3,
-                                             minprop=0.1,
+extractSummaryFromNumberOfEvents <- function(omic, multiOmicObj, moduleCox, 
+                                             analysis, n=3, minprop=0.1,
                                              labels=c("few","many")) {
   covs <- omic$namesCov
-  moduleMat=omic$dataModule
+  moduleMat <- createDataModule(omic, multiOmicObj)
   discreteClass <- createDiscreteClasses(coxObj=moduleCox, covs, analysis,
                                           labels=labels, minprop=minprop)
   numericClass <- retrieveNumericClasses(coxObj=moduleCox, covs, analysis)
 
-  impact <- lapply(covs, mostlyMutated, moduleMat=t(omic$dataModule),
-                   name=omic$omicName,
-                   eventThr = omic$eventThr)
+  impact <- lapply(covs, mostlyMutated, moduleMat=t(moduleMat),
+                   name=omic$omicName, eventThr = omic$eventThr)
 
   mostlyImpacted <- lapply(impact, head, n=n)
   names(mostlyImpacted) <- covs
-
 
   covNames <- lapply(covs, function(cov) {
     rep(cov, length(row.names(mostlyImpacted[[cov]])))
   })
   covNames <- do.call(c, covNames)
   mostlyImpactedGenes <- unlist(lapply(mostlyImpacted, row.names))
-  sigModule <- omic$dataModule[mostlyImpactedGenes, , drop=F]
+  sigModule <- moduleMat[mostlyImpactedGenes, , drop=F]
 
   # involved <- moduleMat[mostlyImpactedGenes, , drop=F]
   covariates <- tapply(covNames, mostlyImpactedGenes,  function(x) x)

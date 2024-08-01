@@ -1,6 +1,7 @@
 Package: biocmosclip
 Title: Multi Omics Survival Clip
 Version: 0.98.0
+Depends: R (>= 3.5.0)
 Authors@R: 
     person(given = "Paolo",
            family = "Martini",
@@ -20,10 +21,12 @@ License: AGPL-3
 Imports: MultiAssayExperiment,methods, survminer, graph,
   graphite, AnnotationDbi, checkmate, ggplot2, gridExtra, igraph,
   pheatmap, survival, RColorBrewer, RCy3, SuperExactTest,
-  reshape, NbClust, S4Vectors, grDevices, graphics, stats, utils
-Suggests: RUnit, BiocGenerics, MASS, BiocStyle, org.Hs.eg.db, knitr, EDAseq, rmarkdown,testthat (>= 3.0.0)
+  reshape, NbClust, S4Vectors, grDevices, graphics, stats, utils, 
+  ComplexHeatmap, FactoMineR, circlize, corpcor, coxrobust,
+  elasticnet, gRbase, ggplotify, qpgraph
+Suggests: RUnit, BiocGenerics, MASS, BiocStyle, org.Hs.eg.db, knitr, EDASeq, rmarkdown,testthat (>= 3.0.0)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 VignetteBuilder: knitr

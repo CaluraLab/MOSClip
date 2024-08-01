@@ -42,8 +42,9 @@ plotPathwayHeat <- function(pathway, sortBy = NULL, paletteNames = NULL,
   annotationFull <- formatAnnotations(involved, sortBy = NULL)
   idx <- which(unlist(lapply(annotationFull, class))=="numeric")
   if (length(idx)>0) {
-    for (i in idx) {annotationFull[,i] <- stats::relevel(
-      as.factor(annotationFull[,i]), ref = "1")}
+    for (i in idx) {
+      annotationFull[,i] <- stats::relevel(
+        as.factor(annotationFull[,i]), ref = "1")}
   }
   
   omics <- guessOmics(colnames(annotationFull))
@@ -73,12 +74,12 @@ plotPathwayHeat <- function(pathway, sortBy = NULL, paletteNames = NULL,
       annot <- as.character(MOSpaletteSchema[discreteColor, c("smart")])
       names(annot) <- values
     } else if (length(values)==2) {
-      annot <- as.character(MOSpaletteSchema[discreteColor,
-                                             c("smart", "light")])
+      annot <- as.character(
+        MOSpaletteSchema[discreteColor, c("smart", "light")])
       names(annot) <- values
     } else if (length(table(annotationFull[, name]))==3) {
-      annot <- as.character(MOSpaletteSchema[discreteColor,
-                                             c("dark", "smart", "light")])
+      annot <- as.character(
+        MOSpaletteSchema[discreteColor, c("dark", "smart", "light")])
       names(annot) <- values
     } else {
       stop("I'm puzzled! Too many values to map")
@@ -98,12 +99,12 @@ plotPathwayHeat <- function(pathway, sortBy = NULL, paletteNames = NULL,
         discreteColor <- additionalPaletteNames[[name]]
         
         if (length(values)==2) {
-          annot <- as.character(MOSpaletteSchema[discreteColor,
-                                                 c("smart", "light")])
+          annot <- as.character(
+            MOSpaletteSchema[discreteColor, c("smart", "light")])
           names(annot) <- values
         } else if (length(table(annotationFull[, name]))==3) {
-          annot <- as.character(MOSpaletteSchema[discreteColor,
-                                                 c("dark", "smart", "light")])
+          annot <- as.character(
+            MOSpaletteSchema[discreteColor, c("dark", "smart", "light")])
           names(annot) <- values
         } else {
           annot <- getContinousPalette(discreteColor, length(values))
@@ -125,16 +126,14 @@ plotPathwayHeat <- function(pathway, sortBy = NULL, paletteNames = NULL,
     heatMatrix <- involved[[n]]$sigModule
     heatMatrix <- heatMatrix[, row.names(annotationFull), drop=F]
     row.names(heatMatrix) <- conversionToSymbols(row.names(heatMatrix), orgDbi)
-    Ht <- Heatmap(heatMatrix, cluster_columns = F, cluster_rows = F,
-                  show_column_names = F,
-                  col = c("#FFFFFF",
-                          rev(as.vector(ann_col
-                                        [involved[[n]]$covsConsidered][[1]]))),
-                  heatmap_legend_param = list(title = NULL))
+    Ht <- Heatmap(
+      heatMatrix, cluster_columns = F, cluster_rows = F, show_column_names = F,
+      heatmap_legend_param = list(title = NULL), col = c("#FFFFFF", 
+              rev(as.vector(ann_col[involved[[n]]$covsConsidered][[1]]))))
     ht_list = ht_list %v% Ht}
   suppressMessages(ComplexHeatmap::draw(ht_list, legend_grouping = "original"))
-  gb <- grid::grid.grabExpr(ComplexHeatmap::draw(ht_list,
-                                                 legend_grouping = "original"))
+  gb <- grid::grid.grabExpr(ComplexHeatmap::draw(
+    ht_list, legend_grouping = "original"))
   gb <- ggplotify::as.ggplot(gb)
   invisible(gb)
 }
@@ -168,25 +167,25 @@ plotPathwayHeat <- function(pathway, sortBy = NULL, paletteNames = NULL,
 #' 
 #' @export
 plotPathwayKM <- function(pathway, formula = "Surv(days, status) ~ PC1",
-                          fileName=NULL, paletteNames = NULL,
-                          h = 9, w=7, risk.table=TRUE, pval=TRUE, size=1,
-                          inYears=FALSE,
+                          fileName=NULL, paletteNames = NULL, h = 9, w=7, 
+                          risk.table=TRUE, pval=TRUE, size=1, inYears=FALSE,
                           discr_prop_pca=0.15, discr_prop_events=0.05,
-                          additional_discrete=NULL,
-                          additional_continous=NULL) {
+                          additional_discrete=NULL, additional_continous=NULL) {
   
   checkmate::assertClass(pathway, "MultiOmicsPathway")
   
   involved <- guessInvolvementPathway(pathway,min_prop_pca=discr_prop_pca,
                                       min_prop_events=discr_prop_events)
   annotationFull <- formatAnnotations(involved, sortBy=NULL)
-  daysAndStatus <- pathway@coxObj[, c("status", "days"), drop=F]
+  multiOmicObj <- get(pathway@multiOmicObj)
+  coxObj <- createCoxObj(multiOmicObj@colData, pathway@pathView)
+  daysAndStatus <- coxObj[, c("status", "days"), drop=F]
   
   if (inYears)
     daysAndStatus$days <- daysAndStatus$days/365.24
   
-  coxObj <- data.frame(daysAndStatus, annotationFull[row.names(daysAndStatus), ,
-                                                     drop=F])
+  coxObj <- data.frame(daysAndStatus, 
+                       annotationFull[row.names(daysAndStatus), , drop=F])
   
   fit <- survminer::surv_fit(formula(formula), data = coxObj)
   
@@ -265,8 +264,9 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
   annotationFull <- formatAnnotations(involved, sortBy = NULL)
   idx <- which(unlist(lapply(annotationFull, class))=="numeric")
   if (length(idx)>0) {
-    for (i in idx) {annotationFull[,i] <- stats::relevel(
-      as.factor(annotationFull[,i]), ref="1")}
+    for (i in idx) {
+      annotationFull[,i] <- stats::relevel(
+        as.factor(annotationFull[,i]), ref="1")}
   }
   
   omics <- guessOmics(colnames(annotationFull))
@@ -295,12 +295,12 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
       annot <- as.character(MOSpaletteSchema[discreteColor, c("smart")])
       names(annot) <- values
     } else if (length(values)==2) {
-      annot <- as.character(MOSpaletteSchema[discreteColor,
-                                             c("smart", "light")])
+      annot <- as.character(
+        MOSpaletteSchema[discreteColor, c("smart", "light")])
       names(annot) <- values
     } else if (length(table(annotationFull[, name]))==3) {
-      annot <- as.character(MOSpaletteSchema[discreteColor,
-                                             c("dark", "smart", "light")])
+      annot <- as.character(
+        MOSpaletteSchema[discreteColor, c("dark", "smart", "light")])
       names(annot) <- values
     } else {
       stop("I'm puzzled! Too many values to map")
@@ -320,12 +320,12 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
         discreteColor <- additionalPaletteNames[[name]]
         
         if (length(values)==2) {
-          annot <- as.character(MOSpaletteSchema[discreteColor,
-                                                 c("smart", "light")])
+          annot <- as.character(
+            MOSpaletteSchema[discreteColor, c("smart", "light")])
           names(annot) <- values
         } else if (length(table(annotationFull[, name]))==3) {
-          annot <- as.character(MOSpaletteSchema[discreteColor,
-                                                 c("dark", "smart", "light")])
+          annot <- as.character(
+            MOSpaletteSchema[discreteColor, c("dark", "smart", "light")])
           names(annot) <- values
         } else {
           # annot <- getContinousPalette(discreteColor, length(values))
@@ -349,16 +349,16 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
     heatMatrix <- involved[[n]]$sigModule
     heatMatrix <- heatMatrix[, row.names(annotationFull), drop=F]
     row.names(heatMatrix) <- conversionToSymbols(row.names(heatMatrix), orgDbi)
-    Ht <- Heatmap(heatMatrix,
-                 cluster_columns = F, cluster_rows = F,
-                 show_column_names = F,
-                 col = c("#FFFFFF", as.vector(ann_col[[
-                   involved[[n]]$covsConsidered[1]]])),
-                 heatmap_legend_param = list(title = NULL))
+    Ht <- Heatmap(heatMatrix, cluster_columns = F, cluster_rows = F,
+                 show_column_names = F, 
+                 heatmap_legend_param = list(title = NULL),
+                 col = c("#FFFFFF", 
+                         as.vector(ann_col[[involved[[n]]$covsConsidered[1]]]))
+                 )
     ht_list = ht_list %v% Ht}
   suppressMessages(ComplexHeatmap::draw(ht_list, legend_grouping = "original"))
-  gb = grid::grid.grabExpr(ComplexHeatmap::draw(ht_list,
-                                                legend_grouping = "original"))
+  gb = grid::grid.grabExpr(ComplexHeatmap::draw(
+    ht_list, legend_grouping = "original"))
   # invisible(ht_list)
   return(gb)
 }
@@ -407,58 +407,56 @@ plotModuleKM <- function(pathway, moduleNumber,
                                min_prop_pca = discr_prop_pca,
                                min_prop_events = discr_prop_events)
   
+  multiOmicObj <- get(pathway@multiOmicObj)
+  coxObj <- createCoxObj(
+    multiOmicObj@colData, pathway@modulesView[[moduleNumber]])
   annotationFull <- formatAnnotations(involved, sortBy=NULL)
   
   days_status_names <- c("status", "days")
   
-  daysAndStatus <- pathway@coxObjs[[moduleNumber]][, days_status_names, drop=F]
+  daysAndStatus <- coxObj[, days_status_names, drop=F]
   if (inYears)
     daysAndStatus$days <- daysAndStatus$days/365.24
   
   additional_clinic = NULL
   if (!is.null(additional_discrete)){
-    not_found <- setdiff(additional_discrete,
-                         colnames(pathway@coxObjs[[moduleNumber]]))
+    not_found <- setdiff(additional_discrete, colnames(coxObj))
     if (length(not_found) > 0)
-      stop(paste0("Some discrete variables were not found: ",
+      stop(paste0("Some discrete variables were not found: ", 
                   paste(not_found, collapse = ", ", "\n"),
-                  "We found the following variables: ",
-                  paste(colnames(pathway@coxObjs[[moduleNumber]]),
-                        collapse = ", ")))
+                  "We found the following variables: ", 
+                  paste(colnames(coxObj), collapse = ", ")))
     
     fixed_covs <- setdiff(additional_discrete, colnames(annotationFull))
-    additional_clinic <- pathway@coxObjs[[moduleNumber]][
-      row.names(daysAndStatus), fixed_covs, drop=F]
+    additional_clinic <- coxObj[row.names(daysAndStatus), fixed_covs, drop=F]
   }
   
   if (!is.null(additional_continous)){
-    not_found <- setdiff(additional_continous,
-                         colnames(pathway@coxObjs[[moduleNumber]]))
+    not_found <- setdiff(additional_continous, colnames(coxObj))
     if (length(not_found) > 0)
-      stop(paste0("Some continous variables were not found: ",
+      stop(paste0("Some continous variables were not found: ", 
                   paste(not_found, collapse = ", ", "\n"),
-                  "We found the following variables: ",
-                  paste(colnames(pathway@coxObjs[[moduleNumber]]),
-                        collapse = ", ")))
+                  "We found the following variables: ", 
+                  paste(colnames(coxObj), collapse = ", ")))
     
     fixed_covs <- setdiff(additional_continous, colnames(annotationFull))
-    df <- cbind(daysAndStatus, pathway@coxObjs[[moduleNumber]][
-      row.names(daysAndStatus), fixed_covs, drop=F])
+    df <- cbind(
+      daysAndStatus, coxObj[row.names(daysAndStatus), fixed_covs, drop=F])
     discretized_covs <- createDiscreteClasses(df, fixed_covs)
     
     if (!is.null(additional_clinic)){
-      additional_clinic <- cbind(additional_clinic,
-                                 discretized_covs[, fixed_covs, drop=F])
+      additional_clinic <- cbind(
+        additional_clinic, discretized_covs[, fixed_covs, drop=F])
     } else {
       additional_clinic <- discretized_covs[, fixed_covs, drop=F]
     }
   }
   
   if (is.null(additional_clinic)){
-    coxObj <- data.frame(daysAndStatus,
+    coxObj <- data.frame(daysAndStatus, 
                          annotationFull[row.names(daysAndStatus), , drop=F])
   } else {
-    coxObj <- data.frame(daysAndStatus,
+    coxObj <- data.frame(daysAndStatus, 
                          annotationFull[row.names(daysAndStatus), , drop=F],
                          additional_clinic)
   }
@@ -480,7 +478,7 @@ plotModuleKM <- function(pathway, moduleNumber,
       }
     }
   }
-  
+
   p <- survminer::ggsurvplot(fit, data = coxObj, risk.table = risk.table,
                              pval=pval, palette=unname(palette), size=size)
   
