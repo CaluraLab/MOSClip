@@ -56,6 +56,10 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
     if (omicsObj@modelInfo[i]=="summarizeWithPca") {
       genesToUse <- intersect(row.names(omicsObj@ExperimentList@listData[[i]]),
                               genesToUse)
+      if (identical(genesToUse, character(0))) {
+        stop(paste0("This data ", omicsObj@ExperimentList@listData[[i]],
+                    "have no genes for this pathway"))
+      }
       graph <- graph::subGraph(genesToUse, graph)
       cliques <- extractCliquesFromDag(graph)
     } 
@@ -63,7 +67,9 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
                  features=genesToUse, cliques=cliques)
     if (!is.null(specificArgs))
       args <- c(args, specificArgs)
+    do.call(test, args)
   })
+  
   moduleView <- moduleView[!sapply(moduleView, is.null)]
   covariates <- lapply(moduleView, function(mo) {
     mo$x
@@ -72,6 +78,8 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
   moduleData <- lapply(moduleView, function(mo) {
     mo$dataModule
   })
+  
+  covariates <- do.call(cbind, covariates)
 
   if (is.null(covariates))
     return(NULL)
@@ -80,8 +88,11 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
     stop("Mismatch in covariates and classes annotations rownames.")
 
   dataTest <- data.frame(classAnnot, covariates)
-
-
+  
+  # nullModelFormula <- paste0(baseFormula,"1")
+  nullModelFormula <- nullModel
+  
+  dependentVar <- all.vars(as.formula(nullModelFormula))[1]
   if(!(dependentVar %in% colnames(dataTest)))
     stop(paste0("Data does not contain the model dependent variable: ",
                 dependentVar))
@@ -159,7 +170,6 @@ multiOmicsTwoClassesModuleTest <- function(omicsObj, graph, classAnnot,
     pathName <- graph@title
 
   graph <- convertPathway(graph, useThisGenes)
-
   genes <- graph::nodes(graph)
   if (length(genes) == 0)
     stop("There is no intersection between expression feature names and
