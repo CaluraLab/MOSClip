@@ -6,7 +6,9 @@
 \usage{
 extractSummaryFromPCA(
   omic,
+  multiOmicObj,
   moduleCox,
+  analysis,
   loadThr = 0.6,
   atleast = 1,
   minprop = 0.1

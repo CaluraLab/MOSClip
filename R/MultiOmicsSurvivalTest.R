@@ -18,7 +18,7 @@
 #' @importFrom survival Surv
 #' @export
 
-multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
+multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
                                           survFormula = "Surv(days, status) ~",
                                           autoCompleteFormula=T,
                                           useThisGenes=NULL,
@@ -35,7 +35,7 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
     stop("There is no nodes on the graph.")
 
   # cicle over the datasets (expression, methylation ...)
-  moduleView <- lapply(seq_along(omicsObj@ExperimentList@listData), function(i) {
+  pathView <- lapply(seq_along(omicsObj@ExperimentList@listData), function(i) {
 
     test <- get(omicsObj@modelInfo[i])
     specificArgs <- omicsObj@specificArgs[[i]]
@@ -59,33 +59,16 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
     do.call(test, args)
   })
 
+  pathView <- pathView[!vapply(pathView, is.null, logical(1))]
 
-  moduleView <- moduleView[!sapply(moduleView, is.null)] # change sapply in vapply
-
-  covariates <- lapply(moduleView, function(mo) mo$x) # extract all the vocariates
-
-  moduleData <- lapply(moduleView, function(mo) mo$dataModule) # extract all the intersting values of the pathways
-
-  usedGenes <- lapply(moduleView, function(mo) mo$usedGenes) ##
-
-  covariates <- do.call(cbind, covariates)
-
-  if (is.null(covariates))
-    return(NULL)
-
-  if (!identical(row.names(colData(omicsObj)), row.names(covariates)))
-    stop("Mismatch in covariates and annot annotations rownames.")
-
-  coxObj <- data.frame(omicsObj@colData, covariates)
-
-  formula = survFormula
-
-  add_covs <- colnames(covariates)
+  coxObj <- createCoxObj(omicsObj@colData, pathView)
+  add_covs <- unlist(lapply(pathView, function(mo) {mo$namesCov}))
   if (include_from_annot) {
     add_annot_covs <- colnames(omicsObj@colData)[!colnames(omicsObj@colData) %in% c("days", "status")]
     add_covs <- c(add_covs, add_annot_covs)
   }
 
+  formula = survFormula
   if (autoCompleteFormula)
     formula = paste0(survFormula, paste(add_covs, collapse="+"))
 
@@ -94,9 +77,14 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph, annot,
   } else {
     scox <- suppressWarnings(survivalcox(coxObj, formula)) ### Check warnings
   }
-  new("MultiOmicsPathway", pvalue=scox$pvalue, zlist=scox$zlist,
-      coxObj=scox$coxObj, pathView=moduleView, usedGenes=usedGenes,
-      formula=formula, title=pathName, analysis="survival")
+
+  new("MultiOmicsPathway", 
+      pvalue=scox$pvalue, 
+      zlist=scox$zlist, 
+      pathView=pathView, 
+      analysis="survival", 
+      multiOmicObj=deparse(substitute(omicsObj)),
+      title=pathName)
 }
 
 #' Compute Multi Omics Survival in Pathway Modules
@@ -147,14 +135,15 @@ multiOmicsSurvivalModuleTest <- function(omicsObj, graph,
   alphas   <- as.numeric(sapply(results, extractPvalues))
   zlist    <- lapply(results, function(x) x$zlist)
   momics   <- lapply(results, function(x) x$moView)
-  coxObjs  <- lapply(results, function(x) x$coxObj)
-  moduleData <- lapply(results, function(x) x$moduleData)
-  usedGenes  <- lapply(results, function(x) x$usedGenes)
   modules  <- cliques
-  formulas <- lapply(results, function(x) x$formula)
 
   names(alphas) <- NULL
-  new("MultiOmicsModules", alphas=alphas, zlists=zlist, coxObjs=coxObjs,
-      modulesView=momics, usedGenes=usedGenes, modules=modules,
-      formulas=formulas, title=pathName, analysis = "survival")
+  new("MultiOmicsModules", 
+      alphas=alphas, 
+      zlists=zlist, 
+      modulesView=momics, 
+      modules=modules, 
+      analysis="survival",
+      multiOmicObj=deparse(substitute(omicsObj)),
+      title=pathName)
 }

@@ -48,7 +48,7 @@ summarizeToBinaryEvents <- function(data, features, name="bin",
 
   collapsed <- data.frame(collapsed, row.names = names(collapsed), stringsAsFactors = F)
   colnames(collapsed) <- name
-  list(x=collapsed, dataModule=t(dataClique), usedGenes=genes, namesCov=name,
+  list(x=collapsed, usedGenes=genes, namesCov=name,
        method="binary", omicName=name, eventThr=1)
 }
 
@@ -89,7 +89,7 @@ summarizeToNumberOfEvents <- function(data, features, name="event", min_prop=0.1
 
   collapsed <- data.frame(collapsed, row.names = names(collapsed), stringsAsFactors = F)
   colnames(collapsed) <- name
-  list(x=collapsed, dataModule=t(dataClique), usedGenes=genes, namesCov=name, method="count", omicName=name,
+  list(x=collapsed, usedGenes=genes, namesCov=name, method="count", omicName=name,
        eventThr = 1, min_prop=min_prop)
 }
 
@@ -150,7 +150,7 @@ summarizeInCluster <- function(data, features, name="clu", dictionary=NULL, max_
   }
 
   collapse=covs
-  list(x=collapse, dataModule=t(datamatClique), usedGenes=features, namesCov=names(covs), cls=used, method="cluster", omicName=name)
+  list(x=collapse, usedGenes=names(used), namesCov=names(covs), cls=used, method="cluster", omicName=name)
 }
 
 createOptiomalClusterClasses <- function(datamatClique, name, max_cluster_number, index_method="silhouette") {
@@ -242,7 +242,7 @@ summarizeInClusterWithoutDictionary <- function(data, features, name="clu", cliq
     return(NULL)
   }
 
-  list(x=covs, dataModule=t(datamatClique), namesCov=names(covs), cls=used, method="cluster", omicName=name)
+  list(x=covs, namesCov=names(covs), cls=used, method="cluster", omicName=name)
 }
 
 #' Summarize Using PCA
@@ -283,7 +283,6 @@ summarizeWithPca <- function(data, features, name="pca", shrink=FALSE, method="r
     pcs <- list(x=dataClique, sdev=sd(dataClique), loadings=1)
   }
 
-  pcs$dataModule <- t(dataClique)
   pcs$usedGenes <- genes
   pcs$method="pca"
   pcs$namesCov=colnames(pcs$x)
@@ -333,7 +332,7 @@ summarizeToNumberOfDirectionalEvents <- function(data, features, name="dCount", 
 
   if (NCOL(collapsed) == 0)
     return(NULL)
-  list(x=collapsed, dataModule=t(dataClique), namesCov=names(collapsed),
+  list(x=collapsed, usedGenes=genes, namesCov=names(collapsed),
        method="directedCount", omicName=name, eventThr=eventThr, min_prop=min_prop)
 }
 
@@ -393,6 +392,6 @@ summarizeToBinaryDirectionalEvents <- function(data, features, name="dirBin", bi
 
   if (NCOL(collapsed) == 0)
     return(NULL)
-  list(x=collapsed, dataModule=t(dataClique), namesCov=names(collapsed),
+  list(x=collapsed, usedGenes=genes, namesCov=names(collapsed),
        method="directedBinary", omicName=name, eventThr=eventThr)
 }

@@ -31,5 +31,7 @@ This class organize the results of the Multi Omics Module Survival Test analysis
 \item{\code{pathView}}{a list, for each omic the pathway data, the method used and the covariate analyzed.}
 
 \item{\code{title}}{the name of the pathway.}
+
+\item{\code{analysis}}{The type of analysis done: survival or two-class.}
 }}
 

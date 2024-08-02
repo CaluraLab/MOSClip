@@ -17,7 +17,7 @@ setClassUnion("characterOrNULL", c("character", "NULL"))
 #' @param pathResult a list containing pathways result
 #' @export
 #' @importFrom S4Vectors DataFrame
-Omics <- function(experiments = ExperimentList(),
+makeOmics <- function(experiments = ExperimentList(),
                   colData = S4Vectors::DataFrame(),
                   sampleMap = S4Vectors::DataFrame(
                      assay = factor(),
@@ -26,8 +26,7 @@ Omics <- function(experiments = ExperimentList(),
                   metadata = list(),
                   drops = list(),
                   modelInfo= character(),
-                  specificArgs= list(),
-                  pathResult= list())
+                  specificArgs= list())
    {
    if (missing(sampleMap)) {
       if (missing(colData)){
@@ -91,8 +90,7 @@ Omics <- function(experiments = ExperimentList(),
        sampleMap = MAE@sampleMap,
        metadata = MAE@metadata,
        modelInfo = modelInfo,
-       specificArgs = specificArgs,
-       pathResult = pathResult)
+       specificArgs = specificArgs)
 }
 
 
@@ -134,14 +132,14 @@ setMethod("showOmics",  signature(object = "Omics"),
 
 
 #' A generic function showing pathway's module info
-#' @param object an object of class MultiOmicsModule
+#' @param object an object of class MultiOmicsModules
 #' @export
 setGeneric("showModule", function(object)
    standardGeneric("showModule") )
 
 #' @export
-#' @describeIn MultiOmicsModule shows module info
-#' @param object an object of class MultiOmicsModule
+#' @describeIn MultiOmicsModules shows module info
+#' @param object an object of class MultiOmicsModules
 setMethod("showModule",
           signature = "MultiOmicsModules",
           definition = function(object){

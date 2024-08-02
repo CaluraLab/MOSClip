@@ -13,19 +13,18 @@ setClassUnion("characterOrNULL", c("character", "NULL"))
 #' @slot formulas a list, for each module the character of the formula used in the coxph.
 #' @slot title the name of the pathway.
 #' @slot analysis The type of analysis done: survival or two-class.
-#' @name MultiOmicsModule-class
-#' @rdname MultiOmicsModule-class
+#' @name MultiOmicsModules-class
+#' @rdname MultiOmicsModules-class
 #'
 setClass(Class ="MultiOmicsModules",
          slots = c(alphas  = "numeric",
                    zlists  = "list",
-                   coxObjs = "list",
                    modulesView  = "list",
-                   usedGenes = "list",
                    modules     = "list",
-                   formulas = "list",
-                   title = "characterOrNULL",
-                   analysis = "characterOrNULL"))
+                   analysis = "characterOrNULL",
+                   multiOmicObj = "characterOrNULL",
+                   title = "characterOrNULL"))
+
 
 #' Multi Omics Pathway.
 #'
@@ -37,26 +36,24 @@ setClass(Class ="MultiOmicsModules",
 #' @slot pathView a list, for each omic the pathway data, the method used and the covariate analyzed.
 #' @slot title the name of the pathway.
 #' @slot analysis The type of analysis done: survival or two-class.
-#'
 #' @name MultiOmicsPathway-class
 #' @rdname MultiOmicsPathway-class
 #'
-
-
 setClass(Class ="MultiOmicsPathway",
          slots = c(pvalue = "numeric",
                    zlist = "numeric",
-                   coxObj = "data.frame",
                    pathView = "list",
-                   usedGenes = "list",
-                   formula = "character",
-                   title = "characterOrNULL",
-                   analysis = "characterOrNULL"))
+                   analysis = "characterOrNULL",
+                   multiOmicObj = "characterOrNULL",
+                   title = "characterOrNULL"))
+
 
 # setClass(Class ="SinglePath", package = "biocmosclip",
 #          slots = c(global = "MultiOmicsPathway",
 #                    modules = "MultiOmicsModules"))
 
+#' Omics.
+#' 
 #' This class is the storage for the different omic datasets that we need to analyze.
 #'
 #' @slot modelInfo a list with length equal to length(data) that are modelInfo to process each dataset.
@@ -70,7 +67,7 @@ setClass(Class ="MultiOmicsPathway",
 Omics <- setClass(Class = "Omics", package = "biocmosclip",
 
                   slots = c(modelInfo = "character",
-                            specificArgs = "list",
-                            pathResult = "list"),
+                            specificArgs = "list"),
                   contains = "MultiAssayExperiment"
 )
+

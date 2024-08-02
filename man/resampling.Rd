@@ -6,7 +6,7 @@
 \alias{mergeCol}
 \alias{filterExpr}
 \alias{filterMultiOmicsForSamples}
-\alias{resampling}
+\alias{preparePerms}
 \title{Check if all the list object have the same order of pathway module}
 \usage{
 checkOrder(li)
@@ -19,13 +19,7 @@ filterExpr(exp, samples)
 
 filterMultiOmicsForSamples(MO, samples)
 
-resampling(
-  fullMultiOmics,
-  pathdb,
-  nperm = 100,
-  pathwaySubset = NULL,
-  nPatients = 3
-)
+preparePerms(fullMultiOmics, nperm = 100, nPatients = 3)
 }
 \arguments{
 \item{li}{a list of summaries}
@@ -42,11 +36,7 @@ resampling(
 
 \item{fullMultiOmics}{a multiOmic object}
 
-\item{pathdb}{pathway database}
-
-\item{nperm}{number of permutation}
-
-\item{pathwaySubset}{a list of pathways to resample}
+\item{nperm}{number of permutations}
 
 \item{nPatients}{number of patients to remove for resampling}
 }
@@ -57,7 +47,7 @@ a filtered matrix
 
 a filtered MultiOmics objects
 
-list of the resampling tables of results
+list of sampled patients for each permutation
 }
 \description{
 For internal use only
@@ -69,4 +59,6 @@ For internal use only
 For internal use only
 
 For internal use only
+
+Prepare subset of patients for permutations
 }

@@ -4,7 +4,7 @@
 \alias{extractSummaryFromCluster}
 \title{Extract Summary CLuster from MultiOmics Objects}
 \usage{
-extractSummaryFromCluster(omic, n = 3)
+extractSummaryFromCluster(omic, multiOmicObj, n = 3)
 }
 \arguments{
 \item{omic}{a summarized omic}

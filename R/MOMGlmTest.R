@@ -8,20 +8,21 @@
 #' @importFrom stats glm poisson pchisq deviance df.residual na.omit
 glmTest <- function(data, fullModelFormula, nullModelFormula){
 
-  glmRes <- glm(as.formula(fullModelFormula), family="binomial", data=na.omit(data))
+  glmRes <- glm(as.formula(fullModelFormula), family="binomial", 
+                data=na.omit(data))
   glmSummary <- summary(glmRes)
   zlist <- glmSummary$coefficients[,"Pr(>|z|)"][-1]
   names(zlist) <- row.names(glmSummary$coefficients)[-1]
 
   # test
-  fullModel=glm(as.formula(fullModelFormula), family=poisson, data=data)  # full model
-  nullModel=glm(as.formula(nullModelFormula), family=poisson, data=data) # null model
+  fullModel=glm(as.formula(fullModelFormula), family=poisson, data=data)  
+  nullModel=glm(as.formula(nullModelFormula), family=poisson, data=data) 
   pvalue <- pchisq(deviance(nullModel)-deviance(fullModel),
                    df.residual(nullModel)-df.residual(fullModel),
                    lower.tail=FALSE)
 
 
-  return(list(pvalue=pvalue, zlist=zlist, data=data))
+  return(list(pvalue=pvalue, zlist=zlist))
 }
 
 #' @importFrom methods new
@@ -53,8 +54,14 @@ MOMglmTest <- function(genes, omicsObj, classAnnot,
   if (is.null(additionalCovariates))
     return(NULL)
 
-  if (!identical(row.names(classAnnot), row.names(additionalCovariates)))
-    stop("Mismatch in covariates and annotations row names.")
+  if (!identical(row.names(classAnnot), row.names(additionalCovariates))) {
+    if (all(row.names(classAnnot) %in% row.names(additionalCovariates))) {
+      res <- resolveAndOrder(list(classAnnot = classAnnot, 
+                                  additionalCovariates = additionalCovariates))
+      classAnnot = res$classAnnot
+      additionalCovariates = res$additionalCovariates 
+      } 
+    else {stop("Mismatch in covariates and annotations row names.") }}
 
   dataTest <- data.frame(classAnnot, additionalCovariates)
 
@@ -63,7 +70,8 @@ MOMglmTest <- function(genes, omicsObj, classAnnot,
 
   dependentVar <- all.vars(as.formula(nullModelFormula))[1]
   if(!(dependentVar %in% colnames(dataTest)))
-    stop(paste0("Data does not contain the model dependent variable: ",dependentVar))
+    stop(paste0("Data does not contain the model dependent variable: ", 
+                dependentVar))
 
   twoClasses <- unique(dataTest[,dependentVar])
   if(length(twoClasses) != 2)
@@ -79,12 +87,11 @@ MOMglmTest <- function(genes, omicsObj, classAnnot,
 
   fullModelFormula = baseFormula
   if (autoCompleteFormula)
-    fullModelFormula = paste0(baseFormula, paste(colnames(additionalCovariates), collapse="+"))
+    fullModelFormula = paste0(baseFormula, paste(colnames(additionalCovariates), 
+                                                 collapse="+"))
 
   res <- suppressWarnings(glmTest(dataTest, fullModelFormula, nullModelFormula))
 
   res$moView <- moView
-  res$formula <- fullModelFormula
-  res$dataTest <- dataTestOut
   res
 }
