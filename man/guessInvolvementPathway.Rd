@@ -10,7 +10,8 @@ guessInvolvementPathway(
   n = 3,
   atleast = 1,
   min_prop_pca = 0.1,
-  min_prop_events = 0.1
+  min_prop_events = 0.1,
+  ...
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ guessInvolvementPathway(
 \item{min_prop_pca}{the minimal proportion to compute the pca classes}
 
 \item{min_prop_events}{the minimal proportion to compute the event classes}
+
+\item{...}{additional arguments passed to \code{get} function}
 }
 \value{
 For each omic analyzed a list that is the summary for omic summarized using the setted method: pvalues are present only for cluster method.

@@ -12,7 +12,8 @@ plotModuleInGraph(
   legendLabels = NULL,
   fileName = NULL,
   discr_prop_pca = 0.15,
-  discr_prop_events = 0.05
+  discr_prop_events = 0.05,
+  ...
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ plotModuleInGraph(
 \item{discr_prop_pca}{the minimal proportion to compute the pca classes}
 
 \item{discr_prop_events}{the minimal proportion to compute the event classes}
+
+\item{...}{additional arguments passed to \code{guessInvolvement} function}
 }
 \description{
 Given the pathway, it creates the Kaplan-meier curves following the formula.

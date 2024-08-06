@@ -18,7 +18,8 @@ plotModuleHeat(
   nrowsHeatmaps = 3,
   orgDbi = "org.Hs.eg.db",
   discr_prop_pca = 0.15,
-  discr_prop_events = 0.05
+  discr_prop_events = 0.05,
+  ...
 )
 }
 \arguments{
@@ -43,6 +44,8 @@ plotModuleHeat(
 \item{nrowsHeatmaps}{magnification respect to annotation of sample (annotations take 1 row)}
 
 \item{discr_prop_events}{the minimal proportion to compute the event classes}
+
+\item{...}{additional arguments passed to \code{guessInvolvement} function}
 }
 \description{
 Given the pathway and the module, it creates the heatmaps of the mostly involved genes for each omic.

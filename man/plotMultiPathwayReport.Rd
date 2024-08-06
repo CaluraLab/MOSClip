@@ -23,7 +23,7 @@ The colors should be among the colors in \code{showMOSpalette()}}
 
 \item{priority_to}{a vector with the covariates (omic name) that should go first}
 
-\item{\dots}{additional argument to be passed to pheatmap}
+\item{...}{additional arguments to be passed to \code{pheatmap}}
 }
 \description{
 Given the list of MOPs, it plots the table.

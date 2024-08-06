@@ -14,7 +14,8 @@ plotPathwayHeat(
   discr_prop_events = 0.05,
   withSampleNames = TRUE,
   nrowsHeatmaps = 3,
-  orgDbi = "org.Hs.eg.db"
+  orgDbi = "org.Hs.eg.db",
+  ...
 )
 }
 \arguments{
@@ -35,6 +36,8 @@ plotPathwayHeat(
 \item{withSampleNames}{create also the samples names}
 
 \item{nrowsHeatmaps}{magnification respect to annotation of sample (annotations take 1 row)}
+
+\item{...}{additional arguments passed to \code{guessInvolvementPathway} function}
 }
 \description{
 Given the pathway, it creates the heatmaps of the mostly involved genes for each omic.

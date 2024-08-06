@@ -18,7 +18,8 @@ plotPathwayKM(
   discr_prop_pca = 0.15,
   discr_prop_events = 0.05,
   additional_discrete = NULL,
-  additional_continous = NULL
+  additional_continous = NULL,
+  ...
 )
 }
 \arguments{
@@ -49,6 +50,8 @@ plotPathwayKM(
 \item{additional_discrete}{names of the additional discrete variables to include}
 
 \item{additional_continous}{names of the additional continous variables to include}
+
+\item{...}{additional arguments passed to \code{guessInvolvementPathway} and \code{get} function}
 }
 \description{
 Given the pathway, it creates the Kaplan-meier curves following the formula.
