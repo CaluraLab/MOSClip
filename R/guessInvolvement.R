@@ -9,6 +9,7 @@
 #' @param atleast the minimum number of features to select (PCA only)
 #' @param min_prop_pca the minimal proportion to compute the pca classes
 #' @param min_prop_events the minimal proportion to compute the event classes
+#' @param ... additional arguments passed to `get` function
 #'
 #' @return For each omic analyzed a list that is the summary for omic summarized using the setted method: pvalues are present only for cluster method.
 #' \item{sigModule}{the original data for significant features}
@@ -19,8 +20,8 @@
 #'
 #' @export
 guessInvolvement <- function(pathway, moduleNumber, loadThr=0.6, n=3, atleast=1,
-                             min_prop_pca=0.1, min_prop_events=0.1) {
-  multiOmicObj <- get(pathway@multiOmicObj)
+                             min_prop_pca=0.1, min_prop_events=0.1, ...) {
+  multiOmicObj <- get(pathway@multiOmicObj, ...)
   omics <- pathway@modulesView[[moduleNumber]]
   moduleCox <- createCoxObj(multiOmicObj@colData, moView=omics)
   analysis <- pathway@analysis
@@ -52,6 +53,7 @@ guessInvolvement <- function(pathway, moduleNumber, loadThr=0.6, n=3, atleast=1,
 #' @param atleast the minimum number of features to select (PCA only)
 #' @param min_prop_pca the minimal proportion to compute the pca classes
 #' @param min_prop_events the minimal proportion to compute the event classes
+#' @param ... additional arguments passed to `get` function
 #' 
 #'
 #' @return For each omic analyzed a list that is the summary for omic summarized using the setted method: pvalues are present only for cluster method.
@@ -63,9 +65,10 @@ guessInvolvement <- function(pathway, moduleNumber, loadThr=0.6, n=3, atleast=1,
 #'
 #' @export
 guessInvolvementPathway <- function(pathway, loadThr=0.6, n=3, atleast=1,
-                                     min_prop_pca=0.1, min_prop_events=0.1) {
+                                    min_prop_pca=0.1, 
+                                    min_prop_events=0.1, ...) {
   
-  multiOmicObj <- get(pathway@multiOmicObj)
+  multiOmicObj <- get(pathway@multiOmicObj, ...)
   omics <- pathway@pathView
   moduleCox <- createCoxObj(multiOmicObj@colData, moView=omics)
   analysis <- pathway@analysis

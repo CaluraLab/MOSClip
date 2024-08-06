@@ -11,6 +11,7 @@
 #' @param discr_prop_events the minimal proportion to compute the event classes
 #' @param withSampleNames create also the samples names
 #' @param nrowsHeatmaps magnification respect to annotation of sample (annotations take 1 row)
+#' @param ... additional arguments passed to `guessInvolvementPathway` function
 #'
 #' @return NULL
 #' 
@@ -26,12 +27,12 @@ plotPathwayHeat <- function(pathway, sortBy = NULL, paletteNames = NULL,
                             additionalPaletteNames = NULL,
                             discr_prop_pca = 0.15, discr_prop_events = 0.05,
                             withSampleNames = TRUE, nrowsHeatmaps = 3, 
-                            orgDbi = "org.Hs.eg.db") {
+                            orgDbi = "org.Hs.eg.db", ...) {
   
   checkmate::assertClass(pathway, "MultiOmicsPathway")
   
   involved <- guessInvolvementPathway(pathway, min_prop_pca = discr_prop_pca,
-                                      min_prop_events = discr_prop_events)
+                                      min_prop_events = discr_prop_events, ...)
   
   if(length(paletteNames)!=length(involved)) {
     repTimes <- ceiling(length(involved)/length(paletteNames))
@@ -156,6 +157,7 @@ plotPathwayHeat <- function(pathway, sortBy = NULL, paletteNames = NULL,
 #' @param discr_prop_events the minimal proportion to compute the event classes
 #' @param additional_discrete names of the additional discrete variables to include
 #' @param additional_continous names of the additional continous variables to include
+#' @param ... additional arguments passed to `guessInvolvementPathway` and `get` function
 #'
 #' @return NULL
 #'
@@ -170,14 +172,15 @@ plotPathwayKM <- function(pathway, formula = "Surv(days, status) ~ PC1",
                           fileName=NULL, paletteNames = NULL, h = 9, w=7, 
                           risk.table=TRUE, pval=TRUE, size=1, inYears=FALSE,
                           discr_prop_pca=0.15, discr_prop_events=0.05,
-                          additional_discrete=NULL, additional_continous=NULL) {
+                          additional_discrete=NULL, 
+                          additional_continous=NULL, ...) {
   
   checkmate::assertClass(pathway, "MultiOmicsPathway")
   
   involved <- guessInvolvementPathway(pathway,min_prop_pca=discr_prop_pca,
-                                      min_prop_events=discr_prop_events)
+                                      min_prop_events=discr_prop_events, ...)
   annotationFull <- formatAnnotations(involved, sortBy=NULL)
-  multiOmicObj <- get(pathway@multiOmicObj)
+  multiOmicObj <- get(pathway@multiOmicObj, ...)
   coxObj <- createCoxObj(multiOmicObj@colData, pathway@pathView)
   daysAndStatus <- coxObj[, c("status", "days"), drop=F]
   
@@ -226,6 +229,7 @@ plotPathwayKM <- function(pathway, formula = "Surv(days, status) ~ PC1",
 #' @param fontsize_col like fontsize_row but for columns
 #' @param nrowsHeatmaps magnification respect to annotation of sample (annotations take 1 row)
 #' @param discr_prop_events the minimal proportion to compute the event classes
+#' @param ... additional arguments passed to `guessInvolvement` function
 #'
 #' @return NULL
 #' @importFrom checkmate assertClass
@@ -244,7 +248,7 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
                            withSampleNames = TRUE, fontsize_row = 10,
                            fontsize_col = 1, nrowsHeatmaps = 3,
                            orgDbi = "org.Hs.eg.db", discr_prop_pca = 0.15,
-                           discr_prop_events = 0.05) {
+                           discr_prop_events = 0.05, ...) {
   
   checkmate::assertClass(pathway, "MultiOmicsModules")
   
@@ -252,7 +256,7 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
   
   involved <- guessInvolvement(pathway, moduleNumber = moduleNumber,
                                min_prop_pca = discr_prop_pca,
-                               min_prop_events = discr_prop_events)
+                               min_prop_events = discr_prop_events, ...)
   
   if(length(paletteNames)!=length(involved)) {
     repTimes <- ceiling(length(involved)/length(paletteNames))
@@ -382,6 +386,7 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
 #' @param discr_prop_events the minimal proportion to compute the event classes
 #' @param additional_discrete names of the additional discrete variables to include
 #' @param additional_continous names of the additional continous variables to include
+#' @param ... additional arguments passed to `guessInvolvement` and `get` function
 #'
 #' @return NULL
 #' @importFrom checkmate assertClass
@@ -398,15 +403,15 @@ plotModuleKM <- function(pathway, moduleNumber,
                          inYears = FALSE, discr_prop_pca = 0.15, 
                          discr_prop_events = 0.05,
                          additional_discrete = NULL, 
-                         additional_continous = NULL) {
+                         additional_continous = NULL, ...) {
   
   checkmate::assertClass(pathway, "MultiOmicsModules")
   
   involved <- guessInvolvement(pathway, moduleNumber = moduleNumber,
                                min_prop_pca = discr_prop_pca,
-                               min_prop_events = discr_prop_events)
+                               min_prop_events = discr_prop_events, ...)
   
-  multiOmicObj <- get(pathway@multiOmicObj)
+  multiOmicObj <- get(pathway@multiOmicObj, ...)
   coxObj <- createCoxObj(
     multiOmicObj@colData, pathway@modulesView[[moduleNumber]])
   annotationFull <- formatAnnotations(involved, sortBy=NULL)
@@ -500,6 +505,7 @@ plotModuleKM <- function(pathway, moduleNumber,
 #' @param fileName optional filenames to save the plot
 #' @param discr_prop_pca the minimal proportion to compute the pca classes
 #' @param discr_prop_events the minimal proportion to compute the event classes
+#' @param ... additional arguments passed to `guessInvolvement` function
 #'
 #' @return NULL
 #' @importFrom checkmate assertClass
@@ -512,7 +518,7 @@ plotModuleKM <- function(pathway, moduleNumber,
 plotModuleInGraph <- function(pathway, moduleNumber, orgDbi="org.Hs.eg.db",
                               paletteNames=NULL, legendLabels=NULL,
                               fileName=NULL, discr_prop_pca=0.15,
-                              discr_prop_events=0.05) {
+                              discr_prop_events=0.05, ...) {
   
   checkmate::assertClass(pathway, "MultiOmicsModules")
   
@@ -525,7 +531,7 @@ plotModuleInGraph <- function(pathway, moduleNumber, orgDbi="org.Hs.eg.db",
   color[names(V(net)) %in% moduleGenes] <- "tomato"
   involved <- guessInvolvement(pathway, moduleNumber = moduleNumber,
                                min_prop_pca=discr_prop_events,
-                               min_prop_events=discr_prop_events)
+                               min_prop_events=discr_prop_events, ...)
   mark.groups=lapply(involved, function(x) {
     row.names(x$subset)
   })
@@ -598,7 +604,7 @@ plotModuleInGraph <- function(pathway, moduleNumber, orgDbi="org.Hs.eg.db",
 #' @param MOcolors character vector with the omic colors.
 #' The colors should be among the colors in \code{showMOSpalette()}
 #' @param priority_to a vector with the covariates (omic name) that should go first
-#' @param \dots additional argument to be passed to pheatmap
+#' @param ... additional arguments to be passed to `pheatmap`
 #' 
 #'
 #' @return NULL
