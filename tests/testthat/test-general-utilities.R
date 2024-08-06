@@ -55,7 +55,7 @@ ex <- matrix(1:100, 10, 10,dimnames = list(letters[1:10], LETTERS[1:10]))
 
 
 
-MO <- Omics(experiments = ExperimentList(e=ex, df=ex),
+MO <- makeOmics(experiments = ExperimentList(e=ex, df=ex),
                      modelInfo=c("summarizeWithPca", "summarizeWithPca"),
                      specificArgs = list("a","b"))
 
