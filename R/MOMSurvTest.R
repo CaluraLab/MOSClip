@@ -9,9 +9,13 @@ MOMSurvTest <- function(genes, omicsObj,
   # check if topological method has been used
   for (i in seq_along(omicsObj@ExperimentList@listData)) {
     if (omicsObj@modelInfo[i] == "summarizeWithPca") {
-      if (omicsObj@specificArgs[[i]]$method=="topological") {
+      if (!is.null(omicsObj@specificArgs[[i]]$method)) {
+        if (omicsObj@specificArgs[[i]]$method=="topological") {
         stop("Topological: not valid method for module analysis.")
-      }
+      }}
+      else {
+        message("Method for pca automatically set to sparse")
+        omicsObj@specificArgs[[i]]$method="sparse"}
     }
   }
 
