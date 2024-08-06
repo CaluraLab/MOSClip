@@ -71,11 +71,10 @@ makeOmics <- function(experiments = ExperimentList(),
       cmps <- sapply(seq(from=2, to=length(samples)), function(i) {
          identical(ref, samples[[i]])
       })
-   }
-   if (!all(cmps)){
-      message("Samples order mismatch")
-      return()
-   }
+      if (!all(cmps)){
+        message("Samples order mismatch")
+        return()
+        }}
    duplo <- sapply(MAE@ExperimentList, function(data) {
       any(duplicated(row.names(data)))
    })
