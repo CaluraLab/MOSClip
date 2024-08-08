@@ -1,5 +1,5 @@
 # Creates fake matrices
-dummy_mutation_like_dataset <- function(seed=1234, genes=NULL) {
+dummy_mutation_like_dataset <- function(genes=NULL, seed=1234) {
   set.seed(seed)
   g_len <- if (!is.null(genes)) length(genes) else 5
   len = 200
@@ -10,7 +10,7 @@ dummy_mutation_like_dataset <- function(seed=1234, genes=NULL) {
   } else {row.names(mut) <- genes}
   return(mut)}
 
-dummy_cnv_like_dataset <- function(seed=1234, genes=NULL) {
+dummy_cnv_like_dataset <- function(genes=NULL, seed=1234) {
   set.seed(seed)
   if (!is.null(genes)) {
     num1 <- floor(length(genes)/2)
@@ -34,8 +34,11 @@ dummy_cnv_like_dataset <- function(seed=1234, genes=NULL) {
   colnames(fake_cnv) <- paste0("P_", seq_len(NCOL(fake_cnv)))
   return(fake_cnv)}
 
-dummy_methylation_like_dataset <- function(seed=1234) {
-  genesSize <- c(3,2)
+dummy_methylation_like_dataset <- function(genes=NULL, seed=1234) {
+  if (!is.null(genes)) {
+    num1 <- floor(length(genes)/2)
+    genesSize <- c(num1, length(genes)-num1)
+  } else {genesSize <- c(3,2)}
   patientsRatio <- list(c(150,50), c(75,125))
   
   set.seed(seed)
@@ -51,13 +54,15 @@ dummy_methylation_like_dataset <- function(seed=1234) {
   )
   
   
-  row.names(fake_data) <- paste0("gene_", seq_len(NROW(fake_data)))
+  if (is.null(genes)) {
+    row.names(fake_data) <- paste0("gene_", seq_len(NROW(fake_data)))}
+  else {row.names(fake_data) <- genes}
   colnames(fake_data) <- paste0("P_", seq_len(NCOL(fake_data)))
   return(fake_data)
 }
 
-dummy_methylation_like_flat_dataset <- function(seed=1234) {
-  flat_data <- matrix(c(rep(0.3,191), rep(0.4,9)),ncol=200, nrow=1,
+dummy_methylation_like_flat_dataset <- function(genes=NULL, seed=1234) {
+  flat_data <- matrix(c(rep(0.3,191), rep(0.4,9)), ncol=200, nrow=1,
                       dimnames = list(paste0("gene_", seq_len(1)),
                                       paste0("P_", seq_len(200))))
   
@@ -66,7 +71,7 @@ dummy_methylation_like_flat_dataset <- function(seed=1234) {
   return(flat_data)
 }
 
-dummy_expression_like_dataset <- function(seed=1234, genes=NULL) {
+dummy_expression_like_dataset <- function(genes=NULL, seed=1234) {
   set.seed(seed)
   if (!is.null(genes)) {
     num1 <- floor(length(genes)/2)
@@ -111,14 +116,23 @@ dummy_colData <- function(len=10, type="two-classes"){
   return(dummy_colData)}
 
 
-fake_mo <- function(genes=NULL, type="survival"){
+fake_mo <- function(genes=NULL, type="survival", 
+                    omics=c("exp", "met", "mut", "cnv"), modelInfo=NULL,
+                    specificArgs=NULL){
   exp <- dummy_expression_like_dataset(genes=genes)
   mut <- dummy_mutation_like_dataset(genes=genes)
+  met <- dummy_methylation_like_dataset(genes=genes)
+  cnv <- dummy_cnv_like_dataset(genes=genes)
+  exp_list <- ExperimentList(exp=exp, mut=mut, met=met, cnv=cnv)
   cdata <- dummy_colData(len=dim(exp)[2], type)
-  mo <- makeOmics(experiments=ExperimentList(exp=exp, mut=mut), 
+  modelInfo = c(exp="summarizeWithPca", met="summarizeInCluster", 
+                mut="summarizeToNumberOfEvents", cnv="summarizeToNumberOfDirectionalEvents")
+  specificArgs = list(exp=list(name="exp"), met=list(name="met"), 
+                      mut=list(name="mut"), cnv=list(name="cnv"))
+  mo <- makeOmics(experiments=exp_list[omics], 
                   colData=cdata,
-                  modelInfo = c("summarizeWithPca", "summarizeToNumberOfEvents"),
-                  specificArgs = list(pca=list(name="exp"), count=list(name="mut")))
+                  modelInfo = modelInfo[omics],
+                  specificArgs = specificArgs[omics])
   return(mo)
 }
 
