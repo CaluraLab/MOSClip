@@ -1,6 +1,6 @@
 env <- test_env()
 graph <- readRDS(test_path("fixtures", "graph.rds"))
-mo <- fake_mo(genes=nodes(graph), type="survival")
+mo <- fake_mo(genes=nodes(graph), type="survival", omics="exp")
 res <- multiOmicsSurvivalModuleTest(mo, graph)
 assign("graph", graph, envir = env)
 assign("mo", mo, envir = env)
