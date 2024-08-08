@@ -63,6 +63,12 @@ createDataModule <- function(omic, multiOmicObj){
   } else {
     genes <- omic$usedGenes
   }
+  
+  if (isFALSE(omic$omicName %in% names(multiOmicObj@ExperimentList))) {
+    stop("omicName not found in ExperimentList.
+         Specify the correct omicName to be used by summarize methods 
+         in the corresponding specificArgs section of the multiOmic object")
+  }
   assay <- assay(multiOmicObj, omic$omicName)
   dataModule <- assay[genes,]
   return(dataModule)
