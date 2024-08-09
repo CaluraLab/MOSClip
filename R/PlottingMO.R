@@ -21,7 +21,8 @@
 #' @importFrom ggplotify as.ggplot
 #' 
 #' @export
-plotPathwayHeat <- function(pathway, sortBy = NULL, paletteNames = NULL,
+plotPathwayHeat <- function(pathway, multiOmic, sortBy = NULL,
+                            paletteNames = NULL,
                             additionalAnnotations = NULL,
                             additionalPaletteNames = NULL,
                             discr_prop_pca = 0.15, discr_prop_events = 0.05,
@@ -30,7 +31,8 @@ plotPathwayHeat <- function(pathway, sortBy = NULL, paletteNames = NULL,
   
   checkmate::assertClass(pathway, "MultiOmicsPathway")
   
-  involved <- guessInvolvementPathway(pathway, min_prop_pca = discr_prop_pca,
+  involved <- guessInvolvementPathway(pathway, multiOmic,
+                                      min_prop_pca = discr_prop_pca,
                                       min_prop_events = discr_prop_events)
   
   if(length(paletteNames)!=length(involved)) {
@@ -155,7 +157,7 @@ plotPathwayHeat <- function(pathway, sortBy = NULL, paletteNames = NULL,
 #' @param discr_prop_pca the minimal proportion to compute the pca classes
 #' @param discr_prop_events the minimal proportion to compute the event classes
 #' @param additional_discrete names of the additional discrete variables to include
-#' @param additional_continous names of the additional continous variables to include
+#' @param additional_continuous names of the additional continous variables to include
 #'
 #' @return NULL
 #'
@@ -166,18 +168,20 @@ plotPathwayHeat <- function(pathway, sortBy = NULL, paletteNames = NULL,
 #' @importFrom ggplot2 ggsave
 #' 
 #' @export
-plotPathwayKM <- function(pathway, formula = "Surv(days, status) ~ PC1",
+plotPathwayKM <- function(pathway, multiOmic,
+                          formula = "Surv(days, status) ~ PC1",
                           fileName=NULL, paletteNames = NULL, h = 9, w=7, 
                           risk.table=TRUE, pval=TRUE, size=1, inYears=FALSE,
                           discr_prop_pca=0.15, discr_prop_events=0.05,
-                          additional_discrete=NULL, additional_continous=NULL) {
+                          additional_discrete=NULL, additional_continuous=NULL){
   
   checkmate::assertClass(pathway, "MultiOmicsPathway")
   
-  involved <- guessInvolvementPathway(pathway,min_prop_pca=discr_prop_pca,
+  involved <- guessInvolvementPathway(pathway, multiOmic, 
+                                      min_prop_pca=discr_prop_pca,
                                       min_prop_events=discr_prop_events)
   annotationFull <- formatAnnotations(involved, sortBy=NULL)
-  multiOmicObj <- get(pathway@multiOmicObj)
+  multiOmicObj <- multiOmic
   coxObj <- createCoxObj(multiOmicObj@colData, pathway@pathView)
   daysAndStatus <- coxObj[, c("status", "days"), drop=F]
   
@@ -238,7 +242,7 @@ plotPathwayKM <- function(pathway, formula = "Surv(days, status) ~ PC1",
 #' @importFrom ggplotify as.ggplot
 #' 
 #' @export
-plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
+plotModuleHeat <- function(pathway, multiOmic, moduleNumber, sortBy = NULL,
                            fileName = NULL, paletteNames = NULL,
                            additionalAnnotations = NULL,
                            additionalPaletteNames = NULL,
@@ -251,7 +255,7 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
   
   moduleGenes <- pathway@modules[[moduleNumber]]
   
-  involved <- guessInvolvement(pathway, moduleNumber = moduleNumber,
+  involved <- guessInvolvement(pathway, multiOmic, moduleNumber = moduleNumber,
                                min_prop_pca = discr_prop_pca,
                                min_prop_events = discr_prop_events)
   
@@ -382,7 +386,7 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
 #' @param discr_prop_pca the minimal proportion to compute the pca classes
 #' @param discr_prop_events the minimal proportion to compute the event classes
 #' @param additional_discrete names of the additional discrete variables to include
-#' @param additional_continous names of the additional continous variables to include
+#' @param additional_continuous names of the additional continous variables to include
 #'
 #' @return NULL
 #' @importFrom checkmate assertClass
@@ -392,22 +396,22 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
 #' @importFrom ggplot2 ggsave
 #' 
 #' @export
-plotModuleKM <- function(pathway, moduleNumber,
+plotModuleKM <- function(pathway, multiOmic, moduleNumber,
                          formula = "Surv(days, status) ~ PC1",
                          fileName = NULL, paletteNames = NULL, h = 9, w = 7,
                          risk.table = TRUE, pval = TRUE, size = 1,
                          inYears = FALSE,
                          discr_prop_pca = 0.15, discr_prop_events = 0.05,
                          additional_discrete = NULL,
-                         additional_continous = NULL) {
+                         additional_continuous = NULL) {
   
   checkmate::assertClass(pathway, "MultiOmicsModules")
   
-  involved <- guessInvolvement(pathway, moduleNumber = moduleNumber,
+  involved <- guessInvolvement(pathway, multiOmic, moduleNumber = moduleNumber,
                                min_prop_pca = discr_prop_pca,
                                min_prop_events = discr_prop_events)
   
-  multiOmicObj <- get(pathway@multiOmicObj)
+  multiOmicObj <- multiOmic
   coxObj <- createCoxObj(
     multiOmicObj@colData, pathway@modulesView[[moduleNumber]])
   annotationFull <- formatAnnotations(involved, sortBy=NULL)
@@ -431,15 +435,15 @@ plotModuleKM <- function(pathway, moduleNumber,
     additional_clinic <- coxObj[row.names(daysAndStatus), fixed_covs, drop=F]
   }
   
-  if (!is.null(additional_continous)){
-    not_found <- setdiff(additional_continous, colnames(coxObj))
+  if (!is.null(additional_continuous)){
+    not_found <- setdiff(additional_continuous, colnames(coxObj))
     if (length(not_found) > 0)
-      stop(paste0("Some continous variables were not found: ", 
+      stop(paste0("Some continuous variables were not found: ", 
                   paste(not_found, collapse = ", ", "\n"),
                   "We found the following variables: ", 
                   paste(colnames(coxObj), collapse = ", ")))
     
-    fixed_covs <- setdiff(additional_continous, colnames(annotationFull))
+    fixed_covs <- setdiff(additional_continuous, colnames(annotationFull))
     df <- cbind(
       daysAndStatus, coxObj[row.names(daysAndStatus), fixed_covs, drop=F])
     discretized_covs <- createDiscreteClasses(df, fixed_covs)
@@ -510,7 +514,8 @@ plotModuleKM <- function(pathway, moduleNumber,
 #' @importFrom grDevices dev.off pdf rainbow
 #' 
 #' @export
-plotModuleInGraph <- function(pathway, moduleNumber, orgDbi="org.Hs.eg.db",
+plotModuleInGraph <- function(pathway, multiOmic, reactObj, moduleNumber,
+                              orgDbi="org.Hs.eg.db",
                               paletteNames=NULL, legendLabels=NULL,
                               fileName=NULL, discr_prop_pca=0.15,
                               discr_prop_events=0.05) {
@@ -519,12 +524,12 @@ plotModuleInGraph <- function(pathway, moduleNumber, orgDbi="org.Hs.eg.db",
   
   # dentro pathway dovrebbe esserci l'oggetto graphNEL
   net <- igraph::graph_from_graphnel(
-    convertPathway(reactome[[pathway@title]], NULL))
+    convertPathway(reactObj[[pathway@title]], NULL))
   moduleGenes <- pathway@modules[[moduleNumber]]
   net <- igraph::simplify(net, remove.multiple = T, remove.loops = T)
   color <- rep("grey", length(V(net)))
   color[names(V(net)) %in% moduleGenes] <- "tomato"
-  involved <- guessInvolvement(pathway, moduleNumber = moduleNumber,
+  involved <- guessInvolvement(pathway, multiOmic, moduleNumber = moduleNumber,
                                min_prop_pca=discr_prop_events,
                                min_prop_events=discr_prop_events)
   mark.groups=lapply(involved, function(x) {
@@ -550,7 +555,7 @@ plotModuleInGraph <- function(pathway, moduleNumber, orgDbi="org.Hs.eg.db",
     if (!is.null(names(paletteNames))) {
       mismatch <- setdiff(group.names, names(paletteNames))
       if (length(mismatch)>0)
-        stop(paste0("Missing palet for omics:" , paste(mismatch,
+        stop(paste0("Missing palette for omics:" , paste(mismatch,
                                                        collapse = ", ")))
       paletteNames <- paletteNames[group.names]
     }
@@ -568,7 +573,7 @@ plotModuleInGraph <- function(pathway, moduleNumber, orgDbi="org.Hs.eg.db",
     legendLabels <- group.names
   } else {
     if (length(legendLabels)!=length(group.names))
-      warning("Your legendLabels are more than those found")
+      warning("Some legendLabels were not found in data")
     legendLabels <- legendLabels[seq_along(group.names)]
   }
   
@@ -585,9 +590,9 @@ plotModuleInGraph <- function(pathway, moduleNumber, orgDbi="org.Hs.eg.db",
   )
   legend(x=-1, y=-1, legendLabels, pch=21, horiz=TRUE,
          col="#777777", pt.bg=mark.col, pt.cex=2, cex=.8, bty="n", ncol=1)
-  if (!is.null(fileName)) {
-    dev.off()
-  }
+  #if (!is.null(fileName)) {
+   # dev.off()
+  #}
 }
 
 #' Summarize and plot pathways' info from a list of MultiOmicsPathway (MOP)
