@@ -6,7 +6,7 @@ test_that("Survival Results object works", {
   
   res.survPathway <- multiOmicsSurvivalPathwayTest(
     dummy_Omics, dummy_react[[1]], survFormula = "Surv(days, status) ~",
-    autoCompleteFormula = T, include_from_annot = TRUE)
+    autoCompleteFormula = TRUE, include_from_annot = TRUE)
   
   expect_s4_class(res.survPathway, "MultiOmicsPathway")
   expect_true(!is.null(res.survPathway@pvalue) &

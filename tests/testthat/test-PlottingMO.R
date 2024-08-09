@@ -1,8 +1,8 @@
 test_that("Plots with two class object work", {
   # does not work w get()
   dummy_react <- readRDS(test_path("fixtures", "reactSmallDummy.rds"))
-  dummy_omics <- readRDS(test_path("fixtures", "dummyOmics.rds"))
-  dummy_annot <- readRDS(test_path("fixtures", "dummyAnnot.rds"))
+  dummy_omics <- createFakeOmics("two-classes")
+  dummy_annot <- dummy_colData("two-classes")
   
   twoCPathwayObj <- multiOmicsTwoClassesPathwayTest(dummy_omics,
                                                     dummy_react[[1]],

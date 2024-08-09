@@ -100,8 +100,7 @@ dummy_mut <- function(){
 
 dummy_colData <- function(analysis){
   if (analysis=="two-classes") {
-    data.frame(patient_id = paste0("p_", seq_len(200)),
-               classes = c(rep("A", 100), rep("B", 100)),
+    data.frame(classes = c(rep("A", 100), rep("B", 100)),
                row.names = paste0("p_", seq_len(200)))
   } else if (analysis=="survival") {
     data.frame(status = sample(c(0,1), 200, replace=TRUE),
