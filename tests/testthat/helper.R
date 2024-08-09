@@ -68,13 +68,13 @@ dummy_cnv <- function(seed=1234) {
   patientsRatio <- list(c(150,50), c(75,125))
   
   lowValues <- sample(c(-1,0,0,0,1,1), patientsRatio[[1]][1]*genesSize[1],
-                      replace = T)
+                      replace = TRUE)
   highValues <- sample(c(-2,0,0,0,0,2,2), patientsRatio[[1]][2]*genesSize[1],
-                       replace = T)
+                       replace = TRUE)
   lowValues2nd <- sample(c(-2,0,0,0,0,0,2), patientsRatio[[2]][1]*genesSize[2],
-                         replace = T)
+                         replace = TRUE)
   highValues2nd <- sample(c(-1,0,0,0,0,0,1), patientsRatio[[2]][2]*genesSize[2],
-                          replace = T)
+                          replace = TRUE)
   
   fake_cnv <- rbind(cbind(matrix(lowValues, ncol=patientsRatio[[1]][1],
                                  nrow=genesSize[1]),
@@ -91,21 +91,32 @@ dummy_cnv <- function(seed=1234) {
   return(fake_cnv)
 }
 
-fake_mut <- dummy_cnv()
-fake_mut[abs(fake_mut) < 2] <- 0
-fake_mut[abs(fake_mut) >= 2] <- 1
+dummy_mut <- function(){
+  fake_mut <- dummy_cnv()
+  fake_mut[abs(fake_mut) < 2] <- 0
+  fake_mut[abs(fake_mut) >= 2] <- 1
+  return(fake_mut)
+}
 
-dummy_colData <- data.frame(patient_id = paste0("p_", seq_len(200)),
-                            treatment = c(rep("A", 100), rep("B", 100)))
-rownames(dummy_colData) <- paste0("p_", seq_len(200))
+dummy_colData <- function(analysis){
+  if (analysis=="two-classes") {
+    data.frame(patient_id = paste0("p_", seq_len(200)),
+               classes = c(rep("A", 100), rep("B", 100)),
+               row.names = paste0("p_", seq_len(200)))
+  } else if (analysis=="survival") {
+    data.frame(status = sample(c(0,1), 200, replace=TRUE),
+               days = sample(5:5000, 200, replace=TRUE),
+               row.names = paste0("p_", seq_len(200)))
+  }
+}
 
-createOmics <- function(){
-  dummy_twoclass_omics <-  Omics(
-    experiments = ExperimentList(expr =  dummy_expression(),
+createFakeOmics <- function(analysis){
+  makeOmics(
+    experiments = ExperimentList(exp =  dummy_expression(),
                                  met = dummy_methylation(),
                                  cnv = dummy_cnv(),
-                                 mut = fake_mut),
-    colData = dummy_colData,
+                                 mut = dummy_mut()),
+    colData = dummy_colData(analysis),
     modelInfo = c("summarizeWithPca", "summarizeInCluster",
                   "summarizeToNumberOfEvents",
                   "summarizeToNumberOfDirectionalEvents"),
@@ -118,12 +129,3 @@ createOmics <- function(){
     )
   )
 }
-
-createClassAnnot <- function(){
-  dummy_classAnnot <- data.frame(classes = c(rep("class1", 100),
-                                             rep("class2", 100)),
-                                 row.names = paste0("p_",
-                                                    seq_len(200)))
-}
-
-
