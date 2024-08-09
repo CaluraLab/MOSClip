@@ -1,8 +1,8 @@
 test_that("Two Class Pathway Test works", {
   
   dummy_react <- readRDS(test_path("fixtures", "reactSmallDummy.rds"))
-  dummy_Omics <- createOmics()
-  dummy_annot <- createClassAnnot()
+  dummy_Omics <- createFakeOmics("two-classes")
+  dummy_annot <- dummy_colData("two-classes")
   
   twoCPathwayObj <- multiOmicsTwoClassesPathwayTest(dummy_Omics,
                                                     dummy_react[[1]],
@@ -17,13 +17,6 @@ test_that("Two Class Pathway Test works", {
   expect_true(is.list(twoCPathwayObj@pathView))
   expect_true(all(vapply(twoCPathwayObj@pathView, function(x) !is.null(x),
                          logical(1))))
-})
-
-test_that("Two Class Module Test works", {
-  
-  dummy_react <- readRDS(test_path("fixtures", "reactSmallDummy.rds"))
-  dummy_Omics <- createOmics()
-  dummy_annot <- createClassAnnot()
   
   twoCModuleObj <- multiOmicsTwoClassesModuleTest(dummy_Omics,
                                                   dummy_react[[1]],
