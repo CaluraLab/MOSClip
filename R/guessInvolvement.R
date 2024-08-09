@@ -18,9 +18,10 @@
 #' \item{covsConsidered}{the name of the considered omic}
 #'
 #' @export
-guessInvolvement <- function(pathway, moduleNumber, loadThr=0.6, n=3, atleast=1,
+guessInvolvement <- function(pathway, multiOmic, moduleNumber, loadThr=0.6, n=3, atleast=1,
                              min_prop_pca=0.1, min_prop_events=0.1) {
-  multiOmicObj <- get(pathway@multiOmicObj)
+  multiOmicObj <- multiOmic
+  #multiOmicObj <- get(pathway@multiOmicObj)
   omics <- pathway@modulesView[[moduleNumber]]
   moduleCox <- createCoxObj(multiOmicObj@colData, moView=omics)
   analysis <- pathway@analysis
@@ -62,10 +63,11 @@ guessInvolvement <- function(pathway, moduleNumber, loadThr=0.6, n=3, atleast=1,
 #' \item{covsConsidered}{the name of the considered omic}
 #'
 #' @export
-guessInvolvementPathway <- function(pathway, loadThr=0.6, n=3, atleast=1,
+guessInvolvementPathway <- function(pathway, multiOmic, loadThr=0.6, n=3, atleast=1,
                                      min_prop_pca=0.1, min_prop_events=0.1) {
   
-  multiOmicObj <- get(pathway@multiOmicObj)
+  multiOmicObj <- multiOmic
+  #multiOmicObj <- get(pathway@multiOmicObj)
   omics <- pathway@pathView
   moduleCox <- createCoxObj(multiOmicObj@colData, moView=omics)
   analysis <- pathway@analysis
