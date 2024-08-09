@@ -21,16 +21,9 @@ setClass(Class ="MultiOmicsModules",
                    zlists  = "list",
                    modulesView  = "list",
                    modules     = "list",
-<<<<<<< HEAD
-                   formulas = "list",
-                   title = "characterOrNULL",
-                   analysis = "character"))
-=======
                    analysis = "characterOrNULL",
                    multiOmicObj = "characterOrNULL",
                    title = "characterOrNULL"))
-
->>>>>>> origin/annab
 
 #' Multi Omics Pathway.
 #'
@@ -49,17 +42,9 @@ setClass(Class ="MultiOmicsPathway",
          slots = c(pvalue = "numeric",
                    zlist = "numeric",
                    pathView = "list",
-<<<<<<< HEAD
-                   usedGenes = "list",
-                   formula = "character",
-                   title = "characterOrNULL",
-                   analysis = "character"))
-=======
                    analysis = "characterOrNULL",
                    multiOmicObj = "characterOrNULL",
                    title = "characterOrNULL"))
-
->>>>>>> origin/annab
 
 # setClass(Class ="SinglePath", package = "biocmosclip",
 #          slots = c(global = "MultiOmicsPathway",
