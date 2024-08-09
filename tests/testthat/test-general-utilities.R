@@ -24,28 +24,19 @@ vec8 <- NULL
 
 test_that("conversionToSymbols", {
   expect_identical(conversionToSymbols(vec, "org.Hs.eg.db"), "MMP15")
-  expect_identical(conversionToSymbols(vec1, "org.Hs.eg.db"),
-                   c("SYMBOL:MMP15","ENTREZID:10","SYMBOL:CMA1"))
-  expect_identical(conversionToSymbols(vec2, "org.Hs.eg.db"),
-                   c("MMP15","MMP24","CMA1"))
-  expect_identical(conversionToSymbols(vec3, "org.Hs.eg.db"),
-                   c("A1BG","NAT2","ADA"))
-  expect_identical(conversionToSymbols(vec4, "org.Hs.eg.db"),
-                   c("A1BG","NAT2","SYMBOL:ADA"))
-  expect_identical(conversionToSymbols(vec5, "org.Hs.eg.db"),
-                   c("MMP24","MMP24","CMA1","CMA1"))
-  expect_identical(conversionToSymbols(vec6, "org.Hs.eg.db"),
-                   c("MMP15","ENRICA","CMA1","PAOLO"))
-  expect_identical(conversionToSymbols(vec7, "org.Hs.eg.db"),
-                   c("A1BG","ENRICA","ADA","PAOLO"))
+  expect_identical(conversionToSymbols(vec1, "org.Hs.eg.db"), c("SYMBOL:MMP15","ENTREZID:10","SYMBOL:CMA1"))
+  expect_identical(conversionToSymbols(vec2, "org.Hs.eg.db"), c("MMP15","MMP24","CMA1"))
+  expect_identical(conversionToSymbols(vec3, "org.Hs.eg.db"), c("A1BG","NAT2","ADA"))
+  expect_identical(conversionToSymbols(vec4, "org.Hs.eg.db"), c("A1BG","NAT2","SYMBOL:ADA"))
+  expect_identical(conversionToSymbols(vec5, "org.Hs.eg.db"), c("MMP24","MMP24","CMA1","CMA1"))
+  expect_identical(conversionToSymbols(vec6, "org.Hs.eg.db"), c("MMP15","ENRICA","CMA1","PAOLO"))
+  expect_identical(conversionToSymbols(vec7, "org.Hs.eg.db"), c("A1BG","ENRICA","ADA","PAOLO"))
   expect_true(is.null(conversionToSymbols(vec8, "org.Hs.eg.db")))
 })
 
 test_that("extractPositivePortion", {
-  expect_identical(extractPositivePortion(matrix(c(1,1,-1,2), 2)),
-                   matrix(c(1,1,0,2),2))
-  expect_identical(extractPositivePortion(matrix(c(1,1,-1,1), 2), invert=T),
-                   matrix(c(0,0,1,0),2))
+  expect_identical(extractPositivePortion(matrix(c(1,1,-1,2), 2)), matrix(c(1,1,0,2),2))
+  expect_identical(extractPositivePortion(matrix(c(1,1,-1,1), 2), invert=T), matrix(c(0,0,1,0),2))
 })
 
 test_that("check_minimal_proportion", {
@@ -64,15 +55,14 @@ ex <- matrix(1:100, 10, 10,dimnames = list(letters[1:10], LETTERS[1:10]))
 
 
 
-MO <- Omics(experiments = ExperimentList(e=ex, df=ex),
-                     modelInfo=c("summarizeWithPca", "summarizeWithPca"),
-                     specificArgs = list("a","b"))
+MO <- makeOmics(experiments = ExperimentList(e=ex, df=ex),
+                modelInfo=c("summarizeWithPca", "summarizeWithPca"),
+                specificArgs = list("a","b"))
 
 
 smallMO <- filterMultiOmicsForSamples(MO, c("A"))
 
 test_that("filterMultiOmicsForSamples", {
-  expect_identical(smallMO@ExperimentList[[1]],
-                   as.matrix(smallMO@ExperimentList[[2]]))
+  expect_identical(smallMO@ExperimentList[[1]], as.matrix(smallMO@ExperimentList[[2]]))
   expect_error(filterMultiOmicsForSamples(MO, c("Z")))
 })
