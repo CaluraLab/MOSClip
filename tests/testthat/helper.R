@@ -103,11 +103,11 @@ create_met_cluster_dict <- function(dataset) {
   return(dict)
 }
 
-dummy_colData <- function(len=10, type="two-classes"){
+dummy_colData <- function(len=10, type="survival"){
   num1 <- sample(1:(len-1), 1)
   num2 <- len - num1
   if (type=="two-classes") {
-    dummy_colData <- data.frame(treatment = c(rep("A", num1), rep("B", num2)))}
+    dummy_colData <- data.frame(classes = c(rep("A", num1), rep("B", num2)))}
   else if (type=="survival") {
     dummy_colData <- data.frame(status = sample(c(0,1), size=len, replace=TRUE),
                                 days = sample(5:5000, size=len, replace=TRUE))
@@ -116,7 +116,7 @@ dummy_colData <- function(len=10, type="two-classes"){
   return(dummy_colData)}
 
 
-fake_mo <- function(genes=NULL, type="survival", 
+fake_mo <- function(genes=NULL, type="survival",
                     omics=c("exp", "met", "mut", "cnv"), modelInfo=NULL,
                     specificArgs=NULL){
   exp <- dummy_expression_like_dataset(genes=genes)
@@ -125,11 +125,11 @@ fake_mo <- function(genes=NULL, type="survival",
   cnv <- dummy_cnv_like_dataset(genes=genes)
   exp_list <- ExperimentList(exp=exp, mut=mut, met=met, cnv=cnv)
   cdata <- dummy_colData(len=dim(exp)[2], type)
-  modelInfo = c(exp="summarizeWithPca", met="summarizeInCluster", 
+  modelInfo = c(exp="summarizeWithPca", met="summarizeInCluster",
                 mut="summarizeToNumberOfEvents", cnv="summarizeToNumberOfDirectionalEvents")
-  specificArgs = list(exp=list(name="exp"), met=list(name="met"), 
+  specificArgs = list(exp=list(name="exp"), met=list(name="met"),
                       mut=list(name="mut"), cnv=list(name="cnv"))
-  mo <- makeOmics(experiments=exp_list[omics], 
+  mo <- makeOmics(experiments=exp_list[omics],
                   colData=cdata,
                   modelInfo = modelInfo[omics],
                   specificArgs = specificArgs[omics])
