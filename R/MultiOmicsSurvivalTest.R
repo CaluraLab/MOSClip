@@ -42,7 +42,7 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
 
     # Inizialize cliques to null
     cliques=NULL
-    if (multiOmics@modelInfo[i]=="summarizeWithPca") {
+    if (omicsObj@modelInfo[i]=="summarizeWithPca") {
       # compute cliques
       genesToUse <- intersect(row.names(omicsObj@ExperimentList@listData[[i]]),
                               genesToUse)
