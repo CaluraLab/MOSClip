@@ -65,17 +65,17 @@ test_that("extractyInfo_Pca", {
   expect_true(length(row.names(pcaInfo$subset)) >= 1)
   pcaInfo <- extractSummaryFromPCA(omic, mo, cox, "survival", loadThr = 1, atleast = 0)
   expect_null(pcaInfo$subset)
-})  
+})
 
 
 test_that("createDiscreteClasses", {
   mo <- fake_mo(omics="exp", type="survival")
   moview <- createMOMView(mo, row.names(assay(mo, "exp")))
   cox <- createCoxObj(mo@colData, moview)
-  expect_error(createDiscreteClasses(cox, covs="mut", analysis="survival"), 
+  expect_error(createDiscreteClasses(cox, covs="mut", analysis="survival"),
                regexp=" not in coxObj")
   covs <- colnames(cox)[-c(1,2)]
-  expect_error(createDiscreteClasses(cox, covs=covs, analysis="class"), 
+  expect_error(createDiscreteClasses(cox, covs=covs, analysis="class"),
                regexp="Type of analysis .* not valid. Check results object")
   sc <- createDiscreteClasses(cox, covs, analysis = "survival")
   expect_setequal(colnames(sc), colnames(cox))
@@ -84,9 +84,21 @@ test_that("createDiscreteClasses", {
   sc <- createDiscreteClasses(cox, covs, analysis = "twoClass")
   expect_s3_class(sc, "data.frame")
   cox[,"expPC2"] <- rep(0, 200)
-  expect_error(createDiscreteClasses(cox, covs=covs, analysis="class"), 
+  expect_error(createDiscreteClasses(cox, covs=covs, analysis="twoClass"),
                regexp="minprop 0.1 is too high. Try a smaller one")
 })
+
+
+test_that("retrieveNumericClasses", {
+  mo <- fake_mo(omics="cnv", type="two-classes")
+  moview <- createMOMView(mo, row.names(assay(mo, "cnv")))
+  cox <- createCoxObj(mo@colData, moview)
+  expect_error(retrieveNumericClasses(cox, covs="mut", analysis="twoClass"),
+               regexp=" not in coxObj")
+  covs <- colnames(cox)[-c(1)]
+  expect_error(retrieveNumericClasses(cox, covs=covs, analysis="surv"),
+               regexp="Type of analysis .* not valid. Check results object")
+  })
 
 
 test_that("extractyInfo_NumberOfEvents", {
@@ -99,7 +111,7 @@ test_that("extractyInfo_NumberOfEvents", {
   mut_sum <- rowSums(fake_mut)
   mut_sum <- mut_sum[order(mut_sum, decreasing = TRUE)]
   expect_setequal(names(mut_sum)[1:3], row.names(countInfo$subset))
-})  
+})
 
 
 
