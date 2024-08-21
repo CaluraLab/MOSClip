@@ -103,7 +103,7 @@ create_met_cluster_dict <- function(dataset) {
   return(dict)
 }
 
-dummy_colData <- function(len=10, type="survival"){
+dummy_colData <- function(len=200, type="survival"){
   num1 <- sample(1:(len-1), 1)
   num2 <- len - num1
   if (type=="two-classes") {
