@@ -51,7 +51,8 @@ minOrNA <- function(x) {
 computeFreqs <- function(elementsIntersections) {
   freques <- lapply(names(elementsIntersections), function(x) {
     counts <- table(elementsIntersections[[x]])
-    data.frame(category=names(counts), frequencies=as.numeric(counts), class=x, stringsAsFactors = F)
+    data.frame(category=names(counts), frequencies=as.numeric(counts),
+               class=x, stringsAsFactors = F)
   })
   do.call(rbind, freques)
 }
@@ -84,10 +85,12 @@ computeFreqs <- function(elementsIntersections) {
 #' @export
 #'
 plotFrequencies <- function(frequencies, manualColors=NULL, minSize=4,
-                            maxSize=20, width=20, relMagnificationOfLegend=0.5, lineSize=1){
+                            maxSize=20, width=20, relMagnificationOfLegend=0.5,
+                            lineSize=1){
   category <- NULL
   if (!all(colnames(frequencies) %in% c("category", "frequencies", "class")))
-    stop("Frequences dataframe must contain columns category, frequencies and class")
+    stop("Frequences dataframe must contain columns category, frequencies and 
+         class")
   if (!is.null(manualColors)) {
     g <- ggplot2::ggplot(frequencies, aes(y = frequencies,
                                           x = factor(category),
@@ -98,7 +101,9 @@ plotFrequencies <- function(frequencies, manualColors=NULL, minSize=4,
                                           x = factor(category),
                                           group = class, colour = class))
   }
-  size <- tapply(seq_along(frequencies$frequencies), factor(frequencies$category), function(idx) max(frequencies$frequencies[idx]))
+  size <- tapply(seq_along(frequencies$frequencies),
+                 factor(frequencies$category), function(idx) 
+                   max(frequencies$frequencies[idx]))
   size <- as.numeric(size)+minSize
   size[size > maxSize] <- maxSize
   g <- g + ggplot2::coord_polar() +
@@ -107,13 +112,17 @@ plotFrequencies <- function(frequencies, manualColors=NULL, minSize=4,
     ggplot2::geom_path(size=lineSize) +
     ggplot2::labs(x = NULL) +
     ggplot2::theme_bw() +
-    ggplot2::theme(panel.border = element_blank(), axis.line.x = element_blank(), axis.line.y = element_blank()) +
+    ggplot2::theme(panel.border = element_blank(),
+                   axis.line.x = element_blank(),
+                   axis.line.y = element_blank()) +
     ggplot2::theme(panel.grid=ggplot2::element_line(size = lineSize*0.5),
                    axis.text.x=element_text(size=size, colour="black"),
                    axis.text=element_text(colour="black")) +
-    ggplot2::scale_x_discrete(labels=function(x) lapply(strwrap(x, width = width, simplify = FALSE), paste, collapse="\n"))
+    ggplot2::scale_x_discrete(labels=function(x) lapply(
+      strwrap(x, width = width, simplify = FALSE), paste, collapse="\n"))
   g <- g + theme(legend.position = c(1,1), legend.justification=c(0, 1),
-                 legend.text=element_text(size=ggplot2::rel(relMagnificationOfLegend)))
+                 legend.text=element_text(
+                   size=ggplot2::rel(relMagnificationOfLegend)))
   grid::grid.newpage()
   gt <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(g))
   gt$layout$clip <- "off"

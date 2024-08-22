@@ -2,7 +2,8 @@
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom pheatmap pheatmap
 generateHeatmapGrobTable <- function(i, involved, annotationFull, palettes,
-                                     annotationCol=NA, orgDbi="org.Hs.eg.db", oldFation=TRUE,
+                                     annotationCol=NA, orgDbi="org.Hs.eg.db",
+                                     oldFation=TRUE,
                                      fontsize_row = 10, fontsize_col = 1) {
   heatMatrix <- involved[[i]]$sigModule
   omic <- guessOmic(involved[[i]]$covsConsidered)

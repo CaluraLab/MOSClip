@@ -6,7 +6,8 @@ conversionToSymbols <- function(idsGraphiteStyle, orgDbi="org.Hs.eg.db") {
     return(NULL)
   
   if (!(length(grep(":", idsGraphiteStyle)) == length(idsGraphiteStyle) &
-        length(unique(do.call(rbind,(strsplit(idsGraphiteStyle, ":")))[,1])) == 1 ))
+        length(unique(do.call(rbind,(strsplit(idsGraphiteStyle, ":")))
+                      [,1])) == 1 ))
     return(idsGraphiteStyle)
   
   typeId <- unique(do.call(rbind,(strsplit(idsGraphiteStyle, ":")))[,1])
@@ -118,7 +119,8 @@ matchAnnotations <- function(d1, d2){
   
   diff <- setdiff(row.names(d2), row.names(d1))
   if (length(diff) != 0)
-    stop(paste0("We found that samples", paste(diff, collapse = ", "), "do not match MOM annotation"))
+    stop(paste0("We found samples", paste(diff, collapse = ", "),
+                "that do not match MOM annotation"))
   
   d2 <- d2[row.names(d1), , drop=F]
   d2

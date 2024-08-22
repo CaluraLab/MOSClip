@@ -45,7 +45,8 @@ makeOmics <- function(experiments = ExperimentList(),
   else { MAE <- MultiAssayExperiment(experiments, colData, sampleMap) }
 
    if (length(MAE@ExperimentList) != length(modelInfo)){
-      message("Data and relative methods to analyze them must be equal in length.")
+      message("Data and relative methods to analyze them must be equal in 
+              length.")
       return()
       }
    if (length(MAE@ExperimentList) != length(specificArgs)){
@@ -55,7 +56,8 @@ makeOmics <- function(experiments = ExperimentList(),
 
    match <- !(modelInfo %in% availableOmicMethods())
    if (any(match)) {
-      message(paste(paste(modelInfo[match], collapse=", "), "modelInfo not found in method. Try availableOmicMethods."))
+      message(paste(paste(modelInfo[match], collapse=", "),
+                    "modelInfo not found in method. Try availableOmicMethods."))
       return()
    }
 
@@ -79,10 +81,20 @@ makeOmics <- function(experiments = ExperimentList(),
       any(duplicated(row.names(data)))
    })
    if (any(duplo)) {
-      message(paste0("Duplicated row.names found in omics ", paste(which(duplo), collapse = ", ")))
+      message(paste0("Duplicated row.names found in omics ",
+                     paste(which(duplo), collapse = ", ")))
       return()
    }
 
+   data_validation <- lapply(MAE@ExperimentList@listData,
+                             function(exp) all(exp == 0 | is.na(exp)))
+   
+   if (any(data_validation == TRUE)) {
+     stop(paste0("Some experiment matrices contains only 0 or NA values: ",
+                 paste(names(data_validation)[which(data_validation == TRUE)],
+                       collapse = ", ")))
+   }
+   
    new("Omics",
        ExperimentList = MAE@ExperimentList,
        colData = MAE@colData,
@@ -109,26 +121,29 @@ setMethod("showOmics",  signature(object = "Omics"),
             if (is.null(nm))
               nm <- seq_len(length(nm))
             for (i in seq_along(nm)) {
-              cat(paste0("Data \"", nm[i], "\" to be process with \"", object@modelInfo[[i]],"\". "))
+              cat(paste0("Data \"", nm[i], "\" to be process with \"",
+                         object@modelInfo[[i]],"\". "))
               if (is.null(object@specificArgs[[i]])) {
                 cat("Default parameters\n")
               } else {
                 cat("Arguments:\n")
-                arguments <- sapply(seq_along(object@specificArgs[[i]]), function(argI) {
-                  values <- object@specificArgs[[i]][[argI]]
-                  if (is.list(values)) {
-                    values <- values[1:2]
-                    values <- paste(paste(names(values), unlist(values), sep=" -> "), collapse = " ,")
+                arguments <- sapply(
+                  seq_along(object@specificArgs[[i]]), function(argI) {
+                    values <- object@specificArgs[[i]][[argI]]
+                    if (is.list(values)) {
+                      values <- values[1:2]
+                      values <- paste(paste(names(values),
+                                            unlist(values), sep=" -> "),
+                                      collapse = " ,")
                     values <- paste0(values, " ...")
-                  }
-                  paste(names(object@specificArgs[[i]])[argI], values, sep=" :")
-                })
+                    }
+                    paste(names(object@specificArgs[[i]])[argI],
+                          values, sep=" :")
+                    })
                 cat(paste(arguments, collapse ="\n"), "\n")
               }
-
-            }
-          })
-
+              }
+            })
 
 #' A generic function showing pathway's module info
 #' @param object an object of class MultiOmicsModules
@@ -155,14 +170,17 @@ setMethod("showModule",
               cat(paste0("Module ",i, ": pvalue ", object@alphas[i], "\n"))
               covs <- names(which(object@zlists[[i]] <=0.05))
               if (length(covs)!=0)
-                cat("The following covariates are implicated:\n",paste(covs, collapse=", "),"\n")
+                cat("The following covariates are implicated:\n",
+                    paste(covs, collapse=", "),"\n")
               cat("Module is composed by the followings:\n")
               cat(paste(object@modules[[i]], collapse=", "))
               cat("\n-+-\n")
             }
 
             if (length(sthis) < length(sigCliquesIdx)) {
-              cat(paste0("There are other ", length(sigCliquesIdx)-length(sthis), " cliques with pvalue <= 0.05"))
+              cat(paste0("There are other ",
+                         length(sigCliquesIdx)-length(sthis),
+                         " cliques with pvalue <= 0.05"))
             }
 
             invisible(NULL)

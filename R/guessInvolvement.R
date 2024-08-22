@@ -25,17 +25,17 @@ guessInvolvement <- function(pathway, moduleNumber, loadThr=0.6, n=3, atleast=1,
   omics <- pathway@modulesView[[moduleNumber]]
   moduleCox <- createCoxObj(multiOmicObj@colData, moView=omics)
   analysis <- pathway@analysis
-  
+
   lapply(omics, function(omic) {
     if(omic$method=="pca") {
-      extractSummaryFromPCA(omic, multiOmicObj, moduleCox, analysis, loadThr, 
+      extractSummaryFromPCA(omic, multiOmicObj, moduleCox, analysis, loadThr,
                             atleast, minprop=min_prop_pca)
     } else if (omic$method=="cluster") {
       extractSummaryFromCluster(omic, multiOmicObj, n)
     } else if (omic$method %in% c("binary", "directedBinary")) {
       extractSummaryFromBinary(omic, multiOmicObj, n)
     } else if (omic$method %in% c("count", "directedCount")) {
-      extractSummaryFromNumberOfEvents(omic, multiOmicObj, moduleCox, analysis, 
+      extractSummaryFromNumberOfEvents(omic, multiOmicObj, moduleCox, analysis,
                                        n=3, minprop=min_prop_events)
     } else {
       stop("Unsupported method.")
@@ -54,7 +54,7 @@ guessInvolvement <- function(pathway, moduleNumber, loadThr=0.6, n=3, atleast=1,
 #' @param min_prop_pca the minimal proportion to compute the pca classes
 #' @param min_prop_events the minimal proportion to compute the event classes
 #' @param ... additional arguments passed to `get` function
-#' 
+#'
 #'
 #' @return For each omic analyzed a list that is the summary for omic summarized using the setted method: pvalues are present only for cluster method.
 #' \item{sigModule}{the original data for significant features}
@@ -65,17 +65,17 @@ guessInvolvement <- function(pathway, moduleNumber, loadThr=0.6, n=3, atleast=1,
 #'
 #' @export
 guessInvolvementPathway <- function(pathway, loadThr=0.6, n=3, atleast=1,
-                                    min_prop_pca=0.1, 
+                                    min_prop_pca=0.1,
                                     min_prop_events=0.1, ...) {
-  
+
   multiOmicObj <- get(pathway@multiOmicObj, ...)
   omics <- pathway@pathView
   moduleCox <- createCoxObj(multiOmicObj@colData, moView=omics)
   analysis <- pathway@analysis
-  
+
   lapply(omics, function(omic) {
     if(omic$method=="pca") {
-      extractSummaryFromPCA(omic, multiOmicObj, moduleCox, analysis, loadThr, 
+      extractSummaryFromPCA(omic, multiOmicObj, moduleCox, analysis, loadThr,
                             atleast, minprop=min_prop_pca)
 
     } else if (omic$method=="cluster") {
@@ -83,7 +83,7 @@ guessInvolvementPathway <- function(pathway, loadThr=0.6, n=3, atleast=1,
     } else if (omic$method %in% c("binary", "directedBinary")) {
       extractSummaryFromBinary(omic, multiOmicObj, n)
     } else if (omic$method %in% c("count", "directedCount")) {
-      extractSummaryFromNumberOfEvents(omic, multiOmicObj, moduleCox, analysis, 
+      extractSummaryFromNumberOfEvents(omic, multiOmicObj, moduleCox, analysis,
                                        n=3, minprop=min_prop_events)
     } else {
       stop("Unsupported method.")
@@ -95,12 +95,12 @@ guessInvolvementPathway <- function(pathway, loadThr=0.6, n=3, atleast=1,
 #   if (is.null(sigOmicsIndex) || length(sigOmicsIndex)==0)
 #     return(NULL)
 #   omics <- pathway@modulesView[[moduleNumber]]
-# 
+#
 #   if (length(sigOmicsIndex)>length(omics))
 #     stop("sigOmicsIndex greater that omics considered.")
 #   if (max(sigOmicsIndex)>length(omics))
 #     stop("sigOmicsIndex greater that omics considered.")
-# 
+#
 #   moduleCox <- pathway@coxObjs[[moduleNumber]]
 #   lapply(sigOmicsIndex, function(idx) {
 #     omic<-omics[[idx]]

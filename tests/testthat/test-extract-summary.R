@@ -8,6 +8,7 @@ test_that("extractyInfo_binary", {
                method="binary",
                omicName="mut",
                eventThr=1)
+
   summ <- summarizeToBinaryEvents(mut, features = row.names(mut), name = "mut")
   expect_identical(summ$x, x)
   discrete <- x
@@ -30,7 +31,9 @@ test_that("extractyInfo_dirBinary", {
   cnvCountNeg <- rowSums(dataModule <=-2)
   ordCnvCountPos <- cnvCountPos[order(cnvCountPos, decreasing = T)]
   ordCnvCountNeg <- cnvCountNeg[order(cnvCountNeg, decreasing = T)]
-  ordCnvGene <- unique(c(head(names(ordCnvCountPos), 3), head(names(ordCnvCountNeg), 3)))
+  ordCnvGene <- unique(c(head(names(ordCnvCountPos), 3),
+                         head(names(ordCnvCountNeg), 3)))
+
   discrete2class <- data.frame(lapply(omic$x, as.numeric))
   row.names(discrete2class) <- row.names(omic$x)
   duobleBinInfo <- extractSummaryFromBinary(omic, mo, n=3)
@@ -49,11 +52,11 @@ test_that("extractyInfo_Cluster", {
   involved <- head(KMsigMat, 3)
   expect_setequal(row.names(clsInfo$subset), row.names(involved))
 })
-  
+
 
 test_that("extractyInfo_Pca", {
   fake_exp <- dummy_expression_like_dataset()
-  omic <- summarizeWithPca(fake_exp, row.names(fake_exp), name="exp", maxPCs = 1)  
+  omic <- summarizeWithPca(fake_exp, row.names(fake_exp), name="exp", maxPCs = 1)
   mo <- fake_mo(omics="exp", type="survival")
   moview <- createMOMView(mo, row.names(fake_exp))
   cox <- createCoxObj(mo@colData, moview)
@@ -112,6 +115,5 @@ test_that("extractyInfo_NumberOfEvents", {
   mut_sum <- mut_sum[order(mut_sum, decreasing = TRUE)]
   expect_setequal(names(mut_sum)[1:3], row.names(countInfo$subset))
 })
-
 
 

@@ -23,6 +23,22 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
                                             nullModel = "classes ~ 1",
                                             pathName=NULL) {
 
+  baseFormula_input <- strsplit(baseFormula, " ")[[1]]
+  if (!(baseFormula_input[1] %in% colnames(classAnnot))){
+    stop("Invalid formula. Class column not found in classAnnot")
+  } else if (length(baseFormula_input) == 1 | baseFormula_input[2] != "~") {
+    stop("Invalid formula. Formula should be written as: 'classes ~'")
+  }
+  
+  nullModel_input <- strsplit(nullModel, " ")[[1]]
+  if (!(nullModel_input[1] %in% colnames(classAnnot))){
+    stop("Invalid formula. Class column not found in classAnnot")
+  } else if (length(nullModel_input) == 1) {
+    stop("Formula is too short. Formula should be written as 'classes ~ 1")
+  } else if (nullModel_input[2] != "~" | nullModel_input[3] != "1") {
+    stop("Invalid formula. Formula should be written as: 'classes ~'")
+  }
+  
   if (is.null(pathName) && is(graph, "Pathway"))
     pathName <- graph@title
 
@@ -32,7 +48,7 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
     stop("There is no nodes on the graph.")
 
   moduleView <- lapply(seq_along(omicsObj@ExperimentList@listData), function(i) 
-    { 
+    {
     test <- get(omicsObj@modelInfo[i]) 
     specificArgs <- omicsObj@specificArgs[[i]]
 
@@ -40,6 +56,10 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
     if (omicsObj@modelInfo[i]=="summarizeWithPca") {
       genesToUse <- intersect(row.names(omicsObj@ExperimentList@listData[[i]]),
                               genesToUse)
+      if (identical(genesToUse, character(0))) {
+        stop(paste0("This data ", omicsObj@ExperimentList@listData[[i]],
+                    "have no genes for this pathway"))
+      }
       graph <- graph::subGraph(genesToUse, graph)
       cliques <- extractCliquesFromDag(graph)
     } 
@@ -71,7 +91,8 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
   
   dataTest <- data.frame(classAnnot, covariates)
   
-  nullModelFormula <- nullModel
+  # nullModelFormula <- paste0(baseFormula,"1")
+ nullModelFormula <- nullModel
   
   dependentVar <- all.vars(as.formula(nullModelFormula))[1]
   if(!(dependentVar %in% colnames(dataTest)))
@@ -90,7 +111,7 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
   }
 
   fullModelFormula = baseFormula
-  if (autoCompleteFormula)
+  if (autoCompleteFormula) # i'd remove that or change because we r not doing survival 4 2 class
     fullModelFormula = paste0(baseFormula,
                              paste(colnames(covariates), collapse="+"))
 
@@ -135,16 +156,31 @@ multiOmicsTwoClassesModuleTest <- function(omicsObj, graph, classAnnot,
 
   if (is(graph, "character"))
     stop("Module test can not handle gene list.")
+  
+  baseFormula_input <- strsplit(baseFormula, " ")[[1]]
+  if (!(baseFormula_input[1] %in% colnames(classAnnot))){
+    stop("Invalid formula. Class column not found in classAnnot")
+  } else if (length(baseFormula_input) == 1 | baseFormula_input[2] != "~") {
+    stop("Invalid formula. Formula should be written as: 'classes ~'")
+  }
+  
+  nullModel_input <- strsplit(nullModel, " ")[[1]]
+  if (!(nullModel_input[1] %in% colnames(classAnnot))){
+    stop("Invalid null formula. Class column not found in classAnnot")
+  } else if (length(nullModel_input) == 1) {
+    stop("Null formula is too short. Formula should be written as 'classes ~ 1")
+  } else if (nullModel_input[2] != "~" | nullModel_input[3] != "1") {
+    stop("Invalid null formula. Formula should be written as: 'classes ~'")
+  }
 
   if (is.null(pathName) & is(graph, "Pathway"))
     pathName <- graph@title
 
   graph <- convertPathway(graph, useThisGenes)
-
   genes <- graph::nodes(graph)
-  if (length(genes)== 0)
-    stop("There is no intersection between expression feature names and 
-         the node names on the graph.")
+  if (length(genes) == 0)
+    stop("There is no intersection between expression feature names and
+         the node names in the graph.")
 
   # create the modules
   cliques <- extractCliquesFromDag(graph)

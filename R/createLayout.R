@@ -18,7 +18,8 @@ showMOSpalette <- function(){
   title("MOSClip palette")
 }
 
-createLayout <- function(heatNumber=1, nrowsHeatmaps=3, withTopAnno=TRUE, withSampleNames=TRUE, annotaionLegend=TRUE){
+createLayout <- function(heatNumber=1, nrowsHeatmaps=3, withTopAnno=TRUE,
+                         withSampleNames=TRUE, annotaionLegend=TRUE){
   body <- NULL
   for (i in seq_len(heatNumber)) {
     body <- rbind(body, createMatrixLayout(i, nrowsHeatmaps, 4))

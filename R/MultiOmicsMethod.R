@@ -111,7 +111,9 @@ summarizeToNumberOfEvents <- function(data, features, name="event", min_prop=0.1
 #' @importFrom stats cutree dist hclust
 #' @importFrom NbClust NbClust
 #' @export
-summarizeInCluster <- function(data, features, name="clu", dictionary=NULL, max_cluster_number=3, cliques=NULL) {
+summarizeInCluster <- function(data, features, name="clu",
+                               dictionary=NULL, max_cluster_number=3,
+                               cliques=NULL) {
   if (is.null(data) || (ncol(data)==0) || !(is.matrix(data)))
     return(NULL)
 
@@ -139,7 +141,9 @@ summarizeInCluster <- function(data, features, name="clu", dictionary=NULL, max_
 
   ## CREATE CLUSTERS
   if (TRUE){
-    covs <- createOptiomalClusterClasses(datamatClique, name, max_cluster_number = max_cluster_number)
+    covs <- createOptiomalClusterClasses(datamatClique,name,
+                                         max_cluster_number = 
+                                           max_cluster_number)
   } else {
     covs <- createClusterClassesOld(datamatClique, name)
   }
@@ -150,11 +154,15 @@ summarizeInCluster <- function(data, features, name="clu", dictionary=NULL, max_
   }
 
   collapse=covs
-  list(x=collapse, usedGenes=names(used), namesCov=names(covs), cls=used, method="cluster", omicName=name)
+  list(x=collapse, usedGenes=names(used), namesCov=names(covs), cls=used,
+       method="cluster", omicName=name)
 }
 
-createOptiomalClusterClasses <- function(datamatClique, name, max_cluster_number, index_method="silhouette") {
-  nb <- sinkNbClust(data=datamatClique, min.nc=2, max.nc=max_cluster_number, method="ward.D2", index=index_method)
+createOptiomalClusterClasses <- function(datamatClique, name,
+                                         max_cluster_number,
+                                         index_method="silhouette") {
+  nb <- sinkNbClust(data=datamatClique, min.nc=2, max.nc=max_cluster_number,
+                    method="ward.D2", index=index_method)
   covs <- data.frame(factor(nb$Best.partition), stringsAsFactors = T)
   optimalCLusterNumber <- length(table(nb$Best.partition))
   names(covs) <- paste0(name,optimalCLusterNumber, "k")
@@ -163,11 +171,13 @@ createOptiomalClusterClasses <- function(datamatClique, name, max_cluster_number
 
 #' @importFrom grDevices dev.off pdf
 #'
-sinkNbClust <- function(data, min.nc=2, max.nc=6, method="ward.D2", index="silhouette"){
+sinkNbClust <- function(data, min.nc=2, max.nc=6, method="ward.D2",
+                        index="silhouette"){
   if (index=="all")
     sink(file=tempfile()); pdf(file=NULL)
 
-  nb <- NbClust(data=data, min.nc=min.nc, max.nc=max.nc, method=method, index=index)
+  nb <- NbClust(data=data, min.nc=min.nc, max.nc=max.nc, method=method,
+                index=index)
 
   if (index=="all")
     sink(); dev.off()
@@ -176,7 +186,7 @@ sinkNbClust <- function(data, min.nc=2, max.nc=6, method="ward.D2", index="silho
 }
 
 createClusterClassesOld <- function(datamatClique, name){
-  warning("you are using an old way to evaluate cluster...\n
+  warning("You are using an old way to evaluate cluster...\n
           this function will be deprecated soon...")
 
   md <- dist(datamatClique, method = "euclidean")
@@ -207,7 +217,8 @@ createClusterClassesOld <- function(datamatClique, name){
 #' @return NULL
 #' @importFrom stats cutree dist hclust
 #' @export
-summarizeInClusterWithoutDictionary <- function(data, features, name="clu", cliques=NULL) {
+summarizeInClusterWithoutDictionary <- function(data, features, name="clu",
+                                                cliques=NULL) {
   warning("function summarizeInClusterWithoutDictionary has been deprecated...\n
           use summarizeInCluster")
 
@@ -261,7 +272,9 @@ summarizeInClusterWithoutDictionary <- function(data, features, name="clu", cliq
 #' @return NULL
 #' @importFrom stats sd
 #' @export
-summarizeWithPca <- function(data, features, name="pca", shrink=FALSE, method="regular", cliques=NULL, maxPCs=3, loadThr=0.6) {
+summarizeWithPca <- function(data, features, name="pca", shrink=FALSE,
+                             method="regular", cliques=NULL, maxPCs=3,
+                             loadThr=0.6) {
   if (is.null(data))
     return(NULL)
 
@@ -274,7 +287,8 @@ summarizeWithPca <- function(data, features, name="pca", shrink=FALSE, method="r
     return(NULL)
 
   if (NCOL(dataClique)!=1) {
-    pcs <- computePCs(dataClique, shrink=shrink, method=method, cliques=cliques, maxPCs=maxPCs)
+    pcs <- computePCs(dataClique, shrink=shrink, method=method,
+                      cliques=cliques, maxPCs=maxPCs)
     colnames(pcs$x) <- paste0(name,colnames(pcs$x))
     names(pcs$sdev) <- paste0(name,names(pcs$sdev))
     colnames(pcs$loadings) <- paste0(name,colnames(pcs$loadings))
@@ -304,7 +318,8 @@ summarizeWithPca <- function(data, features, name="pca", shrink=FALSE, method="r
 #' @return NULL
 #'
 #' @export
-summarizeToNumberOfDirectionalEvents <- function(data, features, name="dCount", eventThr=2,
+summarizeToNumberOfDirectionalEvents <- function(data, features, name="dCount",
+                                                 eventThr=2,
                                                  min_prop=0.1, cliques=NULL) {
   if (is.null(data))
     return(NULL)
@@ -333,7 +348,8 @@ summarizeToNumberOfDirectionalEvents <- function(data, features, name="dCount", 
   if (NCOL(collapsed) == 0)
     return(NULL)
   list(x=collapsed, usedGenes=genes, namesCov=names(collapsed),
-       method="directedCount", omicName=name, eventThr=eventThr, min_prop=min_prop)
+       method="directedCount", omicName=name, eventThr=eventThr,
+       min_prop=min_prop)
 }
 
 #' @importFrom stats quantile
@@ -363,7 +379,8 @@ check_minimal_proportion <- function(x, min_prop=0.1){
 #' @return NULL
 #'
 #' @export
-summarizeToBinaryDirectionalEvents <- function(data, features, name="dirBin", binaryClassMin=10,
+summarizeToBinaryDirectionalEvents <- function(data, features, name="dirBin",
+                                               binaryClassMin=10,
                                                eventThr=2, cliques=NULL) {
   if (is.null(data))
     return(NULL)
@@ -387,7 +404,8 @@ summarizeToBinaryDirectionalEvents <- function(data, features, name="dirBin", bi
   colnames(collapsed) <- paste0(name, c("POS","NEG"))
 
 
-  keep <- sapply(collapsed, sum) >= binaryClassMin | sapply(collapsed, sum) <= NROW(dataClique)-binaryClassMin
+  keep <- sapply(collapsed, sum) >= binaryClassMin | 
+    sapply(collapsed, sum) <= NROW(dataClique)-binaryClassMin
   collapsed = collapsed[, keep, drop=F]
 
   if (NCOL(collapsed) == 0)

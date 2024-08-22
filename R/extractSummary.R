@@ -19,14 +19,15 @@ extractSummaryFromBinary <- function(omic, multiOmicObj, n=3) {
   # involved <- head(mostlyMutated(moduleMat), n)
   # sigModule <- omic$dataModule[row.names(involved), , drop=F]
 
-  impact <- lapply(covs, mostlyMutated, moduleMat=t(moduleMat), name=omic$omicName,
-                   eventThr=omic$eventThr)
+  impact <- lapply(covs, mostlyMutated, moduleMat=t(moduleMat),
+                   name=omic$omicName,eventThr=omic$eventThr)
   mostlyImpacted <- lapply(impact, head, n=n)
   involved <- unique(unlist(lapply(mostlyImpacted, row.names)))
   sigModule <- moduleMat[involved, , drop=F]
 
   discrete=data.frame(lapply(omic$x, as.numeric), row.names=row.names(omic$x))
-  list(sigModule=sigModule, discrete=discrete, subset=mostlyImpacted, covsConsidered=omic$namesCov)
+  list(sigModule=sigModule, discrete=discrete, subset=mostlyImpacted,
+       covsConsidered=omic$namesCov)
 }
 
 # mostlyMutated <- function(moduleMat) {
@@ -58,7 +59,7 @@ extractSummaryFromCluster <-function(omic, multiOmicObj, n=3) {
   # if (is.list(KMsigMat) & !is.data.frame(KMsigMat))
   #   stop("Something wrong 458. Contact maintainer.")
   if (is.null(names(omic$cls)))
-    stop("cls in omic need to be a list or named vector")
+    stop("cls in omic needs to be a list or a named vector")
 
   g <- lapply(names(omic$cls), function(gene) {
     cbind(gene, omic$cls[[gene]])
@@ -72,7 +73,9 @@ extractSummaryFromCluster <-function(omic, multiOmicObj, n=3) {
   topGenes <- genes[row.names(involved)]
   topGenes <- tapply(names(topGenes), topGenes, paste, collapse=";")
 
-  list(sigModule=sigModule, discrete=omic$x, subset=data.frame(row.names=names(topGenes), metClust=topGenes), pvalues=involved,
+  list(sigModule=sigModule, discrete=omic$x,
+       subset=data.frame(row.names=names(topGenes), metClust=topGenes),
+       pvalues=involved,
        covsConsidered=omic$namesCov)
 }
 
@@ -113,7 +116,7 @@ extractSummaryFromPCA <- function(omic, multiOmicObj, moduleCox, analysis,
   moduleMat <- createDataModule(omic, multiOmicObj)
   sigModule <- moduleMat[row.names(topLoad), , drop=F]
 
-  list(sigModule=sigModule, discrete=discretePC, subset=topLoad, 
+  list(sigModule=sigModule, discrete=discretePC, subset=topLoad,
        covsConsidered=covs)
 }
 
@@ -145,8 +148,8 @@ createDiscreteClasses <- function(coxObj, covs, analysis,
     sc[covs] <- covs_classified
     return(sc)
   } else {
-    stop(paste0("Type of analysis ", analysis,
-                " not valid. Check results object"))
+    stop(paste0("Invalid type of analysis: ", analysis,
+                " Check results object"))
   }
 }
 
@@ -162,8 +165,8 @@ retrieveNumericClasses <- function(coxObj, covs, analysis) {
   } else if (analysis == "twoClass") {
     coxObj[, covs, drop=F]
   } else {
-    stop(paste0("Type of analysis ", analysis,
-                " not valid. Check results object"))
+    stop(paste0("Invalid type of analysis ", analysis,
+                " Check results object"))
   }
 }
 
@@ -175,7 +178,8 @@ extractHighLoadingsGenes <- function(loadings, thr, atleast=1) {
     if (length(genes)==0)
       genes = names(ld[order(abs(ld), decreasing = T)][seq_len(atleast)])
 
-    data.frame(row.names=genes, component=rep(pc, length(genes)), stringsAsFactors = FALSE)
+    data.frame(row.names=genes, component=rep(pc, length(genes)),
+               stringsAsFactors = FALSE)
   })
   l <- collapse(l)
   do.call(rbind, l)
@@ -183,7 +187,8 @@ extractHighLoadingsGenes <- function(loadings, thr, atleast=1) {
 
 collapse <- function(list) {
   df <- data.frame(genes=unlist(lapply(list, function(x) row.names(x))),
-                   components=unlist(lapply(list, function(x) x$component)), stringsAsFactors = F)
+                   components=unlist(lapply(list, function(x) x$component)),
+                   stringsAsFactors = F)
   tapply(seq_len(NROW(df)), df$genes, function(idx){
     paste(df$components[idx], collapse=";")
   }, simplify = F)

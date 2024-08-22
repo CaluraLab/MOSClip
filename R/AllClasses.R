@@ -25,7 +25,6 @@ setClass(Class ="MultiOmicsModules",
                    multiOmicObj = "characterOrNULL",
                    title = "characterOrNULL"))
 
-
 #' Multi Omics Pathway.
 #'
 #' This class organize the results of the Multi Omics Module Survival Test analysis.
@@ -46,7 +45,6 @@ setClass(Class ="MultiOmicsPathway",
                    analysis = "characterOrNULL",
                    multiOmicObj = "characterOrNULL",
                    title = "characterOrNULL"))
-
 
 # setClass(Class ="SinglePath", package = "biocmosclip",
 #          slots = c(global = "MultiOmicsPathway",

@@ -17,17 +17,17 @@ dummy_cnv_like_dataset <- function(genes=NULL, seed=1234) {
     genesSize <- c(num1, length(genes)-num1)
   } else {genesSize <- c(3,2)}
   patientsRatio <- list(c(150,50), c(75,125))
-  
+
   lowValues <- sample(c(-1,0,0,0,1,1), patientsRatio[[1]][1]*genesSize[1],replace = T)
   highValues <- sample(c(-2,0,0,0,0,2,2), patientsRatio[[1]][2]*genesSize[1], replace = T)
   lowValues2nd <- sample(c(-2,0,0,0,0,0,2), patientsRatio[[2]][1]*genesSize[2], replace = T)
   highValues2nd <- sample(c(-1,0,0,0,0,0,1), patientsRatio[[2]][2]*genesSize[2], replace = T)
-  
+
   fake_cnv <- rbind(cbind(matrix(lowValues, ncol=patientsRatio[[1]][1], nrow=genesSize[1]),
                           matrix(highValues, ncol=patientsRatio[[1]][2], nrow=genesSize[1])),
                     cbind(matrix(lowValues2nd, ncol=patientsRatio[[2]][1], nrow=genesSize[2]),
                           matrix(highValues2nd, ncol=patientsRatio[[2]][2], nrow=genesSize[2])))
-  
+
   if (is.null(genes)) {
     row.names(fake_cnv) <- paste0("gene_", seq_len(NROW(fake_cnv)))}
   else {row.names(fake_cnv) <- genes}
@@ -40,20 +40,21 @@ dummy_methylation_like_dataset <- function(genes=NULL, seed=1234) {
     genesSize <- c(num1, length(genes)-num1)
   } else {genesSize <- c(3,2)}
   patientsRatio <- list(c(150,50), c(75,125))
-  
+
   set.seed(seed)
+
   lowValues <- runif(patientsRatio[[1]][1]*genesSize[1], 0, 0.2)
   highValues <- runif(patientsRatio[[1]][2]*genesSize[1], 0.7, 0.99)
   lowValues2nd <- runif(patientsRatio[[2]][1]*genesSize[2], 0.6, 1)
   highValues2nd <- runif(patientsRatio[[2]][2]*genesSize[2], 0.2, 0.4)
-  
+
   fake_data <- rbind(cbind(matrix(lowValues, ncol=patientsRatio[[1]][1], nrow=genesSize[1]),
                            matrix(highValues, ncol=patientsRatio[[1]][2], nrow=genesSize[1])),
                      cbind(matrix(lowValues2nd, ncol=patientsRatio[[2]][1], nrow=genesSize[2]),
                            matrix(highValues2nd, ncol=patientsRatio[[2]][2], nrow=genesSize[2]))
   )
-  
-  
+
+
   if (is.null(genes)) {
     row.names(fake_data) <- paste0("gene_", seq_len(NROW(fake_data)))}
   else {row.names(fake_data) <- genes}
@@ -65,7 +66,7 @@ dummy_methylation_like_flat_dataset <- function(genes=NULL, seed=1234) {
   flat_data <- matrix(c(rep(0.3,191), rep(0.4,9)), ncol=200, nrow=1,
                       dimnames = list(paste0("gene_", seq_len(1)),
                                       paste0("P_", seq_len(200))))
-  
+
   row.names(flat_data) <- paste0("gene_", seq_len(NROW(flat_data)))
   colnames(flat_data) <- paste0("P_", seq_len(NCOL(flat_data)))
   return(flat_data)
@@ -77,19 +78,20 @@ dummy_expression_like_dataset <- function(genes=NULL, seed=1234) {
     num1 <- floor(length(genes)/2)
     genesSize <- c(num1, length(genes)-num1)
   } else {genesSize <- c(3,2)}
+
   patientsRatio <- list(c(150,50), c(75,125))
-  
+
   lowValues <- rnorm(patientsRatio[[1]][1]*genesSize[1], 5, 1)
   highValues <- rnorm(patientsRatio[[1]][2]*genesSize[1], 8, 1)
   lowValues2nd <- rnorm(patientsRatio[[2]][1]*genesSize[2], 9, 1)
   highValues2nd <- rnorm(patientsRatio[[2]][2]*genesSize[2], 2, 1)
-  
-  fake_exp <- rbind(cbind(matrix(lowValues, ncol=patientsRatio[[1]][1], nrow=genesSize[1]), 
+
+  fake_exp <- rbind(cbind(matrix(lowValues, ncol=patientsRatio[[1]][1], nrow=genesSize[1]),
                           matrix(highValues, ncol=patientsRatio[[1]][2], nrow=genesSize[1])),
-                    cbind(matrix(lowValues2nd, ncol=patientsRatio[[2]][1], nrow=genesSize[2]), 
+                    cbind(matrix(lowValues2nd, ncol=patientsRatio[[2]][1], nrow=genesSize[2]),
                           matrix(highValues2nd, ncol=patientsRatio[[2]][2], nrow=genesSize[2]))
   )
-  
+
   if (is.null(genes)) {
     row.names(fake_exp) <- paste0("gene_", seq_len(NROW(fake_exp)))}
   else {row.names(fake_exp) <- genes}
@@ -135,4 +137,5 @@ fake_mo <- function(genes=NULL, type="survival",
                   specificArgs = specificArgs[omics])
   return(mo)
 }
+
 

@@ -56,9 +56,8 @@ ex <- matrix(1:100, 10, 10,dimnames = list(letters[1:10], LETTERS[1:10]))
 
 
 MO <- makeOmics(experiments = ExperimentList(e=ex, df=ex),
-                     modelInfo=c("summarizeWithPca", "summarizeWithPca"),
-                     specificArgs = list("a","b"))
-
+                modelInfo=c("summarizeWithPca", "summarizeWithPca"),
+                specificArgs = list("a","b"))
 
 smallMO <- filterMultiOmicsForSamples(MO, c("A"))
 

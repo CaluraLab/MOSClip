@@ -44,14 +44,15 @@ makePositiveDefinite<-function(m1, m2=NULL, m3=NULL, threshold=0.1){
     if (!(ncol(m1)==nrow(m1)) | !(ncol(m2)==nrow(m2)) | (!(ncol(m3)==nrow(m3))))
       stop("the matrices are not square")
     
-    if (!all(rownames(m1)==colnames(m1)) | !all(rownames(m2)==colnames(m2)) | !all(rownames(m3)==colnames(m3)))
-      stop("column and row elements must be equal")
+    if (!all(rownames(m1)==colnames(m1)) | !all(rownames(m2)==colnames(m2)) | 
+        !all(rownames(m3)==colnames(m3)))
+      stop("column and row elements must be identical")
     
     if( !all(dim(m1)==dim(m2)) | !all(dim(m1)==dim(m3)))
       stop("Matrices have different sizes")
     
     if (!all(colnames(m1)==colnames(m2)) | !all(colnames(m1)==colnames(m3)))
-      stop("Matrices hav different names")
+      stop("Matrices have different names")
     
     eig<-min(round(c(eigen(m1)$values,eigen(m2)$values,eigen(m3)$values),2))
   }
