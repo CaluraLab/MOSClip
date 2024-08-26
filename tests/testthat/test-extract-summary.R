@@ -79,7 +79,7 @@ test_that("createDiscreteClasses", {
                regexp=" not in coxObj")
   covs <- colnames(cox)[-c(1,2)]
   expect_error(createDiscreteClasses(cox, covs=covs, analysis="class"),
-               regexp="Type of analysis .* not valid. Check results object")
+               regexp="Invalid type of analysis: .* Check results object")
   sc <- createDiscreteClasses(cox, covs, analysis = "survival")
   expect_setequal(colnames(sc), colnames(cox))
   expect_setequal(unique(unlist(apply(sc[,covs], 2, unique, simplify = FALSE))), c("low", "high"))
@@ -100,7 +100,7 @@ test_that("retrieveNumericClasses", {
                regexp=" not in coxObj")
   covs <- colnames(cox)[-c(1)]
   expect_error(retrieveNumericClasses(cox, covs=covs, analysis="surv"),
-               regexp="Type of analysis .* not valid. Check results object")
+               regexp="Invalid type of analysis .* Check results object")
   })
 
 
