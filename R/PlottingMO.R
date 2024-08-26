@@ -258,7 +258,7 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
 
   moduleGenes <- pathway@modules[[moduleNumber]]
 
-  involved <- guessInvolvement(pathway, multiOmic, moduleNumber = moduleNumber,
+  involved <- guessInvolvement(pathway, moduleNumber = moduleNumber,
                                min_prop_pca = discr_prop_pca,
                                min_prop_events = discr_prop_events, ...)
 
@@ -407,11 +407,11 @@ plotModuleKM <- function(pathway, moduleNumber,
                          inYears = FALSE, discr_prop_pca = 0.15,
                          discr_prop_events = 0.05,
                          additional_discrete = NULL,
-                         additional_continous = NULL, ...) {
+                         additional_continuous = NULL, ...) {
 
   checkmate::assertClass(pathway, "MultiOmicsModules")
 
-  involved <- guessInvolvement(pathway, multiOmic, moduleNumber = moduleNumber,
+  involved <- guessInvolvement(pathway, moduleNumber = moduleNumber,
                                min_prop_pca = discr_prop_pca,
                                min_prop_events = discr_prop_events, ...)
 
@@ -534,7 +534,7 @@ plotModuleInGraph <- function(pathway, reactObj, moduleNumber,
   net <- igraph::simplify(net, remove.multiple = T, remove.loops = T)
   color <- rep("grey", length(V(net)))
   color[names(V(net)) %in% moduleGenes] <- "tomato"
-  involved <- guessInvolvement(pathway, multiOmic, moduleNumber = moduleNumber,
+  involved <- guessInvolvement(pathway, moduleNumber = moduleNumber,
                                min_prop_pca=discr_prop_events,
                                min_prop_events=discr_prop_events, ...)
   mark.groups=lapply(involved, function(x) {
