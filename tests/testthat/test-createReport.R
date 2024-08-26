@@ -30,7 +30,7 @@ test_that("multiPathwayModuleReport", {
   covs <- unique(sapply(colnames(report), substr, 1, 3))[-(1:3)]
   expect_identical(covs[1:length(priority_to)], priority_to)
   expect_s3_class(report, "data.frame")
-  expect_equal(ncol(report), 10)
+  expect_equal(ncol(report), 11)
   expect_error(multiPathwayModuleReport(res[[1]]),
                "A list of pathway modules results are expected.")
   res[[1]] <- list(1)

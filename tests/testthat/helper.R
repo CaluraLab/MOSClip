@@ -1,9 +1,9 @@
 # Creates fake matrices
 dummy_mutation_like_dataset <- function(genes=NULL, seed=1234) {
   set.seed(seed)
-  g_len <- if (!is.null(genes)) length(genes) else 5
-  len = 200
-  mut = matrix(sample(c(0,0,0,1), len*g_len, replace=T), ncol=len, nrow=g_len)
+  mut <- dummy_cnv_like_dataset(genes=genes)
+  mut[abs(mut) < 2] <- 0
+  mut[abs(mut) >= 2] <- 1
   colnames(mut) <- paste0("P_", seq_len(NCOL(mut)))
   if (is.null(genes)) {
     row.names(mut) <- paste0("gene_", seq_len(NROW(mut)))
@@ -13,20 +13,29 @@ dummy_mutation_like_dataset <- function(genes=NULL, seed=1234) {
 dummy_cnv_like_dataset <- function(genes=NULL, seed=1234) {
   set.seed(seed)
   if (!is.null(genes)) {
-    num1 <- floor(length(genes)/2)
+    num1 <- floor(length(genes)/2)-1
     genesSize <- c(num1, length(genes)-num1)
   } else {genesSize <- c(3,2)}
   patientsRatio <- list(c(150,50), c(75,125))
 
-  lowValues <- sample(c(-1,0,0,0,1,1), patientsRatio[[1]][1]*genesSize[1],replace = T)
-  highValues <- sample(c(-2,0,0,0,0,2,2), patientsRatio[[1]][2]*genesSize[1], replace = T)
-  lowValues2nd <- sample(c(-2,0,0,0,0,0,2), patientsRatio[[2]][1]*genesSize[2], replace = T)
-  highValues2nd <- sample(c(-1,0,0,0,0,0,1), patientsRatio[[2]][2]*genesSize[2], replace = T)
+  lowValues <- sample(c(-1,0,0,0,1,1), patientsRatio[[1]][1]*genesSize[1],
+                      replace = TRUE)
+  highValues <- sample(c(-2,0,0,0,0,2,2), patientsRatio[[1]][2]*genesSize[1],
+                       replace = TRUE)
+  lowValues2nd <- sample(c(-2,0,0,0,0,0,2), patientsRatio[[2]][1]*genesSize[2],
+                         replace = TRUE)
+  highValues2nd <- sample(c(-1,0,0,0,0,0,1), patientsRatio[[2]][2]*genesSize[2],
+                          replace = TRUE)
 
-  fake_cnv <- rbind(cbind(matrix(lowValues, ncol=patientsRatio[[1]][1], nrow=genesSize[1]),
-                          matrix(highValues, ncol=patientsRatio[[1]][2], nrow=genesSize[1])),
-                    cbind(matrix(lowValues2nd, ncol=patientsRatio[[2]][1], nrow=genesSize[2]),
-                          matrix(highValues2nd, ncol=patientsRatio[[2]][2], nrow=genesSize[2])))
+  fake_cnv <- rbind(cbind(matrix(lowValues, ncol=patientsRatio[[1]][1],
+                                 nrow=genesSize[1]),
+                          matrix(highValues, ncol=patientsRatio[[1]][2],
+                                 nrow=genesSize[1])),
+                    cbind(matrix(lowValues2nd, ncol=patientsRatio[[2]][1],
+                                 nrow=genesSize[2]),
+                          matrix(highValues2nd, ncol=patientsRatio[[2]][2],
+                                 nrow=genesSize[2]))
+  )
 
   if (is.null(genes)) {
     row.names(fake_cnv) <- paste0("gene_", seq_len(NROW(fake_cnv)))}
@@ -36,7 +45,7 @@ dummy_cnv_like_dataset <- function(genes=NULL, seed=1234) {
 
 dummy_methylation_like_dataset <- function(genes=NULL, seed=1234) {
   if (!is.null(genes)) {
-    num1 <- floor(length(genes)/2)
+    num1 <- floor(length(genes)/2)-1
     genesSize <- c(num1, length(genes)-num1)
   } else {genesSize <- c(3,2)}
   patientsRatio <- list(c(150,50), c(75,125))
@@ -75,7 +84,7 @@ dummy_methylation_like_flat_dataset <- function(genes=NULL, seed=1234) {
 dummy_expression_like_dataset <- function(genes=NULL, seed=1234) {
   set.seed(seed)
   if (!is.null(genes)) {
-    num1 <- floor(length(genes)/2)
+    num1 <- floor(length(genes)/2)-1
     genesSize <- c(num1, length(genes)-num1)
   } else {genesSize <- c(3,2)}
 
@@ -129,8 +138,8 @@ fake_mo <- function(genes=NULL, type="survival",
   cdata <- dummy_colData(len=dim(exp)[2], type)
   modelInfo = c(exp="summarizeWithPca", met="summarizeInCluster",
                 mut="summarizeToNumberOfEvents", cnv="summarizeToNumberOfDirectionalEvents")
-  specificArgs = list(exp=list(name="exp"), met=list(name="met"),
-                      mut=list(name="mut"), cnv=list(name="cnv"))
+  specificArgs = list(exp = list(name = "exp"), met = list(name = "met"),
+                      mut = list(name = "mut"), cnv = list(name = "cnv"))
   mo <- makeOmics(experiments=exp_list[omics],
                   colData=cdata,
                   modelInfo = modelInfo[omics],
