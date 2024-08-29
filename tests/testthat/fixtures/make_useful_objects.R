@@ -8,11 +8,11 @@ if (file.exists("reactome-entrez.RData")) {
 }
 
 
-if (file.exists("tests/testthat/fixtures/graph.rds")) {
-  graph <- readRDS("tests/testthat/fixtures/graph.rds")
+if (file.exists("tests/testthat/fixtures/reactSmallDummy.rds")) {
+  graph <- readRDS("tests/testthat/fixtures/reactSmallDummy.rds")
 } else {
   graph <- reactome["Intrinsic Pathway for Apoptosis"]
-  saveRDS(graph, file="tests/testthat/fixtures/graph.rds")}
+  saveRDS(graph, file="tests/testthat/fixtures/reactSmallDummy.rds")}
 
 
 if (file.exists("tests/testthat/fixtures/graph_list.rds")) {
