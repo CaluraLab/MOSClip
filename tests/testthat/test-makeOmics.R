@@ -30,5 +30,12 @@ test_that("makeOmics", {
                  "Samples order mismatch")
   expect_null(mo)
   expect_s4_class(fake_mo(), "Omics")
+
+  exp0 <- matrix(0, nrow=5, ncol=200)
+  colnames(exp0) <- paste0("P_", seq_len(NCOL(exp0)))
+  expect_error(makeOmics(experiments = ExperimentList(exp=exp0),
+               modelInfo=c("summarizeWithPca"),
+               specificArgs=list("pca")), 
+               "Some experiment matrices contains only 0 or NA values: ")
 })
 

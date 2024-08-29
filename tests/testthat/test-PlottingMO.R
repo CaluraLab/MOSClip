@@ -73,7 +73,7 @@ test_that("Plots with two class object work", {
 
   res.ModuleInGraph <- plotModuleInGraph(
     twoCModuleObj, dummy_react,
-    moduleNumber = 3, legendLabels = c("exp", "methylation", "cnv"),
+    moduleNumber = 2, legendLabels = c("expr", "methylation", "cnv", "mut"),
     paletteNames = c(exp = "red", met = "green", mut = "blue", cnv = "yellow"),
     envir = env)
 
@@ -84,7 +84,7 @@ test_that("Plots with two class object work", {
 
   expect_error(plotModuleInGraph(
     twoCModuleObj, dummy_react,
-    moduleNumber = 3, legendLabels = c("expr", "methylation", "cnv"),
+    moduleNumber = 3, legendLabels = c("expr", "methylation", "cnv", "mut"),
     paletteNames = c(
       exp = "orange", met = "green", mut = "blue", cnv = "yellow"),
     envir = env),

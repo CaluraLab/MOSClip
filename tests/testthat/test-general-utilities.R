@@ -65,3 +65,15 @@ test_that("filterMultiOmicsForSamples", {
   expect_identical(smallMO@ExperimentList[[1]], as.matrix(smallMO@ExperimentList[[2]]))
   expect_error(filterMultiOmicsForSamples(MO, c("Z")))
 })
+
+
+test_that("createDataModule work", {
+  mo <- fake_mo(type="survival")
+  mov <- createMOMView(mo, paste0("gene_", seq_len(200)))
+  expect_length(mov, 4)
+  mov[[1]]$omicName = "test"
+  expect_error(createDataModule(mov[[1]], mo), 
+               paste0("omicName not found in ExperimentList.\nSpecify the ",
+                      "correct omicName in the corresponding specificArgs ",
+                      "section of the multiOmic object"))
+})
