@@ -19,6 +19,7 @@
 #' @importFrom ComplexHeatmap Heatmap HeatmapAnnotation '%v%' draw
 #' @importFrom stats relevel
 #' @importFrom ggplotify as.ggplot
+#' @importFrom org.Hs.eg.db org.Hs.eg.db 
 #' 
 #' @export
 plotPathwayHeat <- function(pathway, multiOmic, sortBy = NULL,
