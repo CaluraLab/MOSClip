@@ -109,18 +109,18 @@ plotFrequencies <- function(frequencies, manualColors=NULL, minSize=4,
   g <- g + ggplot2::coord_polar() +
     ggplot2::geom_point(stat='identity') +
     ggplot2::geom_polygon(fill=NA)+
-    ggplot2::geom_path(size=lineSize) +
+    ggplot2::geom_path(linewidth=lineSize) +
     ggplot2::labs(x = NULL) +
     ggplot2::theme_bw() +
     ggplot2::theme(panel.border = element_blank(),
                    axis.line.x = element_blank(),
                    axis.line.y = element_blank()) +
-    ggplot2::theme(panel.grid=ggplot2::element_line(size = lineSize*0.5),
+    ggplot2::theme(panel.grid=ggplot2::element_line(linewidth = lineSize*0.5),
                    axis.text.x=element_text(size=size, colour="black"),
                    axis.text=element_text(colour="black")) +
     ggplot2::scale_x_discrete(labels=function(x) lapply(
       strwrap(x, width = width, simplify = FALSE), paste, collapse="\n"))
-  g <- g + theme(legend.position = c(1,1), legend.justification=c(0, 1),
+  g <- g + theme(legend.position.inside = c(1,1), legend.justification=c(0, 1),
                  legend.text=element_text(
                    size=ggplot2::rel(relMagnificationOfLegend)))
   grid::grid.newpage()
