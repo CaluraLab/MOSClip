@@ -128,8 +128,8 @@ multiOmicsSurvivalModuleTest <- function(omicsObj, graph,
 
   genes <- graph::nodes(graph)
   if (length(genes)== 0)
-    stop("There is no intersection between expression
-         feature names and the node names in the graph.")
+    stop(paste0("There is no intersection between expression ",
+         "feature names and the node names in the graph."))
 
   # create the modules
   cliques <- extractCliquesFromDag(graph)
