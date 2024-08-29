@@ -5,8 +5,9 @@ dummy_methylation <- function(seed=1234) {
   set.seed(seed)
   
   genes <- paste0("ENTREZID:", c(10000, 90427, 5366, 23368, 637, 3002, 79792,
-                                 840, 5414, 5599, 8655, 140735, 708))
-  genesSize <- c(8,5)
+                                 840, 5414, 5599, 8655, 140735, 708, 2254,
+                                 57761, 5140, 5289, 10714, 7318, 1642, 121504))
+  genesSize <- c(12,9)
   patientsRatio <- list(c(150,50), c(75,125))
   
   lowValues <- runif(patientsRatio[[1]][1]*genesSize[1], 0, 0.2)
@@ -34,8 +35,9 @@ dummy_expression <- function(seed=1234) {
   set.seed(seed)
   
   genes <- paste0("ENTREZID:", c(10000, 90427, 5366, 23368, 637, 3002, 79792,
-                                 840, 5414, 5599, 8655, 140735, 708))
-  genesSize <- c(8,5)
+                                 840, 5414, 5599, 8655, 140735, 708, 2254,
+                                 57761, 5140, 5289, 10714, 7318, 1642, 121504))
+  genesSize <- c(12,9)
   patientsRatio <- list(c(150,50), c(75,125))
   
   lowValues <- rnorm(patientsRatio[[1]][1]*genesSize[1], 5, 1)
@@ -63,8 +65,9 @@ dummy_cnv <- function(seed=1234) {
   set.seed(seed)
   
   genes <- paste0("ENTREZID:", c(10000, 90427, 5366, 23368, 637, 3002, 79792,
-                                 840, 5414, 5599, 8655, 140735, 708))
-  genesSize <- c(8,5)
+                                 840, 5414, 5599, 8655, 140735, 708, 2254,
+                                 57761, 5140, 5289, 10714, 7318, 1642, 121504))
+  genesSize <- c(12,9)
   patientsRatio <- list(c(150,50), c(75,125))
   
   lowValues <- sample(c(-1,0,0,0,1,1), patientsRatio[[1]][1]*genesSize[1],
