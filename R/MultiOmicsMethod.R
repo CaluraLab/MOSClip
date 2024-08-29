@@ -10,7 +10,6 @@ availableOmicMethods <- function() {
            "summarizeToNumberOfEvents",
            "summarizeWithPca",
            "summarizeInCluster",
-           "summarizeInClusterWithoutDictionary",
            "summarizeToBinaryDirectionalEvents",
            "summarizeToNumberOfDirectionalEvents"))
 }
@@ -140,13 +139,8 @@ summarizeInCluster <- function(data, features, name="clu",
     return(NULL)
 
   ## CREATE CLUSTERS
-  if (TRUE){
-    covs <- createOptiomalClusterClasses(datamatClique,name,
-                                         max_cluster_number = 
-                                           max_cluster_number)
-  } else {
-    covs <- createClusterClassesOld(datamatClique, name)
-  }
+  covs <- createOptiomalClusterClasses(datamatClique, name, 
+                                       max_cluster_number = max_cluster_number)
 
   if (any(table(covs[[1]])<2)){
     warning("Not meaningful class separation\n")
@@ -185,76 +179,6 @@ sinkNbClust <- function(data, min.nc=2, max.nc=6, method="ward.D2",
   return(nb)
 }
 
-createClusterClassesOld <- function(datamatClique, name){
-  warning("You are using an old way to evaluate cluster...\n
-          this function will be deprecated soon...")
-
-  md <- dist(datamatClique, method = "euclidean")
-  if (any(is.na(md)))
-    return(NULL)
-  hc <- hclust(md, method="ward.D2")
-  # clusters <- kmeans(datamatClique, centers=2) # provioamo a implementare anche il Kmeans?
-
-  if (ncol(datamatClique)<4){
-    covs <- data.frame(factor(cutree(hc, k = 2)), stringsAsFactors = T)
-    names(covs) <- paste0(name,"2k")
-  } else {
-    covs <- data.frame(factor(cutree(hc, k = 3)), stringsAsFactors = T)
-    names(covs) <- paste0(name,"3k")
-  }
-  return(covs)
-}
-
-#' Summarize Using Cluster Analysis with no dictionary to translate the matrix ids
-#'
-#' Given a quantitative matrix it clusters the samples
-#'
-#' @param data a data matrix
-#' @param features a vector with the features to analyze
-#' @param name prefix of the covariates
-#' @param cliques the features organized in cliques. Only use for topology.
-#'
-#' @return NULL
-#' @importFrom stats cutree dist hclust
-#' @export
-summarizeInClusterWithoutDictionary <- function(data, features, name="clu",
-                                                cliques=NULL) {
-  warning("function summarizeInClusterWithoutDictionary has been deprecated...\n
-          use summarizeInCluster")
-
-  if (is.null(data) | (ncol(data)==0) | !(is.matrix(data)))
-    return(NULL)
-  genes <- intersect(rownames(data), features)
-
-  if (length(genes)==0)
-    return(NULL)
-
-  datamatClique <- t(data[genes, ,drop=FALSE])
-
-  used <- colnames(datamatClique)
-  names(used) <- colnames(datamatClique)
-
-  md <- dist(datamatClique, method = "euclidean")
-  if (any(is.na(md)))
-    return(NULL)
-  hc <- hclust(md, method="ward.D2")
-  # clusters <- kmeans(datamatClique, centers=2) # TO DO: add kmeans
-
-  if (ncol(datamatClique)<4){
-    covs <- data.frame(factor(cutree(hc, k = 2)), stringsAsFactors = T)
-    names(covs) <- paste0(name,"2k")
-  } else {
-    covs <- data.frame(factor(cutree(hc, k = 3)), stringsAsFactors = T)
-    names(covs) <- paste0(name,"3k")
-  }
-
-  if (any(table(covs[[1]])<2)){
-    # warning("Not meaningful class separation\n")
-    return(NULL)
-  }
-
-  list(x=covs, namesCov=names(covs), cls=used, method="cluster", omicName=name)
-}
 
 #' Summarize Using PCA
 #'
