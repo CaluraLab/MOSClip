@@ -43,6 +43,8 @@ plotModuleHeat(
 
 \item{nrowsHeatmaps}{magnification respect to annotation of sample (annotations take 1 row)}
 
+\item{discr_prop_pca}{the minimal proportion to compute the pca classes}
+
 \item{discr_prop_events}{the minimal proportion to compute the event classes}
 
 \item{...}{additional arguments passed to \code{guessInvolvement} function}

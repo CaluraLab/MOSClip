@@ -12,7 +12,7 @@ multiOmicsSurvivalPathwayTest(
   useThisGenes = NULL,
   pathName = NULL,
   robust = FALSE,
-  include_from_annot = F
+  include_from_annot = FALSE
 )
 }
 \arguments{
