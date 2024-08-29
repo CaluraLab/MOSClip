@@ -6,6 +6,7 @@
 \usage{
 guessInvolvement(
   pathway,
+  multiOmic,
   moduleNumber,
   loadThr = 0.6,
   n = 3,

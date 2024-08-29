@@ -6,6 +6,7 @@
 \usage{
 guessInvolvementPathway(
   pathway,
+  multiOmic,
   loadThr = 0.6,
   n = 3,
   atleast = 1,
