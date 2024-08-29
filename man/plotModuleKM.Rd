@@ -6,6 +6,7 @@
 \usage{
 plotModuleKM(
   pathway,
+  multiOmic,
   moduleNumber,
   formula = "Surv(days, status) ~ PC1",
   fileName = NULL,
@@ -19,7 +20,7 @@ plotModuleKM(
   discr_prop_pca = 0.15,
   discr_prop_events = 0.05,
   additional_discrete = NULL,
-  additional_continous = NULL
+  additional_continuous = NULL
 )
 }
 \arguments{
@@ -51,7 +52,7 @@ plotModuleKM(
 
 \item{additional_discrete}{names of the additional discrete variables to include}
 
-\item{additional_continous}{names of the additional continous variables to include}
+\item{additional_continuous}{names of the additional continous variables to include}
 }
 \description{
 Given the pathway, it creates the Kaplan-meier curves following the formula.

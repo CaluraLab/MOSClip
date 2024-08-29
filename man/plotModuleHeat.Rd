@@ -6,6 +6,7 @@
 \usage{
 plotModuleHeat(
   pathway,
+  multiOmic,
   moduleNumber,
   sortBy = NULL,
   fileName = NULL,
@@ -41,6 +42,8 @@ plotModuleHeat(
 \item{fontsize_col}{like fontsize_row but for columns}
 
 \item{nrowsHeatmaps}{magnification respect to annotation of sample (annotations take 1 row)}
+
+\item{discr_prop_pca}{the minimal proportion to compute the pca classes}
 
 \item{discr_prop_events}{the minimal proportion to compute the event classes}
 }

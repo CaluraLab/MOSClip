@@ -6,6 +6,8 @@
 \usage{
 plotModuleInGraph(
   pathway,
+  multiOmic,
+  reactObj,
   moduleNumber,
   orgDbi = "org.Hs.eg.db",
   paletteNames = NULL,

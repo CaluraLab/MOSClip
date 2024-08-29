@@ -6,6 +6,7 @@
 \usage{
 plotPathwayHeat(
   pathway,
+  multiOmic,
   sortBy = NULL,
   paletteNames = NULL,
   additionalAnnotations = NULL,
