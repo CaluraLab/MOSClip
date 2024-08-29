@@ -19,6 +19,15 @@ test_that("Plots with two class object work", {
   expect_false(is.null(res.pathwayHeat))
   expect_identical(class(res.pathwayHeat), c("gg", "ggplot"))
   
+  res.pathwayHeat_nopalette <- plotPathwayHeat(
+    twoCPathwayObj, dummy_omics, sortBy = c("expPC2", "mut", "classes"),
+    additionalAnnotations = dummy_annot,
+    additionalPaletteNames = list(classes = "teal"),
+    nrowsHeatmaps = 2, withSampleNames = F)
+  
+  expect_false(is.null(res.pathwayHeat_nopalette))
+  expect_identical(class(res.pathwayHeat_nopalette), c("gg", "ggplot"))
+  
   expect_error(plotPathwayHeat(
     twoCPathwayObj, dummy_omics, sortBy = c("expPC2", "mut", "classes"),
     paletteNames = c(exp = "red", met = "green"),
@@ -103,7 +112,7 @@ test_that("Kaplan Meier plots work", {
   
   res.PathwayKM <- plotPathwayKM(
     res.survPathway, dummy_omicsSurv,
-    formula = "Surv(days, status) ~ met3k + expPC2",
+    formula = "Surv(days, status) ~ expPC2",
     paletteNames = "Paired")
   
   expect_false(is.null(res.PathwayKM))
