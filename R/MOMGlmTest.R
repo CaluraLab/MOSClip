@@ -63,7 +63,7 @@ MOMglmTest <- function(genes, omicsObj, classAnnot,
       classAnnot = res$classAnnot
       additionalCovariates = res$additionalCovariates
       }
-    else {stop("Mismatch in covariates and annotations row names.") }}
+    else {stop("Mismatch in covariates and classes annotations row names.") }}
 
   dataTest <- data.frame(classAnnot, additionalCovariates)
 
@@ -71,13 +71,12 @@ MOMglmTest <- function(genes, omicsObj, classAnnot,
   nullModelFormula <- nullModel
 
   dependentVar <- all.vars(as.formula(nullModelFormula))[1]
-  if(!(dependentVar %in% colnames(dataTest)))
-    stop(paste0("Data does not contain the model dependent variable: ",
-                dependentVar))
 
   twoClasses <- unique(dataTest[,dependentVar])
-  if(length(twoClasses) != 2)
-    stop(paste0("Classes in column ",dependentVar," are not two: ",twoClasses))
+  if(length(twoClasses) != 2) {
+    stringClasses <- paste(twoClasses, collapse = " ") 
+    stop(paste("Classes in column ", 
+               dependentVar," are not two: ", stringClasses)) }
 
   dataTestOut <- dataTest
 

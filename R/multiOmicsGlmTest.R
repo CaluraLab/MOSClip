@@ -57,8 +57,7 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
       genesToUse <- intersect(row.names(omicsObj@ExperimentList@listData[[i]]),
                               genesToUse)
       if (identical(genesToUse, character(0))) {
-        stop(paste0("This data ", omicsObj@ExperimentList@listData[[i]],
-                    "have no genes for this pathway"))
+        stop("Genes not found in graph nodes")
       }
       graph <- graph::subGraph(genesToUse, graph)
       cliques <- extractCliquesFromDag(graph)
@@ -95,9 +94,6 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
  nullModelFormula <- nullModel
   
   dependentVar <- all.vars(as.formula(nullModelFormula))[1]
-  if(!(dependentVar %in% colnames(dataTest)))
-    stop(paste0(
-      "Data does not contain the model dependent variable: ", dependentVar))
 
   twoClasses <- unique(dataTest[,dependentVar])
   if(length(twoClasses) != 2)
@@ -179,8 +175,8 @@ multiOmicsTwoClassesModuleTest <- function(omicsObj, graph, classAnnot,
   graph <- convertPathway(graph, useThisGenes)
   genes <- graph::nodes(graph)
   if (length(genes) == 0)
-    stop("There is no intersection between expression feature names and
-         the node names in the graph.")
+    stop(paste0("There is no intersection between expression feature names and",
+         " the node names in the graph."))
 
   # create the modules
   cliques <- extractCliquesFromDag(graph)
