@@ -138,6 +138,10 @@ computeOmicsIntersections <- function(multiPathwayReportData, pvalueThr=0.05,
   universeSize <- NROW(multiPathwayReportData)
   multiPathwayReportDataSig <- multiPathwayReportData[
     multiPathwayReportData[,"pvalue"] <= pvalueThr,]
+  
+  if (nrow(multiPathwayReportDataSig) == 0) {
+    stop("There is no significant modules. Try changing the pvalue threshold")
+  }
 
   if (!is.null(resampligThr)) {
     if (is.null(multiPathwayReportDataSig$resamplingCount))
@@ -151,6 +155,11 @@ computeOmicsIntersections <- function(multiPathwayReportData, pvalueThr=0.05,
 
   MOlistPathSig <- lapply(MOlistPval, function(pp) {
     names(which(pp <= zscoreThr))})
+  
+  if (0 %in% lengths(MOlistPathSig)){
+    stop("One or more omics do not have a significant z score for any of their
+         modules. Try increasing the z score threshold.")
+  }
 
   df <- reshape::melt(MOlistPathSig)
   p2o <- tapply(seq_len(NROW(df)), df[,1], function(idx) {
@@ -241,18 +250,18 @@ pvalueSummary <- function(multiPathwayReportData, excludeColumns=NULL,
                 paste(notNumericColumns, collapse = ", ")))
   }
 
-  covarColumns <- !(colnames(multiPathwayReportData) %in% "pvalue")
+  covarColumns <- colnames(multiPathwayReportData) != "pvalue"
   multiPathwayReportDataSig <- multiPathwayReportData[,covarColumns, drop=F]
 
-  malformedColumns <- apply(multiPathwayReportDataSig, 2,
-                            function(col) 
-                              any(na.omit(col) > 1 | na.omit(col) < 0))
+  malformedColumns <- any(
+    na.omit(multiPathwayReportData$pvalue) > 1 |
+      na.omit(multiPathwayReportData$pvalue) < 0)
 
   if (any(malformedColumns)) {
     stop(paste0("Data malformed. The following columns are not pvalues
                 (values greater than 1 or lower than 0).
                 Consider using excludeColumns argument: ",
-                paste(colnames(multiPathwayReportDataSig)[malformedCoulums],
+                paste(colnames(multiPathwayReportDataSig)[malformedColumns],
                       collapse = ", ")
     ))
   }
