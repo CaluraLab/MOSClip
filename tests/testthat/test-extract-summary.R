@@ -24,7 +24,8 @@ test_that("extractyInfo_binary", {
 
 test_that("extractyInfo_dirBinary", {
   fake_cnv <- dummy_cnv_like_dataset()
-  omic <- summarizeToBinaryDirectionalEvents(fake_cnv, row.names(fake_cnv), name="cnv")
+  omic <- summarizeToBinaryDirectionalEvents(fake_cnv, row.names(fake_cnv), 
+                                             name="cnv")
   mo <- fake_mo(omics="cnv")
   dataModule <- createDataModule(omic, mo)
   cnvCountPos <- rowSums(dataModule >=2)
@@ -56,17 +57,20 @@ test_that("extractyInfo_Cluster", {
 
 test_that("extractyInfo_Pca", {
   fake_exp <- dummy_expression_like_dataset()
-  omic <- summarizeWithPca(fake_exp, row.names(fake_exp), name="exp", maxPCs = 1)
+  omic <- summarizeWithPca(fake_exp, row.names(fake_exp), name="exp", 
+                           maxPCs = 1)
   mo <- fake_mo(omics="exp", type="survival")
   moview <- createMOMView(mo, row.names(fake_exp))
   cox <- createCoxObj(mo@colData, moview)
-  pcaInfo <- extractSummaryFromPCA(omic, mo, cox, "survival", loadThr = 0.6, atleast = 1)
+  pcaInfo <- extractSummaryFromPCA(omic, mo, cox, "survival", 
+                                   loadThr = 0.6, atleast = 1)
   lds <- omic$loadings[order(abs(omic$loadings), decreasing = T),]
   topgenes <- names(lds[abs(lds) >= 0.6])
   if (length(topgenes)==0) {topgenes <- names(lds)[1]}
   expect_setequal(topgenes, row.names(pcaInfo$subset))
   expect_true(length(row.names(pcaInfo$subset)) >= 1)
-  pcaInfo <- extractSummaryFromPCA(omic, mo, cox, "survival", loadThr = 1, atleast = 0)
+  pcaInfo <- extractSummaryFromPCA(omic, mo, cox, "survival", 
+                                   loadThr = 1, atleast = 0)
   expect_null(pcaInfo$subset)
 })
 
@@ -82,7 +86,8 @@ test_that("createDiscreteClasses", {
                regexp="Invalid type of analysis: .* Check results object")
   sc <- createDiscreteClasses(cox, covs, analysis = "survival")
   expect_setequal(colnames(sc), colnames(cox))
-  expect_setequal(unique(unlist(apply(sc[,covs], 2, unique, simplify = FALSE))), c("low", "high"))
+  expect_setequal(unique(unlist(apply(sc[,covs], 2, unique, simplify = FALSE))), 
+                  c("low", "high"))
   expect_s3_class(sc, "surv_categorize")
   sc <- createDiscreteClasses(cox, covs, analysis = "twoClass")
   expect_s3_class(sc, "data.frame")
@@ -110,7 +115,8 @@ test_that("extractyInfo_NumberOfEvents", {
   mo <- fake_mo(omics="mut", type="survival")
   moview <- createMOMView(mo, row.names(fake_mut))
   cox <- createCoxObj(mo@colData, moview)
-  countInfo <- extractSummaryFromNumberOfEvents(omic, mo, cox, analysis = "survival")
+  countInfo <- extractSummaryFromNumberOfEvents(omic, mo, cox, 
+                                                analysis = "survival")
   mut_sum <- rowSums(fake_mut)
   mut_sum <- mut_sum[order(mut_sum, decreasing = TRUE)]
   expect_setequal(names(mut_sum)[1:3], row.names(countInfo$subset))

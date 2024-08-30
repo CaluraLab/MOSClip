@@ -1,6 +1,7 @@
 test_that("summarizeToBinaryEvents", {
   mat <- dummy_mutation_like_dataset()
-  res <- summarizeToBinaryEvents(mat, features = c("gene_1", "gene_2", "gene_3"))
+  res <- summarizeToBinaryEvents(mat, 
+                                 features = c("gene_1", "gene_2", "gene_3"))
   expect_type(res$x[[1]], "logical")
   res <- summarizeToBinaryEvents(data=NULL)
   expect_null(res)

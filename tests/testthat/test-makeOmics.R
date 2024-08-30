@@ -7,7 +7,7 @@ test_that("makeOmics", {
   fake_dup <- fake_exp[new_order_dup,]
   
   expect_message(makeOmics(experiments = ExperimentList(exp=fake_exp)), 
-                 "Data and relative methods to analyze them must be equal in length.")
+          "Data and relative methods to analyze them must be equal in length.")
   expect_message(makeOmics(experiments = ExperimentList(exp=fake_exp, exp2=fake_exp),
                            modelInfo = c("summarizeWithPca", "test"),
                            specificArgs = "test"),
@@ -15,17 +15,20 @@ test_that("makeOmics", {
   expect_message(makeOmics(experiments = ExperimentList(exp=fake_exp),
                            modelInfo = "test",
                            specificArgs = "test"),
-                 "test modelInfo not found in method. Try availableOmicMethods.")
-  expect_message(makeOmics(experiments = ExperimentList(exp=fake_exp, exp2=fake_exp2),
-                           modelInfo = c("summarizeWithPca", "summarizeWithPca"),
+              "test modelInfo not found in method. Try availableOmicMethods.")
+  expect_message(makeOmics(
+    experiments = ExperimentList(exp=fake_exp, exp2=fake_exp2),
+                        modelInfo = c("summarizeWithPca", "summarizeWithPca"),
                            specificArgs = list("pca", "pca")),
                  "Mismatch in sample numbers")
-  expect_message(makeOmics(experiments = ExperimentList(exp=fake_exp, exp2=fake_dup),
-                           modelInfo = c("summarizeWithPca", "summarizeWithPca"),
+  expect_message(makeOmics(
+    experiments = ExperimentList(exp=fake_exp, exp2=fake_dup),
+                        modelInfo = c("summarizeWithPca", "summarizeWithPca"),
                            specificArgs = list("pca", "pca")),
                  "Duplicated row.names found in omics ")
-  expect_message(mo <- makeOmics(experiments = ExperimentList(exp=fake_exp, exp2=fake_ord),
-                                 modelInfo = c("summarizeWithPca", "summarizeWithPca"),
+  expect_message(mo <- makeOmics(
+    experiments = ExperimentList(exp=fake_exp, exp2=fake_ord),
+                        modelInfo = c("summarizeWithPca", "summarizeWithPca"),
                                  specificArgs = list("pca", "pca")),
                  "Samples order mismatch")
   expect_null(mo)

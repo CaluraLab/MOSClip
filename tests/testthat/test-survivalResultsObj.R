@@ -41,7 +41,8 @@ test_that("Survival Results object  for modules works", {
     autoCompleteFormula = T)
 
   expect_s4_class(res.survModule, "MultiOmicsModules")
-  expect_true(!is.null(res.survModule@alphas) & is.numeric(res.survModule@alphas))
+  expect_true(
+    !is.null(res.survModule@alphas) & is.numeric(res.survModule@alphas))
   expect_true(!is.null(res.survModule@zlists) & is.list(res.survModule@zlists))
 
   graph <- convertPathway(dummy_react[[1]], NULL)
@@ -57,7 +58,8 @@ test_that("Survival Results object  for modules works", {
     autoCompleteFormula = T, robust = TRUE)
   
   expect_s4_class(res.survModule, "MultiOmicsModules")
-  expect_true(!is.null(res.survModule@alphas) & is.numeric(res.survModule@alphas))
+  expect_true(
+    !is.null(res.survModule@alphas) & is.numeric(res.survModule@alphas))
   expect_true(!is.null(res.survModule@zlists) & is.list(res.survModule@zlists))
   
   graph <- convertPathway(dummy_react[[1]], NULL)
@@ -100,6 +102,7 @@ test_that("Survival Test works with additional covariates", {
     dummy_omics, dummy_react[[1]], survFormula = "Surv(days, status) ~",
     autoCompleteFormula = T, include_from_annot = TRUE)
   expect_s4_class(res.survModule, "MultiOmicsModules")
-  expect_true(!is.null(res.survModule@alphas) & is.numeric(res.survModule@alphas))
+  expect_true(
+    !is.null(res.survModule@alphas) & is.numeric(res.survModule@alphas))
   expect_true(!is.null(res.survModule@zlists) & is.list(res.survModule@zlists))
   })
