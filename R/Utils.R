@@ -162,7 +162,8 @@ extractPositivePortion <- function(data, invert=FALSE) {
 #'   7 omicName
 #'
 createMOMView <- function(omicsObj, genes) {
-  listCovariates <- lapply(seq_along(omicsObj@ExperimentList@listData), function(i) {
+  listCovariates <- lapply(seq_along(omicsObj@ExperimentList@listData), 
+                           function(i) {
     test <- get(omicsObj@modelInfo[i])
     specificArgs <- omicsObj@specificArgs[[i]]
     args <- list(data=omicsObj@ExperimentList@listData[[i]], features=genes)
@@ -180,7 +181,8 @@ createMOMView <- function(omicsObj, genes) {
 #' Create the coxObj from the covariates used in the test
 #'
 #' @param colData colData from multiOmic object
-#' @param moView modulesView or pathView from multiOmicsModules or multiOmicsPathway object
+#' @param moView modulesView or pathView from multiOmicsModules or 
+#' multiOmicsPathway object
 #'
 #' @return data.frame, samples in the rows, covariates in the columns
 createCoxObj <- function(colData, moView){
@@ -201,7 +203,8 @@ createCoxObj <- function(colData, moView){
 
 #' Create Data Module
 #' 
-#' Extract sub-matrix for the genes of a module or pathway from data matrix of a specific omic
+#' Extract sub-matrix for the genes of a module or pathway from data matrix of 
+#' a specific omic
 #'
 #' @param omic modulesView or pathView object 
 #' @param multiOmicObj object of class 'Omics'
@@ -216,10 +219,32 @@ createDataModule <- function(omic, multiOmicObj){
   
   if (isFALSE(omic$omicName %in% names(multiOmicObj@ExperimentList))) {
     stop(paste0("omicName not found in ExperimentList.\n",
-                "Specify the correct omicName in the corresponding specificArgs ",
-                "section of the multiOmic object"))
+                "Specify the correct omicName in the corresponding ", 
+                "specificArgs section of the multiOmic object"))
   }
   assay <- assay(multiOmicObj, omic$omicName)
-  dataModule <- assay[genes,]
+  dataModule <- assay[genes, , drop = FALSE]
   return(dataModule)
+}
+
+
+#' Shows the MOSClip palette.
+#'
+#' This function shows the MOSClip palette. 
+#' Each omic should be coupled to a color panel, this match will be preserved 
+#' in plots.
+#'
+#' @examples
+#' showMOSpalette()
+#' 
+#' @importFrom graphics axis title
+#'
+#' @export
+showMOSpalette <- function(){
+  plot(c(1:6,1:6,1:6,1:6), c(rep(1,6),rep(2,6), rep(3,6), rep(4,6)),
+       col=apply(MOSpaletteSchema,2,c), pch=19, cex=13, xlim=c(0.5,6.5) , 
+       ylim=c(0,4.8), xlab="", ylab="", axes=FALSE)
+  axis(3, at=1:6, labels=rownames(MOSpaletteSchema), las=1, 
+       cex.axis=0.8, lwd=0, pos=4.5, font=4)
+  title("MOSClip palette")
 }
