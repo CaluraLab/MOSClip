@@ -2,21 +2,18 @@
 #' @importFrom survival Surv
 
 MOMSurvTest <- function(genes, omicsObj,
-                        survFormula = "Surv(days, status) ~",
-                        autoCompleteFormula=T, robust=FALSE,
-                        include_from_annot=F) {
+                        survFormula="Surv(days, status) ~",
+                        autoCompleteFormula=TRUE, robust=FALSE,
+                        include_from_annot=FALSE) {
 
-  # check if topological method has been used
+  # check if topological method has been used 
   for (i in seq_along(omicsObj@ExperimentList@listData)) {
     if (omicsObj@modelInfo[i] == "summarizeWithPca") {
       if (!is.null(omicsObj@specificArgs[[i]]$method)) {
-        if (omicsObj@specificArgs[[i]]$method=="topological") {
+        if (omicsObj@specificArgs[[i]]$method == "topological") {
           stop("Invalid method for module analysis: topological")
         }}
-      else if (is.null(omicsObj@specificArgs[[i]]$method)) {
-        omicsObj@specificArgs[[i]]$method="sparse"}
-    }
-  }
+    }}
 
   moView <- createMOMView(omicsObj, genes)
   formula = survFormula
@@ -33,11 +30,14 @@ MOMSurvTest <- function(genes, omicsObj,
   if (autoCompleteFormula)
     formula = paste0(survFormula, paste(add_covs, collapse="+"))
 
-  if (robust) {
-    scox <- suppressWarnings(survivalcoxr(coxObj, formula)) ### Check warnings
+  if (is.null(coxObj)) {
+    scox = list()
   } else {
-    scox <- suppressWarnings(survivalcox(coxObj, formula)) ### Check warnings
-  }
+    if (robust) {
+      scox <- suppressWarnings(survivalcoxr(coxObj, formula))
+    } else {
+      scox <- suppressWarnings(survivalcox(coxObj, formula))
+    }}
 
   scox$moView <- moView
 

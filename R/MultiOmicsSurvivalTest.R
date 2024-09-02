@@ -1,17 +1,21 @@
 #' Compute Multi Omics Survival in Pathways
 #'
-#' Performs topological survival analysis using an 'Omics' object.
+#' Performs topological survival analysis using an `Omics` object.
 #'
-#' @param omicsObj Object of class 'Omics'
-#' @param graph a pathway in graphNEL, Pathway or geneset format.
-#' @param survFormula Formula to compute survival
-#' @param autoCompleteFormula logical. If TRUE autocomplete the survFormula using all the available covariates
+#' @param omicsObj Object of class `Omics`
+#' @param graph a pathway in `graphNEL`, `Pathway` or geneset format
+#' @param survFormula a character with the formula to compute survival
+#' @param autoCompleteFormula logical. If TRUE autocomplete the `survFormula` 
+#' using all the available covariates
 #' @param useThisGenes vector of genes used to filter pathways
-#' @param pathName title of the pathway. If NULL and graph is "Pathway" graph@title is used as title
-#' @param robust should be used the robust mode for cox
-#' @param include_from_annot compute cox using additional covariates from annot
+#' @param pathName title of the pathway. If NULL and graph is `Pathway`, 
+#' `graph@title` is used as title
+#' @param robust logical, whether the robust mode should be used 
+#' for cox model analysis
+#' @param include_from_annot logical. If TRUE compute cox model analysis 
+#' using additional covariates from `colData`
 #'
-#' @return MultiOmicsPathway object
+#' @return `MultiOmicsPathway` object
 #'
 #' @importFrom graph nodes
 #' @importFrom methods new is
@@ -19,8 +23,8 @@
 #' @export
 
 multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
-                                          survFormula = "Surv(days, status) ~",
-                                          autoCompleteFormula=T,
+                                          survFormula="Surv(days, status) ~",
+                                          autoCompleteFormula=TRUE,
                                           useThisGenes=NULL,
                                           pathName=NULL, robust=FALSE,
                                           include_from_annot=FALSE) {
@@ -31,7 +35,7 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
 
   graph <- convertPathway(graph, useThisGenes)
   genesToUse <- graph::nodes(graph)
-  if (length(genesToUse)== 0)
+  if (length(genesToUse) == 0)
     stop("There is no nodes on the graph.")
 
   # cicle over the datasets (expression, methylation ...)
@@ -41,7 +45,7 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
 
     # Inizialize cliques to null
     cliques=NULL
-    if (omicsObj@modelInfo[i]=="summarizeWithPca") {
+    if (omicsObj@modelInfo[i] == "summarizeWithPca") {
       # compute cliques
       genesToUse <- intersect(row.names(omicsObj@ExperimentList@listData[[i]]),
                               genesToUse)
@@ -77,46 +81,41 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
     formula = paste0(survFormula, paste(add_covs, collapse="+"))
 
   if (robust) {
-    scox <- suppressWarnings(survivalcoxr(coxObj, formula)) ### Check warnings
+    scox <- suppressWarnings(survivalcoxr(coxObj, formula))
   } else {
-    scox <- suppressWarnings(survivalcox(coxObj, formula)) ### Check warnings
+    scox <- suppressWarnings(survivalcox(coxObj, formula))
   }
 
   new("MultiOmicsPathway", 
-      pvalue=scox$pvalue, 
-      zlist=scox$zlist, 
-      pathView=pathView, 
-      analysis="survival", 
-      multiOmicObj=deparse(substitute(omicsObj)),
-      title=pathName)
+      pvalue = scox$pvalue, 
+      zlist = scox$zlist, 
+      pathView = pathView, 
+      analysis = "survival", 
+      multiOmicObj = deparse(substitute(omicsObj)),
+      title = pathName)
 }
 
 #' Compute Multi Omics Survival in Pathway Modules
 #'
-#' Performs survival analysis using an 'Omics' object. The pathway (graph) used is decomposed in modules (cliques) using graph theory.
+#' Performs survival analysis using an `Omics` object. The pathway (graph) used 
+#' is decomposed in modules (cliques) using graph theory.
 #'
-#' @param omicsObj Object of class 'Omics'
-#' @param graph a pathway in graphNEL, Pathway or geneset format.
-#' @param survFormula Formula to compute survival
-#' @param autoCompleteFormula logical. If TRUE autocomplete the survFormula using all the available covariates
-#' @param useThisGenes vector of genes used to filter pathways
-#' @param pathName title of the pathway. If NULL and graph is "Pathway" graph@title is used as title
-#' @param robust should be used the robust mode for cox
-#' @param include_from_annot compute cox using additional covariates from annot
+#' @inheritParams multiOmicsSurvivalPathwayTest
 #'
-#' @return MultiOmicsModules object
+#' @return `MultiOmicsModules` object
 #'
 #' @importFrom graph nodes
 #' @importFrom methods new is
 #' @importFrom survival Surv
 #'
 #' @export
+
 multiOmicsSurvivalModuleTest <- function(omicsObj, graph,
-                                         survFormula = "Surv(days, status) ~",
-                                         autoCompleteFormula=T,
+                                         survFormula="Surv(days, status) ~",
+                                         autoCompleteFormula=TRUE,
                                          useThisGenes=NULL,
                                          pathName=NULL, robust=FALSE,
-                                         include_from_annot=F) {
+                                         include_from_annot=FALSE) {
 
   if (is(graph, "character"))
     stop("Module test cannot handle gene list.")
@@ -127,7 +126,7 @@ multiOmicsSurvivalModuleTest <- function(omicsObj, graph,
   graph <- convertPathway(graph, useThisGenes)
 
   genes <- graph::nodes(graph)
-  if (length(genes)== 0)
+  if (length(genes) == 0)
     stop(paste0("There is no intersection between expression ",
          "feature names and the node names in the graph."))
 
@@ -135,22 +134,22 @@ multiOmicsSurvivalModuleTest <- function(omicsObj, graph,
   cliques <- extractCliquesFromDag(graph)
 
   results <- lapply(cliques, MOMSurvTest, omicsObj=omicsObj,
-                    survFormula = survFormula,
+                    survFormula=survFormula,
                     autoCompleteFormula=autoCompleteFormula,
                     robust=robust, include_from_annot=include_from_annot)
 
-  alphas   <- as.numeric(sapply(results, extractPvalues))
-  zlist    <- lapply(results, function(x) x$zlist)
-  momics   <- lapply(results, function(x) x$moView)
-  modules  <- cliques
+  alphas <- as.numeric(sapply(results, extractPvalues))
+  zlist <- lapply(results, function(x) x$zlist)
+  momics <- lapply(results, function(x) x$moView)
+  modules <- cliques
 
   names(alphas) <- NULL
   new("MultiOmicsModules", 
-      alphas=alphas, 
-      zlists=zlist, 
-      modulesView=momics, 
-      modules=modules, 
-      analysis="survival",
-      multiOmicObj=deparse(substitute(omicsObj)),
-      title=pathName)
+      alphas = alphas, 
+      zlists = zlist, 
+      modulesView = momics, 
+      modules = modules, 
+      analysis = "survival",
+      multiOmicObj = deparse(substitute(omicsObj)),
+      title = pathName)
 }
