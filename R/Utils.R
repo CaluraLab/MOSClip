@@ -70,11 +70,6 @@ extractPvalues <- function(x) {
   }
 }
 
-na2false <- function(x) {
-  x[is.na(x)] <- FALSE
-  x
-}
-
 matchArguments <- function(dots, defaults) {
   if (length(defaults)==0)
     return(dots)
