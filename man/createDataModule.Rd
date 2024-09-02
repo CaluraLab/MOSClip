@@ -15,5 +15,6 @@ createDataModule(omic, multiOmicObj)
 matrix, genes in the rows, samples in the columns
 }
 \description{
-Extract sub-matrix for the genes of a module or pathway from data matrix of a specific omic
+Extract sub-matrix for the genes of a module or pathway from data matrix of
+a specific omic
 }

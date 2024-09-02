@@ -9,7 +9,8 @@ createCoxObj(colData, moView)
 \arguments{
 \item{colData}{colData from multiOmic object}
 
-\item{moView}{modulesView or pathView from multiOmicsModules or multiOmicsPathway object}
+\item{moView}{modulesView or pathView from multiOmicsModules or
+multiOmicsPathway object}
 }
 \value{
 data.frame, samples in the rows, covariates in the columns
