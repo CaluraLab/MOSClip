@@ -86,9 +86,9 @@ test_that("createDataModule work", {
   expect_length(mov, 4)
   mov[[1]]$omicName = "test"
   expect_error(createDataModule(mov[[1]], mo), 
-               paste0("omicName not found in ExperimentList.\nSpecify the ",
-                      "correct omicName in the corresponding specificArgs ",
-                      "section of the multiOmic object"))
+               paste0("omicName not found in ExperimentList.\n",
+                      "Names of experiments in ExperimentList should match",
+                      "the name arguments given in specificArgs"))
 })
 
 

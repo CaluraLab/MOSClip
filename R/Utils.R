@@ -214,8 +214,8 @@ createDataModule <- function(omic, multiOmicObj){
   
   if (isFALSE(omic$omicName %in% names(multiOmicObj@ExperimentList))) {
     stop(paste0("omicName not found in ExperimentList.\n",
-                "Specify the correct omicName in the corresponding ", 
-                "specificArgs section of the multiOmic object"))
+                "Names of experiments in ExperimentList should match",
+                "the name arguments given in specificArgs"))
   }
   assay <- assay(multiOmicObj, omic$omicName)
   dataModule <- assay[genes, , drop = FALSE]
