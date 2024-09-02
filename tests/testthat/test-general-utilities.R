@@ -90,3 +90,8 @@ test_that("createDataModule work", {
                       "correct omicName in the corresponding specificArgs ",
                       "section of the multiOmic object"))
 })
+
+
+test_that("showMOSpalette work", {
+  expect_no_error(showMOSpalette())
+})
