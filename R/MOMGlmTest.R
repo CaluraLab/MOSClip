@@ -47,9 +47,6 @@ MOMglmTest <- function(genes, omicsObj, classAnnot,
   additionalCovariates <- lapply(moView, function(mo) {
     mo$x
   })
-  moduleData <- lapply(moView, function(mo) {
-    mo$dataModule
-  })
 
   additionalCovariates <- do.call(cbind, additionalCovariates)
 
