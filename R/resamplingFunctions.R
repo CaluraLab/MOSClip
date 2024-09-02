@@ -123,6 +123,8 @@ preparePerms <- function(fullMultiOmics, nperm=100, nPatients=3) {
 #' 
 #' @param pathdb pathway database
 #' @param pathwaySubset a list of pathways to resample
+#' @param genesToConsider vector of genes used to filter pathways; if NULL, 
+#' genes found in the first experiment of the multiOmic object are used
 #' 
 #' @inheritParams preparePerms 
 #' 
@@ -130,14 +132,18 @@ preparePerms <- function(fullMultiOmics, nperm=100, nPatients=3) {
 #' 
 #' @export
 #' 
-resamplingSurvival <- function(fullMultiOmics, pathdb, nperm=100, 
-                               pathwaySubset=NULL, nPatients=3) {
+resamplingModulesSurvival <- function(fullMultiOmics, pathdb, nperm=100, 
+                                      pathwaySubset=NULL, nPatients=3, 
+                                      genesToConsider=NULL) {
   patientsPerms <- preparePerms(fullMultiOmics, nperm, nPatients)
   
-  genesToConsider <- row.names(experiments(fullMultiOmics)[[1]])
+  if (is.null(genesToConsider)) {
+    genesToConsider <- row.names(experiments(fullMultiOmics)[[1]])
+  }
+  
   rePathSmall <- pathdb
   if (!is.null(pathwaySubset))
-    rePathSmall <- pathdb[pathwaySubset] #ext the sig pathways in the first pass
+    rePathSmall <- pathdb[pathwaySubset] 
   
   perms <- lapply(seq_len(nperm), function(boot){
     cat("boot", boot, "\n")
@@ -159,21 +165,25 @@ resamplingSurvival <- function(fullMultiOmics, pathdb, nperm=100,
 
 #' Resampling function for two-classes analysis on modules
 #' 
-#' @inheritParams resamplingSurvival
+#' @inheritParams resamplingModulesSurvival
 #' @param classAnnot patients class annotations
 #' 
 #' @return list of the resampling tables of results
 #' 
 #' @export
 #' 
-resamplingTwoClasses <- function(fullMultiOmics, classAnnot, pathdb, nperm=100, 
-                               pathwaySubset=NULL, nPatients=3) {
+resamplingModulesTwoClass <- function(fullMultiOmics, classAnnot, 
+                                      pathdb, nperm=100, 
+                                      pathwaySubset=NULL, nPatients=3,
+                                      genesToConsider=NULL) {
   patientsPerms <- preparePerms(fullMultiOmics, nperm, nPatients)
   
-  genesToConsider <- row.names(experiments(fullMultiOmics)[[1]])
+  if (is.null(genesToConsider)) {
+    genesToConsider <- row.names(experiments(fullMultiOmics)[[1]])
+  }
   rePathSmall <- pathdb
   if (!is.null(pathwaySubset))
-    rePathSmall <- pathdb[pathwaySubset] #ext the sig pathways in the first pass
+    rePathSmall <- pathdb[pathwaySubset] 
   
   perms <- lapply(seq_len(nperm), function(boot){
     cat("boot", boot, "\n")
@@ -196,20 +206,23 @@ resamplingTwoClasses <- function(fullMultiOmics, classAnnot, pathdb, nperm=100,
 
 #' Resampling function for pathways (survival analysis)
 #' 
-#' @inheritParams resamplingSurvival
+#' @inheritParams resamplingModulesSurvival
 #' 
 #' @return list of the resampling tables of results
 #' 
 #' @export
 #' 
 resamplingPathwaySurvival <- function(fullMultiOmics, pathdb, nperm=100,
-                              pathwaySubset=NULL, nPatients=3) {
+                                      pathwaySubset=NULL, nPatients=3,
+                                      genesToConsider=NULL) {
   patientsPerms <- preparePerms(fullMultiOmics, nperm, nPatients)
   
-  genesToConsider <- row.names(experiments(fullMultiOmics)[[1]])
+  if (is.null(genesToConsider)) {
+    genesToConsider <- row.names(experiments(fullMultiOmics)[[1]])
+  }
   rePathSmall <- pathdb
   if (!is.null(pathwaySubset))
-    rePathSmall <- pathdb[pathwaySubset] #ext the sig pathways in the first pass
+    rePathSmall <- pathdb[pathwaySubset] 
   
   perms <- lapply(seq_len(nperm), function(boot){
     cat("boot", boot, "\n")
@@ -229,18 +242,20 @@ resamplingPathwaySurvival <- function(fullMultiOmics, pathdb, nperm=100,
 
 #' Resampling function for pathways (two-classes analysis)
 #' 
-#' @inheritParams resamplingTwoClasses
+#' @inheritParams resamplingModulesTwoClass
 #' 
 #' @return list of the resampling tables of results
 #' 
 #' @export
 #' 
-resamplingPathwayTwoClasses <- function(fullMultiOmics, classAnnot, pathdb, 
+resamplingPathwayTwoClass <- function(fullMultiOmics, classAnnot, pathdb, 
                                         nperm=100, pathwaySubset=NULL, 
-                                        nPatients=3) {
+                                        nPatients=3, genesToConsider=NULL) {
   patientsPerms <- preparePerms(fullMultiOmics, nperm, nPatients)
   
-  genesToConsider <- row.names(experiments(fullMultiOmics)[[1]])
+  if (is.null(genesToConsider)) {
+    genesToConsider <- row.names(experiments(fullMultiOmics)[[1]])
+  }
   rePathSmall <- pathdb
   if (!is.null(pathwaySubset))
     rePathSmall <- pathdb[pathwaySubset]
