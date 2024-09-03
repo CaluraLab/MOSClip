@@ -2,6 +2,11 @@ setClassUnion("characterOrNULL", c("character", "NULL"))
 
 
 #' Omics class initializer function
+#' 
+#' Function to build a multi-omic object of class `Omics`, based on 
+#' `MultiAssayExperiment`. It contains `ExperimentList`, `colData`, `sampleMap`,
+#' and additional slots `modelInfo` and `specificArgs`.
+#' 
 #' @param experiments A \code{list} or \link{ExperimentList} of all
 #' combined experiments
 #' @param colData A \code{\linkS4class{DataFrame}} or \code{data.frame} of
@@ -12,32 +17,33 @@ setClassUnion("characterOrNULL", c("character", "NULL"))
 #' content describing the experiments
 #' @param drops A \code{list} of unmatched information
 #' (included after subsetting)
-#' @param modelInfo a list with length equal to length(data) that are modelInfo to process each dataset.
-#' @param specificArgs a list with length equal to length(data) to set additional parameters specific of the modelInfo.
-#' @param pathResult a list containing pathways result
+#' @param modelInfo A list with length equal to length(data) that are modelInfo 
+#' to process each dataset
+#' @param specificArgs a list with length equal to length(data) to set 
+#' additional parameters specific of the modelInfo
 #' @export
 #' @importFrom S4Vectors DataFrame
 makeOmics <- function(experiments = ExperimentList(),
-                  colData = S4Vectors::DataFrame(),
-                  sampleMap = S4Vectors::DataFrame(
-                     assay = factor(),
-                     primary = character(),
-                     colname = character()),
-                  metadata = list(),
-                  drops = list(),
-                  modelInfo= character(),
-                  specificArgs= list())
+                      colData = S4Vectors::DataFrame(),
+                      sampleMap = S4Vectors::DataFrame(
+                        assay = factor(),
+                        primary = character(),
+                        colname = character()),
+                      metadata = list(),
+                      drops = list(),
+                      modelInfo = character(),
+                      specificArgs = list())
    {
    if (missing(sampleMap)) {
       if (missing(colData)){
          MAE <- MultiAssayExperiment(experiments)
       } else {
-            MAE <- MultiAssayExperiment(experiments,colData)
+            MAE <- MultiAssayExperiment(experiments, colData)
          }
 
    } else if (missing(colData)){
       colData <- S4Vectors::DataFrame(
-         row.names = unique(sampleMap[["primary"]])
+         row.names <- unique(sampleMap[["primary"]])
          )
       MAE <- MultiAssayExperiment(experiments, colData, sampleMap)
    }
@@ -61,7 +67,7 @@ makeOmics <- function(experiments = ExperimentList(),
       return()
    }
 
-   samplesNumber <- sapply(MAE@ExperimentList, ncol)
+   samplesNumber <- vapply(MAE@ExperimentList, ncol, integer(1))
    if (length(unique(samplesNumber))!=1){
       message("Mismatch in sample numbers")
       return()
@@ -70,16 +76,16 @@ makeOmics <- function(experiments = ExperimentList(),
    samples <- lapply(MAE@ExperimentList, colnames)
    if (length(samples) > 1) {
       ref <- samples[[1]]
-      cmps <- sapply(seq(from=2, to=length(samples)), function(i) {
+      cmps <- vapply(seq(from=2, to=length(samples)), function(i) {
          identical(ref, samples[[i]])
-      })
+      }, logical(1))
       if (!all(cmps)){
         message("Samples order mismatch")
         return()
         }}
-   duplo <- sapply(MAE@ExperimentList, function(data) {
-      any(duplicated(row.names(data)))
-   })
+   duplo <- vapply(MAE@ExperimentList, function(data) {
+     any(duplicated(row.names(data)))}, 
+     logical(1))
    if (any(duplo)) {
       message(paste0("Duplicated row.names found in omics ",
                      paste(which(duplo), collapse = ", ")))
@@ -107,13 +113,13 @@ makeOmics <- function(experiments = ExperimentList(),
 
 
 #' A generic functions showing parameter asociated with each omics
-#' @param object an object of class Omics
+#' @param object an object of class `Omics`
 #' @export
 setGeneric("showOmics", function(object) standardGeneric("showOmics"))
 
 #' @export
 #' @describeIn Omics shows model parameters
-#' @param object an object of class Omics
+#' @param object an object of class `Omics`
 
 setMethod("showOmics",  signature(object = "Omics"),
           function(object) {
@@ -127,7 +133,7 @@ setMethod("showOmics",  signature(object = "Omics"),
                 cat("Default parameters\n")
               } else {
                 cat("Arguments:\n")
-                arguments <- sapply(
+                arguments <- vapply(
                   seq_along(object@specificArgs[[i]]), function(argI) {
                     values <- object@specificArgs[[i]][[argI]]
                     if (is.list(values)) {
@@ -139,28 +145,28 @@ setMethod("showOmics",  signature(object = "Omics"),
                     }
                     paste(names(object@specificArgs[[i]])[argI],
                           values, sep=" :")
-                    })
+                    }, character(1))
                 cat(paste(arguments, collapse ="\n"), "\n")
               }
               }
             })
 
 #' A generic function showing pathway's module info
-#' @param object an object of class MultiOmicsModules
+#' @param object an object of class `MultiOmicsModules`
 #' @export
 setGeneric("showModule", function(object)
    standardGeneric("showModule") )
 
 #' @export
 #' @describeIn MultiOmicsModules shows module info
-#' @param object an object of class MultiOmicsModules
+#' @param object an object of class `MultiOmicsModules`
 setMethod("showModule",
           signature = "MultiOmicsModules",
           definition = function(object){
             sthis <- seq_len(min(length(object@alphas), 3))
             sthis <- order(object@alphas)[sthis]
 
-            sigCliquesIdx = which(object@alphas <= 0.05)
+            sigCliquesIdx <- which(object@alphas <= 0.05)
 
             if (!is.null(object@title)) {
               cat("\"",object@title, "\"\n", sep = "")
@@ -187,14 +193,14 @@ setMethod("showModule",
           })
 
 #' A generic function showing pathway info
-#' @param object an object of class MultiOmicsPathway
+#' @param object an object of class `MultiOmicsPathway`
 #' @export
 setGeneric("showPathway", function(object)
    standardGeneric("showPathway") )
 
 #' @export
 #' @describeIn MultiOmicsPathway shows module info
-#' @param object an object of class MultiOmicsPathway
+#' @param object an object of class `MultiOmicsPathway`
 setMethod("showPathway",
           signature = "MultiOmicsPathway",
           definition = function(object){

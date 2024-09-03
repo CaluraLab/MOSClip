@@ -58,8 +58,8 @@ setClass(Class ="MultiOmicsPathway",
 #'
 #' @slot modelInfo a list with length equal to length(data) that are modelInfo 
 #' to process each dataset.
-#' @slot specificArgs a list with length equal to length(data) to set additional 
-#' parameters specific of the modelInfo.
+#' @slot specificArgs a list with length equal to length(data) to set 
+#' additional parameters specific of the modelInfo.
 #'
 #' @name Omics-class
 #' @rdname Omics-class
