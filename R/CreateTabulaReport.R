@@ -1,19 +1,24 @@
-#' Summarize pathways' info from a list of MultiOmicsPathway (MOP)
+#' Summarize pathways' info from a list of MultiOmicsPathway objects (MOP)
 #'
-#' Given the list of MOPs, it create the table.
+#' Given the list of MOPs, it creates the table.
 #'
-#' @param multiPathwayList MultiOmicsPathway pathway object list
-#' @param priority_to a vector with the covariates (omic name) that should go first
+#' @param multiPathwayList a list of `MultiOmicsPathway` objects resulting from 
+#' a multi-omics pathway test.
+#' @param priority_to a vector with the covariates (omic name) that should go 
+#' first.
 #'
-#' @return a data.frame with overal pvalue of the coxph, followed by covariates zs.
+#' @return a data.frame, pathways in rows, overall pvalue of the coxph, 
+#' followed by covariates pvalues, in columns.
 #'
 #' @export
 multiPathwayReport <- function(multiPathwayList, priority_to=NULL){
   if (!is(multiPathwayList, "list") ||
-      any(sapply(multiPathwayList, class) != "MultiOmicsPathway"))
+      any(vapply(multiPathwayList, class, character(1)) != 
+          "MultiOmicsPathway"))
     stop("A list of pathway results are expected.")
 
-  pvalues <- sapply(multiPathwayList, function(p) {as.numeric(p@pvalue)})
+  pvalues <- vapply(multiPathwayList, function(p) {as.numeric(p@pvalue)}, 
+                    numeric(1))
 
   zs <- sort(unique(unlist(lapply(multiPathwayList, function(p) {
     names(p@zlist)
@@ -32,19 +37,23 @@ multiPathwayReport <- function(multiPathwayList, priority_to=NULL){
   order_by_covariates(df, 1, priority_to)
 }
 
-#' Provide a data.frame of pathways module test results from list of Multi Omics Module (MOM) objects
+#' Summarize modules' info from a list of MultiOmicsModules objects (MOP)
 #'
 #' Given the list of MOMs, it creates the table.
 #'
-#' @param multiPathwayModuleList a list of Multi Omics Modules resulting from a multi-omics module test.
-#' @param priority_to a vector with the covariates (omic name) that should go first
+#' @param multiPathwayModuleList a list of `MultiOmicsModules` objects resulting 
+#' from a multi-omics module test.
+#' @param priority_to a vector with the covariates (omic name) that should go 
+#' first.
 #'
-#' @return a data.frame, modules in rows, overall and covariate pvalues of the test in columns.
-#' #'
+#' @return a data.frame, modules in rows, overall pvalue of the coxph, 
+#' followed by covariates pvalues, in columns.
+#' 
 #' @export
 multiPathwayModuleReport <- function(multiPathwayModuleList, priority_to=NULL) {
   if (!is(multiPathwayModuleList, "list") ||
-      any(sapply(multiPathwayModuleList, class) != "MultiOmicsModules"))
+      any(vapply(multiPathwayModuleList, class, character(1)) != 
+          "MultiOmicsModules"))
     stop("A list of pathway modules results are expected.")
 
   n_temp <- names(multiPathwayModuleList)
