@@ -5,15 +5,15 @@ Depends: R (>= 3.5.0)
 Authors@R: c(
    person(given = "Paolo", family = "Martini", role = c("aut", "cre"),
           email = "first.last@example.com"),
+   person(given = "Anna", family = "Bortolato", role = c("aut"),
+           email = "anna.bortolato@unipd.it"),
+   person(given = "Anna", family = "Tanada", role = c("aut"),
+           email = "annacarolinaemi.delimatanada@phd.unipd.it"),
    person(given = "Federico", family = "Agostinis", role = c("aut"),
           email = "federico.agostinis@outlook.com"),
    person(given = "Stefania", family = "Pirrotta", role = c("aut"),
           email = "first.last@example.com",
-          comment = c(ORCID = "YOUR-ORCID-ID")),
-    person(given = "Anna", family = "Bortolato", role = c("aut"),
-           email = "anna.bortolato@unipd.it"),
-    person(given = "Anna", family = "Tanada", role = c("aut"),
-           email = "annacarolinaemi.delimatanada@phd.unipd.it"))
+          comment = c(ORCID = "YOUR-ORCID-ID")))
 Description: Allows to combine multiple omics dimension to perform pathway survival analysis. There are two main mode: multiOmicsSurvivalPathwayTest and muoltiOmicsSurvivalModuleTest. The latter method allows the user to dig inside the pathways itself.
 License: AGPL-3
 Imports: MultiAssayExperiment,methods, survminer, graph,
