@@ -30,12 +30,14 @@ test_that("superTest works", {
   expect_identical(class(pvalSum), c("matrix", "array"))
   expect_false(all(vapply(pvalSum, is.null, logical(1))))
   moduleSum_notpval <- moduleSummary
-  moduleSum_notpval$pvalue <- sample(2:5, size = nrow(moduleSum_notpval),
+  moduleSum_notpval$mut <- sample(2:5, size = nrow(moduleSum_notpval),
                                      replace = TRUE)
-  moduleSum_notpval$pvalue <- as.numeric(moduleSum_notpval$pvalue)
-  expect_error(pvalueSummary(moduleSum_notpval,
-                             excludeColumns =  c("pathway", "module"),
-                             as.list = TRUE),
+  moduleSum_notpval$mut <- as.numeric(moduleSum_notpval$mut)
+  expect_error(computeOmicsIntersections(moduleSum_notpval,
+                                         pvalueThr = 0.05, 
+                                         zscoreThr = 1,
+                                         excludeColumns = 
+                                           c("pathway", "module")),
                "columns are not pvalues")  
   
   mi <- runSupertest(moduleSummary, pvalueThr = 0.05, zscoreThr = 1,

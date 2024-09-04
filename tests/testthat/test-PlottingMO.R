@@ -1,5 +1,4 @@
 test_that("Plots with two class object work", {
-  # does not work w get()
   dummy_react <- readRDS(test_path("fixtures", "reactSmallDummy.rds"))
   dummy_omics <- createFakeOmics("two-classes")
   dummy_annot <- dummy_colData("two-classes")
@@ -33,7 +32,7 @@ test_that("Plots with two class object work", {
     paletteNames = c(exp = "red", met = "green"),
     additionalAnnotations = dummy_annot,
     additionalPaletteNames = list(classes = "teal"),
-    nrowsHeatmaps = 2, withSampleNames = F), "omic not found")
+    nrowsHeatmaps = 2, withSampleNames = FALSE), "Missing omic")
   
   res.pathwayReport <- plotMultiPathwayReport(list(twoCPathwayObj),
     MOcolors = c(exp = "red", met = "green", mut = "blue"),
@@ -68,7 +67,7 @@ test_that("Plots with two class object work", {
     paletteNames = c(exp = "red", met = "green"),
     additionalAnnotations = dummy_annot,
     additionalPaletteNames = list(classes = "teal"),
-    nrowsHeatmaps = 2, withSampleNames = F), "omic not found")
+    nrowsHeatmaps = 2, withSampleNames = FALSE), "Missing omic")
   
   res.ModuleInGraph <- plotModuleInGraph(
     twoCModuleObj, dummy_omics, dummy_react,
