@@ -110,7 +110,6 @@ filterMultiOmicsForSamples <- function(MO, samples) {
 #' 
 #' @rdname resampling
 preparePerms <- function(fullMultiOmics, nperm=100, nPatients=3) {
-  set.seed(1234)
   nPatients <- as.numeric(nPatients)
   patients <- row.names(fullMultiOmics@colData)
   patientsPerms <- lapply(seq_len(nperm), function(x) {
@@ -145,8 +144,6 @@ resamplingSurvival <- function(fullMultiOmics, pathdb, nperm=100,
     multiOmics <- fullMultiOmics[,pts]
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
-      # print(g@title)
-      set.seed(1234)
       fcl = multiOmicsSurvivalModuleTest(multiOmics, g, 
                                          useThisGenes = genesToConsider)
       fcl
@@ -182,8 +179,6 @@ resamplingTwoClasses <- function(fullMultiOmics, classAnnot, pathdb, nperm=100,
     classes <- classAnnot[pts, , drop=FALSE]
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
-      # print(g@title)
-      set.seed(1234)
       fcl = multiOmicsTwoClassesModuleTest(multiOmics, g, classAnnot = classes,
                                            useThisGenes = genesToConsider)
       fcl
@@ -217,7 +212,6 @@ resamplingPathwaySurvival <- function(fullMultiOmics, pathdb, nperm=100,
     multiOmics <- fullMultiOmics[,pts]
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
-      set.seed(1234)
       fcl = multiOmicsSurvivalPathwayTest(multiOmics, g, 
                                           useThisGenes = genesToConsider)
       fcl
@@ -252,7 +246,6 @@ resamplingPathwayTwoClasses <- function(fullMultiOmics, classAnnot, pathdb,
     classes <- classAnnot[pts, , drop=FALSE]
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
-      set.seed(1234)
       fcl = multiOmicsTwoClassesPathwayTest(multiOmics, g, classes,
                                             useThisGenes = genesToConsider)
       fcl

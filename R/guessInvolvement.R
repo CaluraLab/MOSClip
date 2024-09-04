@@ -9,6 +9,7 @@
 #' @param atleast the minimum number of features to select (PCA only)
 #' @param min_prop_pca the minimal proportion to compute the pca classes
 #' @param min_prop_events the minimal proportion to compute the event classes
+#' @param multiOmic Omics object
 #'
 #' @return For each omic analyzed a list that is the summary for omic summarized using the setted method: pvalues are present only for cluster method.
 #' \item{sigModule}{the original data for significant features}
@@ -53,7 +54,7 @@ guessInvolvement <- function(pathway, multiOmic, moduleNumber, loadThr=0.6, n=3,
 #' @param atleast the minimum number of features to select (PCA only)
 #' @param min_prop_pca the minimal proportion to compute the pca classes
 #' @param min_prop_events the minimal proportion to compute the event classes
-#' 
+#' @param multiOmic Omics object
 #'
 #' @return For each omic analyzed a list that is the summary for omic summarized using the setted method: pvalues are present only for cluster method.
 #' \item{sigModule}{the original data for significant features}

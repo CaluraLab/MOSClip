@@ -17,7 +17,11 @@ extractSummaryFromPCA(
 \arguments{
 \item{omic}{a summarized omic}
 
+\item{multiOmicObj}{Omics object}
+
 \item{moduleCox}{the coxObj of the interesting module}
+
+\item{analysis}{two-class or survival type}
 
 \item{loadThr}{the thr value to select the most influent features according to the loading}
 

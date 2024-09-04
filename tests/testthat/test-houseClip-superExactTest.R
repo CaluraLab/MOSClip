@@ -97,9 +97,3 @@ test_that("superExactTest works", {
       manualColors = colors),
     NA)
 })
-
-
-
-
-
-

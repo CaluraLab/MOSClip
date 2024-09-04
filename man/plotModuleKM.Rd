@@ -2,10 +2,10 @@
 % Please edit documentation in R/PlottingMO.R
 \name{plotModuleKM}
 \alias{plotModuleKM}
-\title{Plot KM of the module by omics}
+\title{Plot Kaplan-Meier survival curves of a specific module}
 \usage{
 plotModuleKM(
-  pathway,
+  MOM,
   multiOmic,
   moduleNumber,
   formula = "Surv(days, status) ~ PC1",
@@ -24,23 +24,27 @@ plotModuleKM(
 )
 }
 \arguments{
-\item{pathway}{MultiOmicsModule pathway object}
+\item{MOM}{a \code{MultiOmicsModule} class object}
 
-\item{moduleNumber}{a module number}
+\item{multiOmic}{an \code{Omics} class object}
 
-\item{formula}{a formula to compute the plot}
+\item{moduleNumber}{numeric value. The module number of interest}
+
+\item{formula}{a formula for the survival analysis. It should be written as
+"Surv(days, status) ~ omic". To plot more than one omic, write them
+separated by a "+" character after the separator (~)}
 
 \item{fileName}{optional filenames to save the plot}
 
-\item{paletteNames}{three palettes}
+\item{paletteNames}{a palette name to be used}
 
 \item{h}{the height of the plot}
 
 \item{w}{the width of the plot}
 
-\item{risk.table}{logical to show risk.table}
+\item{risk.table}{logical value. If true, shows the risk.table}
 
-\item{pval}{logical to show pvalue}
+\item{pval}{logical value. If true, shows the pvalue}
 
 \item{size}{line width of the KM curves}
 
@@ -50,10 +54,16 @@ plotModuleKM(
 
 \item{discr_prop_events}{the minimal proportion to compute the event classes}
 
-\item{additional_discrete}{names of the additional discrete variables to include}
+\item{additional_discrete}{names of the additional discrete variables to
+include}
 
-\item{additional_continuous}{names of the additional continous variables to include}
+\item{additional_continuous}{names of the additional continous variables to
+include}
+}
+\value{
+a ggsurvplot class object
 }
 \description{
-Given the pathway, it creates the Kaplan-meier curves following the formula.
+Given a \code{MultiOmicsModule} class object and a specific module number, it
+plots Kaplan-Meier curves, in which the strata corresponds to the omics
 }

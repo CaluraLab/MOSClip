@@ -9,6 +9,8 @@ extractSummaryFromBinary(omic, multiOmicObj, n = 3)
 \arguments{
 \item{omic}{a summarized omic}
 
+\item{multiOmicObj}{Omics object}
+
 \item{n}{maximum number of features to retrieve}
 }
 \value{

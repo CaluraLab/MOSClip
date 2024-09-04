@@ -36,8 +36,6 @@ to process each dataset.}
 
 \item{specificArgs}{a list with length equal to length(data) to set
 additional parameters specific of the modelInfo.}
-
-\item{pathResult}{a list containing pathways result}
 }
 \value{
 A Omics class object of the omics data, clinical data, and specific

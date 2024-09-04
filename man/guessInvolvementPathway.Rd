@@ -17,6 +17,8 @@ guessInvolvementPathway(
 \arguments{
 \item{pathway}{MultiOmicsPathway from a pathway.}
 
+\item{multiOmic}{Omics object}
+
 \item{loadThr}{the leading threshold to select genes (PCA only)}
 
 \item{n}{the maximum number of genes to retrive (cluster and binary only)}

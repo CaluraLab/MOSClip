@@ -31,16 +31,21 @@ multiPathwayReport <- function(multiPathwayList, priority_to=NULL){
   order_by_covariates(df, 1, priority_to)
 }
 
-#' Provide a data.frame of pathways module test results from list of Multi Omics Module (MOM) objects
+#' Provides a Table of the Modules Test Results
 #'
-#' Given the list of MOMs, it creates the table.
+#' Summarizes the results of a multi omics module test given a list of
+#' MultiOmicsModules objects
 #'
-#' @param multiPathwayModuleList a list of Multi Omics Modules resulting from a multi-omics module test.
-#' @param priority_to a vector with the covariates (omic name) that should go first
+#' @param multiPathwayModuleList a list of MultiOmicsModules object resulting
+#' from a multi-omics module test.
+#' @param priority_to a vector with the covariates (the omics names) to be at 
+#' that should appear first in the dataframe columns
 #'
-#' @return a data.frame, modules in rows, overall and covariate pvalues of the test in columns.
-#' #'
+#' @return a data.frame class object. Rows correspond to the modules, and the
+#' columns to the overall and covariates pvalues of the test.
+#' 
 #' @export
+
 multiPathwayModuleReport <- function(multiPathwayModuleList, priority_to=NULL) {
   if (!is(multiPathwayModuleList,"list"))
     stop("A list of pathway results are expected.")

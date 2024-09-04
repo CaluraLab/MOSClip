@@ -2,13 +2,18 @@
 % Please edit documentation in R/supertest.R
 \name{stripModulesFromPathways}
 \alias{stripModulesFromPathways}
-\title{Remove module number From Pathway Name}
+\title{Remove Module Number From Pathway Name}
 \usage{
 stripModulesFromPathways(pathways)
 }
 \arguments{
 \item{pathways}{vector of pathway names}
 }
+\value{
+list of pathway names without the module number
+}
 \description{
-Remove module number From Pathway Name
+Function to remove the suffix corresponding to the module number of the
+pathway name. Necessary step for \code{\link{annotePathwayToFather}} and
+\code{\link{plotFrequencies}}
 }

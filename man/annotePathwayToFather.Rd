@@ -2,7 +2,7 @@
 % Please edit documentation in R/supertest.R
 \name{annotePathwayToFather}
 \alias{annotePathwayToFather}
-\title{Convert pathways into a fathers}
+\title{Find Pathway Fathers}
 \usage{
 annotePathwayToFather(pathways, graphiteDB, hierarchy)
 }
@@ -14,8 +14,10 @@ annotePathwayToFather(pathways, graphiteDB, hierarchy)
 \item{hierarchy}{a graph object with the pathway hierarchy}
 }
 \value{
-a vector of fathers names
+a vector of the fathers' names
 }
 \description{
-Convert pathways into a fathers
+Given the hierarchy of the pathways, this formula finds the fathers of the
+respective pathway (e.g. pathway: "PI3K Cascade"; father:
+"Signaling Pathways")
 }

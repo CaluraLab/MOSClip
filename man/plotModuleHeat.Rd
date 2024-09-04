@@ -2,14 +2,13 @@
 % Please edit documentation in R/PlottingMO.R
 \name{plotModuleHeat}
 \alias{plotModuleHeat}
-\title{Plot heatmaps of the module by omics}
+\title{Plot a Heatmap of a Module by Omics}
 \usage{
 plotModuleHeat(
-  pathway,
+  moduleobj,
   multiOmic,
   moduleNumber,
   sortBy = NULL,
-  fileName = NULL,
   paletteNames = NULL,
   additionalAnnotations = NULL,
   additionalPaletteNames = NULL,
@@ -23,30 +22,39 @@ plotModuleHeat(
 )
 }
 \arguments{
-\item{pathway}{MultiOmicsModule pathway object}
+\item{moduleobj}{\code{MultiOmicsModule} class object}
 
-\item{moduleNumber}{a module number}
+\item{multiOmic}{\code{Omics} object}
 
-\item{sortBy}{a covariate to sort by}
+\item{moduleNumber}{module number of interest}
 
-\item{paletteNames}{three palettes}
+\item{sortBy}{a covariate (omic) to sort by}
+
+\item{paletteNames}{a palette containing three colors}
 
 \item{additionalAnnotations}{optional additional sample annotations}
 
 \item{additionalPaletteNames}{optional additional colors for annotations}
 
-\item{withSampleNames}{create also the samples names}
+\item{withSampleNames}{show sample names}
 
-\item{fontsize_row}{size of the fonts for rows}
+\item{fontsize_row}{font size for row labels}
 
-\item{fontsize_col}{like fontsize_row but for columns}
+\item{fontsize_col}{font size for column labels}
 
-\item{nrowsHeatmaps}{magnification respect to annotation of sample (annotations take 1 row)}
+\item{nrowsHeatmaps}{magnification respect to annotation of sample
+(annotations take 1 row)}
 
-\item{discr_prop_pca}{the minimal proportion to compute the pca classes}
+\item{orgDbi}{a Dbi organism to be used. Default is \code{org.Hs.eg.db}}
+
+\item{discr_prop_pca}{the minimal proportion to compute the PCA classes}
 
 \item{discr_prop_events}{the minimal proportion to compute the event classes}
 }
+\value{
+A heatmap of a pathway module (results of the module test)
+}
 \description{
-Given the pathway and the module, it creates the heatmaps of the mostly involved genes for each omic.
+It creates a heatmap of the most involved genes of each omic of a specific
+module from a \code{MultiOmicsModule} object.
 }

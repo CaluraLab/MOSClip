@@ -2,6 +2,12 @@ setClassUnion("characterOrNULL", c("character", "NULL"))
 
 
 #' Omics class initializer function
+#' 
+#' makeOmics() creates the Omics object necessary to perform most of the 
+#' analyses of this package. It contains all the omics data in the format of a 
+#' ExperimentList, the clinical data, and all the information necessary for the
+#' dimentionality reduction step.
+#' 
 #' @param experiments A \code{list} or \link{ExperimentList} of all
 #' combined experiments
 #' @param colData A \code{\linkS4class{DataFrame}} or \code{data.frame} of
@@ -12,11 +18,18 @@ setClassUnion("characterOrNULL", c("character", "NULL"))
 #' content describing the experiments
 #' @param drops A \code{list} of unmatched information
 #' (included after subsetting)
-#' @param modelInfo a list with length equal to length(data) that are modelInfo to process each dataset.
-#' @param specificArgs a list with length equal to length(data) to set additional parameters specific of the modelInfo.
-#' @param pathResult a list containing pathways result
-#' @export
+#' @param modelInfo a list with length equal to length(data) that are modelInfo
+#' to process each dataset.
+#' @param specificArgs a list with length equal to length(data) to set
+#' additional parameters specific of the modelInfo.
+#' 
+#' @return A Omics class object of the omics data, clinical data, and specific
+#' arguments
+#'
 #' @importFrom S4Vectors DataFrame
+#'
+#' @export
+
 makeOmics <- function(experiments = ExperimentList(),
                   colData = S4Vectors::DataFrame(),
                   sampleMap = S4Vectors::DataFrame(
@@ -206,9 +219,9 @@ setMethod("showPathway",
             invisible(NULL)
           })
 
-
-
-#' @export
+#' A generic function to convert pathway
+#' @param graph a graphNEL object
+#' @param useThisGenes list of genes to be used
 setGeneric("convertPathway", function(graph, useThisGenes)
    standardGeneric("convertPathway"))
 

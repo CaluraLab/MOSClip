@@ -2,7 +2,7 @@
 % Please edit documentation in R/houseClip-superExactTest.R
 \name{plotFrequencies}
 \alias{plotFrequencies}
-\title{Plot frequences}
+\title{Plot Frequencies of Pathway Fathers for Omics intersection}
 \usage{
 plotFrequencies(
   frequencies,
@@ -17,23 +17,30 @@ plotFrequencies(
 \arguments{
 \item{frequencies}{a data.frame created from 'computeFreqs'}
 
-\item{manualColors}{optional vector of colors}
+\item{manualColors}{optional vector of colors to be used}
 
-\item{minSize}{the minimal fontsize. Maximal frequencies will be added for each class}
+\item{minSize}{the minimal font size. Maximal frequencies will be added for
+each class}
 
-\item{maxSize}{the maximal fontsize dimension, all values above are clipped}
+\item{maxSize}{the maximal font size dimension, all values above are clipped}
 
 \item{width}{the number of character to wrap the labels}
 
-\item{relMagnificationOfLegend}{the relative magnification of the text of the legend}
+\item{relMagnificationOfLegend}{the relative magnification of the text of the
+legend}
 
 \item{lineSize}{the thickness of the lines}
 }
+\value{
+a circular plot of the frequencies of pathway fathers
+}
 \description{
-For internal use only. Plot supertest frequences
+Plots the frequencies of the pathway fathers by every omics intersection
+from a data.frame of the frequencies returned with the function
+\code{\link{computeFreqs}}.
 }
 \examples{
-df <- data.frame(category=c("talk", "too","mutch", "dear"),
+df <- data.frame(category=c("PathwayA", "PathwayB", "PathwayC", "PathwayD"),
   frequencies=c(1,2,1,3),
   class=rep("Mut",4), stringsAsFactors = FALSE)
 plotFrequencies(df)

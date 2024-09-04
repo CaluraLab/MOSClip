@@ -16,10 +16,6 @@
 #'   \item{sdev}{the standard deviation captured by the PCs}
 #'   \item{loadings}{the loadings}
 #'
-#' @examples
-#'   fakeExp <- randomExpression(4)
-#'   computePCs(t(fakeExp))
-#'
 #' @importFrom FactoMineR estim_ncp
 #'
 #' @export

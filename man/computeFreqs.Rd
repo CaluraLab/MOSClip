@@ -2,16 +2,18 @@
 % Please edit documentation in R/houseClip-superExactTest.R
 \name{computeFreqs}
 \alias{computeFreqs}
-\title{Compute frequences from list}
+\title{Compute Frequencies in a Named List}
 \usage{
 computeFreqs(elementsIntersections)
 }
 \arguments{
-\item{elementsIntersections}{a names list}
+\item{elementsIntersections}{a named list}
 }
 \value{
-a 'data.frame' with the frequences
+a data.frame of the frequencies
 }
 \description{
-For internal use only. Compute frequences
+Compute frequencies in a named list. This function is necessary for
+\code{\link{plotFrequencies}}, in which it will calculate the frequency of
+each pathway father for every omics intersection.
 }

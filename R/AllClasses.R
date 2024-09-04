@@ -3,7 +3,8 @@ setClassUnion("characterOrNULL", c("character", "NULL"))
 
 #' Multi Omics Modules.
 #'
-#' This class organize the results of the Multi Omics Module Survival Test analysis.
+#' This class organize the results of the Multi Omics Module Test analysis, in
+#' which corresponds to one pathway decomposed into modules. 
 #'
 #' @slot alphas numeric vector of the pvalues of all the modules.
 #' @slot zlists a list of all the zs of the covariates.
@@ -68,4 +69,3 @@ Omics <- setClass(Class = "Omics", package = "biocmosclip",
                             specificArgs = "list"),
                   contains = "MultiAssayExperiment"
 )
-

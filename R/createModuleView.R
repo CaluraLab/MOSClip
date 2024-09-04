@@ -1,5 +1,7 @@
 #' Create the list of covariates that are going to be tested
 #'
+#' @param omicsObj Omics object
+#' @param genes genes to be used
 #' @importFrom methods new
 #' @importFrom survival Surv
 #' @return list with

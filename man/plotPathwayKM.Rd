@@ -23,7 +23,9 @@ plotPathwayKM(
 )
 }
 \arguments{
-\item{pathway}{MultiOmicsModule pathway object}
+\item{pathway}{\code{MultiOmicsModule} class object}
+
+\item{multiOmic}{an \code{Omics} class object}
 
 \item{formula}{a formula to compute the plot}
 
@@ -47,9 +49,11 @@ plotPathwayKM(
 
 \item{discr_prop_events}{the minimal proportion to compute the event classes}
 
-\item{additional_discrete}{names of the additional discrete variables to include}
+\item{additional_discrete}{names of the additional discrete variables to
+include}
 
-\item{additional_continuous}{names of the additional continous variables to include}
+\item{additional_continuous}{names of the additional continous variables to
+include}
 }
 \description{
 Given the pathway, it creates the Kaplan-meier curves following the formula.

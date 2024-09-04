@@ -12,7 +12,8 @@
 \item{object}{an object of class MultiOmicsModules}
 }
 \description{
-This class organize the results of the Multi Omics Module Survival Test analysis.
+This class organize the results of the Multi Omics Module Test analysis, in
+which corresponds to one pathway decomposed into modules.
 }
 \section{Methods (by generic)}{
 \itemize{

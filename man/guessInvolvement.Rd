@@ -18,6 +18,8 @@ guessInvolvement(
 \arguments{
 \item{pathway}{MultiOmicsModule from a pathway.}
 
+\item{multiOmic}{Omics object}
+
 \item{moduleNumber}{the module number}
 
 \item{loadThr}{the leading threshold to select genes (PCA only)}
