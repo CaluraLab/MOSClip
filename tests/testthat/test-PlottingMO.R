@@ -1,18 +1,12 @@
-env <- test_env()
-genes <- paste0("ENTREZID:", c(10000, 90427, 5366, 23368, 637, 3002, 79792,
-                               840, 5414, 5599, 8655, 140735, 708))
-dummy_omicsSurv <- fake_mo(genes=genes, type="survival")
-dummy_omics <- fake_mo(genes=genes, type="two-classes")
-assign("dummy_omicsSurv", dummy_omicsSurv, envir=env)
-assign("dummy_omics", dummy_omics, envir=env)
-
 test_that("Plots with two class object work", {
-  # does not work w get()
   dummy_react <- readRDS(test_path("fixtures", "reactSmallDummy.rds"))
   genes <- paste0("ENTREZID:", c(10000, 90427, 5366, 23368, 637, 3002, 79792,
                                  840, 5414, 5599, 8655, 140735, 708))
   dummy_omics <- fake_mo(genes=genes, type="two-classes")
   dummy_annot <- dummy_colData(type="two-classes")
+  
+  env <- environment()
+  assign("dummy_omics", dummy_omics, envir=env)
 
   twoCPathwayObj <- multiOmicsTwoClassesPathwayTest(dummy_omics,
                                                     dummy_react[[1]],
@@ -112,6 +106,9 @@ test_that("Kaplan Meier plots work", {
   genes <- paste0("ENTREZID:", c(10000, 90427, 5366, 23368, 637, 3002, 79792,
                                  840, 5414, 5599, 8655, 140735, 708))
   dummy_omicsSurv <- fake_mo(genes=genes, type="survival")
+  
+  env <- environment()
+  assign("dummy_omicsSurv", dummy_omicsSurv, envir=env)
 
   res.survPathway <- multiOmicsSurvivalPathwayTest(
     dummy_omicsSurv, dummy_react[[1]], survFormula = "Surv(days, status) ~",
