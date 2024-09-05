@@ -12,8 +12,13 @@
 \item{object}{an object of class \code{MultiOmicsModules}}
 }
 \description{
+<<<<<<< HEAD
 This class organizes the results of the Multi-Omics Module Survival Test
 analysis.
+=======
+This class organize the results of the Multi Omics Module Test analysis, in
+which corresponds to one pathway decomposed into modules.
+>>>>>>> origin/anna_t
 }
 \section{Methods (by generic)}{
 \itemize{

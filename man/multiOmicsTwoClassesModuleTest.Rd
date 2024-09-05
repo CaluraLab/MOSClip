@@ -2,13 +2,13 @@
 % Please edit documentation in R/multiOmicsGlmTest.R
 \name{multiOmicsTwoClassesModuleTest}
 \alias{multiOmicsTwoClassesModuleTest}
-\title{Compute Multi Omics two-class in Pathway Modules}
+\title{Computes Multi Omics Two-Class in Pathway Modules}
 \usage{
 multiOmicsTwoClassesModuleTest(
   omicsObj,
   graph,
   classAnnot,
-  baseFormula = "classes ~ ",
+  baseFormula = "classes ~",
   autoCompleteFormula = TRUE,
   useThisGenes = NULL,
   nullModel = "classes ~ 1",
@@ -16,25 +16,34 @@ multiOmicsTwoClassesModuleTest(
 )
 }
 \arguments{
-\item{omicsObj}{Object of class 'Omics'}
+\item{omicsObj}{object of class \code{Omics}}
 
-\item{graph}{a pathway in graphNEL, Pathway or geneset format.}
+\item{graph}{a pathway as a \code{graphNEL} object.}
 
-\item{classAnnot}{class annotation: name of the classes, row.names are samples}
+\item{classAnnot}{a \code{data.frame} with the class annotation. It is necessary
+at least a column with the classes labels, and the row.names as the samples
+labels}
 
-\item{baseFormula}{model to be used for the test}
+\item{baseFormula}{model formula to be used for the test. It should be
+written as "classes ~ ", while "classes" being the column name for the class
+labels}
 
-\item{autoCompleteFormula}{logical. If TRUE autocomplete the survFormula using all the available covariates}
+\item{autoCompleteFormula}{a logical value. If TRUE. It autocompletes the
+formula used to fit generalized lienar models function  using all the
+available covariates (omics)}
 
-\item{useThisGenes}{vector of genes used to filter pathways}
+\item{useThisGenes}{(optional) vector of specific genes to be used}
 
-\item{nullModel}{the null model}
+\item{nullModel}{the null model formula. It should be written the same as
+the baseFormula, followed by " 1". (e.g. "classes ~ 1")}
 
-\item{pathName}{title of the pathway. If NULL and graph is "Pathway" graph@title is used as title}
+\item{pathName}{(optional) title of the pathway. If NULL, \code{graph@title} is
+used as title}
 }
 \value{
-MultiOmicsModule object
+\code{MultiOmicsModule} object
 }
 \description{
-Performs topological two-class analysis using an 'Omics' object on pathway module.
+Performs topological two-class analysis using an \code{Omics} object. It
+decomposes graphs (pathways) into modules.
 }

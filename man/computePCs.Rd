@@ -58,8 +58,3 @@ Three methods are implemented:
 \item sparse: sparse PCA analysis implemented by 'elasticnet'
 }
 }
-\examples{
-  fakeExp <- randomExpression(4)
-  computePCs(t(fakeExp))
-
-}

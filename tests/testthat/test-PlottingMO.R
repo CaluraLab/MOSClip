@@ -22,14 +22,23 @@ test_that("Plots with two class object work", {
 
   expect_false(is.null(res.pathwayHeat))
   expect_identical(class(res.pathwayHeat), c("gg", "ggplot"))
-
+  
+  res.pathwayHeat_nopalette <- plotPathwayHeat(
+    twoCPathwayObj, dummy_omics, sortBy = c("expPC2", "mut", "classes"),
+    additionalAnnotations = dummy_annot,
+    additionalPaletteNames = list(classes = "teal"),
+    nrowsHeatmaps = 2, withSampleNames = F)
+  
+  expect_false(is.null(res.pathwayHeat_nopalette))
+  expect_identical(class(res.pathwayHeat_nopalette), c("gg", "ggplot"))
+  
   expect_error(plotPathwayHeat(
     twoCPathwayObj, sortBy = c("expPC2", "mut", "classes"),
     paletteNames = c(exp = "red", met = "green"),
     additionalAnnotations = dummy_annot,
     additionalPaletteNames = list(classes = "teal"),
-    nrowsHeatmaps = 2, withSampleNames = F, envir = env), "omic not found")
-
+    nrowsHeatmaps = 2, withSampleNames = FALSE, envir=env), "Missing omic")
+  
   res.pathwayReport <- plotMultiPathwayReport(list(twoCPathwayObj),
     MOcolors = c(exp = "red", met = "green", mut = "blue", cnv="yellow"),
     top = 40, fontsize = 10)
@@ -63,8 +72,8 @@ test_that("Plots with two class object work", {
     paletteNames = c(exp = "red", met = "green"),
     additionalAnnotations = dummy_annot,
     additionalPaletteNames = list(classes = "teal"),
-    nrowsHeatmaps = 2, withSampleNames = F, envir = env), "omic not found")
-
+    nrowsHeatmaps = 2, withSampleNames = FALSE, envir=env), "Missing omic")
+  
   res.ModuleInGraph <- plotModuleInGraph(
     twoCModuleObj, dummy_react,
     moduleNumber = 2, legendLabels = c("expr", "methylation", "cnv", "mut"),

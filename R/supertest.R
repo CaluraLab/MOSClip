@@ -1,34 +1,41 @@
-#' Performs statistical tests of the pathway intersections among omics.
+#' Performs a Exact test - analysis of omics intersection
 #'
-#' This function calculates intersection sizes among the pathway sets
-#' significative in each omic and performs statistical intersection test.
+#' This function performs a exact test implementing a theorical framework using
+#' the SuperExactTest package. It calculates the statistical distributions of
+#' multi omics set intersections. It can be used with both a MultiOmicsModules 
+#' or MultiOmicsPathway class objects.
 #'
-#' @param multiPathwayReportData data.frame, the output of
-#' the \code{\link{multiPathwayReport}} or \code{\link{multiPathwayModuleReport}} functions.
-#' @param pvalueThr numeric indicating the cut-off for overall pvalue
-#' @param zscoreThr numeric indicating the cut-off for covariates coefficients
-#' @param resampligThr numeric the number of success in the resamplig procedure
-#' @param plot character indicating the layout for plotting.
-#' It is one of \code{circular}, \code{landscape} or \code{no}.
-#' By default, plot="circular", if plot="no" no plot will be provided.
+#' @param multiPathwayReportData data.frame, the output of the 
+#' \code{\link{multiPathwayReport}} or \code{\link{multiPathwayModuleReport}}
+#' functions.
+#' @param pvalueThr numeric value. Overall pvalue cut-off to be used
+#' @param zscoreThr numeric value. Covariates coefficient cut-off to be used.
+#' @param resampligThr numeric value. Filters the modules according to the
+#' number of success in the resampling procedure, takes only the modules above
+#' this threshold.
+#' @param plot character indicating the layout for plotting. It is one of 
+#' \code{circular}, \code{landscape} or \code{noplot}. By default,
+#' plot="circular", if plot="noplot" no plot will be provided.
 #' @param sort.by character indicating how to sort the
 #' intersections in the plot. It is one of "set" (by omics), "size"
 #' (by intersection size), "degree" (by number of intersected omics),
 #' and "p-value".
 #' @param excludeColumns a vector of characters listing the columns of
 #' \code{multiPathwayReportData} object to be excluded by the analysis.
-#' In the case \code{multiPathwayReportData} derives from \code{\link{multiPathwayModuleReport}}
+#' In the case \code{multiPathwayReportData} derives from
+#' \code{\link{multiPathwayModuleReport}}
 #' you should set \code{excludeColumns = c("pathway","module")}.
 #' @param color.on color that represent the active omics in the sector
-#' @param color.off color that represent the omics mnot considered in the sector
+#' @param color.off color that represent the omics mnot considered in the
+#' sector
 #'
-#' @details This function calculates intersection sizes between multiple set of pathways or modules
-#' and performs statistical test of the intersections using the total amout of
-#' analyzed pathways or modules as background. The super exact test of this function
-#' was described in Wang et al 2015.
+#' @details This function calculates intersection sizes between multiple set of
+#' pathways or modules and performs statistical test of the intersections using
+#' the total amout of analyzed pathways or modules as background. The super
+#' exact test of this function was described in Wang et al 2015.
 #'
-#' @return a data.frame containing all the numeric information of the plot included
-#'  the pathways shared by different omics.
+#' @return a data.frame containing all the numeric information of the plot
+#' included the pathways shared by different omics.
 #'
 #' @references
 #' Minghui Wang, Yongzhong Zhao, and Bin Zhang (2015).
@@ -91,19 +98,24 @@ runSupertest <- function(multiPathwayReportData, pvalueThr=0.05,
   invisible(summary(msetSupertest)$Table)
 }
 
-#' Convert pathways into a fathers
+#' Find Pathway Fathers
+#' 
+#' Given the hierarchy of the pathways, this formula finds the fathers of the
+#' respective pathway (e.g. pathway: "PI3K Cascade"; father:
+#' "Signaling Pathways")
 #'
 #' @param pathways vector of pathway names
 #' @param graphiteDB graphite DB object
 #' @param hierarchy a graph object with the pathway hierarchy
 #'
-#' @return a vector of fathers names
+#' @return a vector of the fathers' names
 #'
 #' @importFrom igraph V
+#
 #' @export
-#'
+
 annotePathwayToFather <- function(pathways, graphiteDB, hierarchy) {
-  ord = length(igraph::V(hierarchy))*2
+  ord <- length(igraph::V(hierarchy))*2
   pathway2id <- mapPathwaysIDfromGraphite(graphiteDB) # codici
   pathwayDict <- pathway2id$pname
   names(pathwayDict) <- pathway2id$id
@@ -113,18 +125,21 @@ annotePathwayToFather <- function(pathways, graphiteDB, hierarchy) {
                          ord=ord)
   names(path2fathers) <- ids
   ids2father <- id2name(path2fathers, pathwayDict)
-  # data.frame(pathways, fathers=unlist(ids2father), stringsAsFactors = FALSE)
   unlist(ids2father)
 }
 
 #' Compute Omics Intersections
 #'
+#' Finds the modules that have any intersection among the available omics
+#'
 #' @inheritParams runSupertest
 #'
-#' @return a list of pathway omics intersection
+#' @return a list of pathway modules present for every intersection of omics
+#' present
 #'
 #' @importFrom reshape melt
 #' @export
+
 computeOmicsIntersections <- function(multiPathwayReportData, pvalueThr=0.05,
                                       zscoreThr=0.05, resampligThr = NULL,
                                       excludeColumns=NULL){
@@ -138,6 +153,10 @@ computeOmicsIntersections <- function(multiPathwayReportData, pvalueThr=0.05,
   universeSize <- NROW(multiPathwayReportData)
   multiPathwayReportDataSig <- multiPathwayReportData[
     multiPathwayReportData[,"pvalue"] <= pvalueThr,]
+  
+  if (nrow(multiPathwayReportDataSig) == 0) {
+    stop("There is no significant modules. Try changing the pvalue threshold")
+  }
 
   if (!is.null(resampligThr)) {
     if (is.null(multiPathwayReportDataSig$resamplingCount))
@@ -151,6 +170,11 @@ computeOmicsIntersections <- function(multiPathwayReportData, pvalueThr=0.05,
 
   MOlistPathSig <- lapply(MOlistPval, function(pp) {
     names(which(pp <= zscoreThr))})
+  
+  if (0 %in% lengths(MOlistPathSig)){
+    stop("One or more omics do not have a significant z score for any of their
+         modules. Try increasing the z score threshold.")
+  }
 
   df <- reshape::melt(MOlistPathSig)
   p2o <- tapply(seq_len(NROW(df)), df[,1], function(idx) {
@@ -161,14 +185,20 @@ computeOmicsIntersections <- function(multiPathwayReportData, pvalueThr=0.05,
   })
 }
 
-#' Remove module number From Pathway Name
+#' Remove Module Number From Pathway Name
+#' 
+#' Function to remove the suffix corresponding to the module number of the
+#' pathway name. Necessary step for \code{\link{annotePathwayToFather}} and 
+#' \code{\link{plotFrequencies}}
 #'
 #' @inheritParams annotePathwayToFather
 #'
-#' @export
+#' @return list of pathway names without the module number
 #'
+#' @export
+
 stripModulesFromPathways <- function(pathways) {
-  sub("\\.[0-9]+", "",pathways, perl=T)
+  sub("\\.[0-9]+", "",pathways, perl = TRUE)
 }
 
 #' Remove pathways with no id in graphite
@@ -187,12 +217,12 @@ stripModulesFromPathways <- function(pathways) {
 match_pathway_to_fathers <- function(omicClass, omicsClasses2pathways,
                                      omicsClasses2fathers) {
   if (!(omicClass %in% names(omicsClasses2pathways)))
-    stop(paste0("Omic not found in class2pathways:", omicClass))
+    stop("Omic not found in class2pathways")
   if (!(omicClass %in% names(omicsClasses2fathers)))
-    stop(paste0("Omic not found in class2pathways:", omicClass))
+    stop("Omic not found in class2pathways")
 
   if (is.null(omicsClasses2fathers[[omicClass]])){
-    valid_set=character()
+    valid_set <- character()
   } else {
     valid_set <- intersect(omicsClasses2pathways[[omicClass]],
                            omicsClasses2fathers[[omicClass]])
@@ -207,7 +237,7 @@ match_pathway_to_fathers <- function(omicClass, omicsClasses2pathways,
   select_father <- omicsClasses2fathers[[omicClass]] %in% valid_set
   data.frame(path=omicsClasses2pathways[[omicClass]][select_path],
              father=omicsClasses2fathers[[omicClass]][select_father],
-             stringsAsFactors = F)
+             stringsAsFactors = FALSE)
 }
 
 
@@ -221,17 +251,18 @@ match_pathway_to_fathers <- function(omicClass, omicsClasses2pathways,
 #' @importFrom stats na.omit
 #' @export
 #'
-pvalueSummary <- function(multiPathwayReportData, excludeColumns=NULL,
-                          as.list=FALSE){
+pvalueSummary <- function(multiPathwayReportData, excludeColumns = NULL,
+                          as.list = FALSE){
   checkReportFormat(multiPathwayReportData)
   checkColumnsExclusion(multiPathwayReportData, excludeColumns)
 
   columnsNotExcluded <- colnames(multiPathwayReportData)[
     !(colnames(multiPathwayReportData) %in% excludeColumns)]
-  multiPathwayReportData <- multiPathwayReportData[,columnsNotExcluded, drop=F]
+  multiPathwayReportData <- multiPathwayReportData[,columnsNotExcluded,
+                                                   drop=FALSE]
 
 
-  colClasses <- sapply(multiPathwayReportData, class)
+  colClasses <- vapply(multiPathwayReportData, class, character(1))
   if(any(unique(colClasses) != "numeric")){
     notNumericColumns <- colnames(multiPathwayReportData)[
       colClasses != "numeric"]
@@ -241,8 +272,9 @@ pvalueSummary <- function(multiPathwayReportData, excludeColumns=NULL,
                 paste(notNumericColumns, collapse = ", ")))
   }
 
-  covarColumns <- !(colnames(multiPathwayReportData) %in% "pvalue")
-  multiPathwayReportDataSig <- multiPathwayReportData[,covarColumns, drop=F]
+  covarColumns <- colnames(multiPathwayReportData) != "pvalue"
+  multiPathwayReportDataSig <- multiPathwayReportData[,covarColumns,
+                                                      drop=FALSE]
 
   malformedColumns <- apply(multiPathwayReportDataSig, 2,
                             function(col) 
@@ -252,7 +284,7 @@ pvalueSummary <- function(multiPathwayReportData, excludeColumns=NULL,
     stop(paste0("Data malformed. The following columns are not pvalues
                 (values greater than 1 or lower than 0).
                 Consider using excludeColumns argument: ",
-                paste(colnames(multiPathwayReportDataSig)[malformedCoulums],
+                paste(colnames(multiPathwayReportDataSig)[malformedColumns],
                       collapse = ", ")
     ))
   }
@@ -264,7 +296,7 @@ pvalueSummary <- function(multiPathwayReportData, excludeColumns=NULL,
                        covars2omics,
                        summarizeOmicsResByMinPvalue,
                        mat=multiPathwayReportDataSig,
-                       simplify = F)
+                       simplify = FALSE)
   if (as.list)
     return(MOlistPval)
   do.call(cbind, MOlistPval)
@@ -292,7 +324,7 @@ checkColumnsExclusion <- function(multiPathwayReportData, excludeColumns) {
 
 checkPvalueThresholdFormat <- function(thr, name="thr") {
   if(!is.numeric(thr))
-    stop(paste0(name, " should be numeric."))
+    stop("pValue threshold should be numeric")
   else if((thr > 1) | (thr < 0))
-    stop(paste0(name, " should be a number between 0 and 1."))
+    stop("pValue threshold should be a number between 0 and 1")
 }

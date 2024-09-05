@@ -3,9 +3,10 @@ setClassUnion("characterOrNULL", c("character", "NULL"))
 
 #' Omics class initializer function
 #' 
-#' Function to build a multi-omic object of class `Omics`, based on 
-#' `MultiAssayExperiment`. It contains `ExperimentList`, `colData`, `sampleMap`,
-#' and additional slots `modelInfo` and `specificArgs`.
+#' makeOmics creates the `Omics` object necessary to perform most of the 
+#' analyses of this package. It contains all the omics data in the format of a 
+#' `ExperimentList`, the clinical data, and all the information necessary for 
+#' the dimensionality reduction step.
 #' 
 #' @param experiments A \code{list} or \link{ExperimentList} of all
 #' combined experiments
@@ -26,6 +27,9 @@ setClassUnion("characterOrNULL", c("character", "NULL"))
 #' 
 #' @export
 #' @importFrom S4Vectors DataFrame
+#'
+#' @export
+
 makeOmics <- function(experiments = ExperimentList(),
                       colData = S4Vectors::DataFrame(),
                       sampleMap = S4Vectors::DataFrame(
@@ -225,9 +229,9 @@ setMethod("showPathway",
             invisible(NULL)
           })
 
-
-
-#' @export
+#' A generic function to convert pathway
+#' @param graph a graphNEL object
+#' @param useThisGenes list of genes to be used
 setGeneric("convertPathway", function(graph, useThisGenes)
    standardGeneric("convertPathway"))
 

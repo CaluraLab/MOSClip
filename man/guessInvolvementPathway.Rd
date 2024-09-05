@@ -7,6 +7,7 @@ results.}
 \usage{
 guessInvolvementPathway(
   pathway,
+  multiOmic,
   loadThr = 0.6,
   n = 3,
   atleast = 1,
@@ -18,7 +19,13 @@ guessInvolvementPathway(
 \arguments{
 \item{pathway}{\code{MultiOmicsModules} object from a pathway}
 
+<<<<<<< HEAD
 \item{loadThr}{the loading threshold to select genes (PCA only)}
+=======
+\item{multiOmic}{Omics object}
+
+\item{loadThr}{the leading threshold to select genes (PCA only)}
+>>>>>>> origin/anna_t
 
 \item{n}{the maximum number of genes to retrieve (cluster and binary only)}
 

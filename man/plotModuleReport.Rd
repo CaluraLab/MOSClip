@@ -2,10 +2,10 @@
 % Please edit documentation in R/PlottingMO.R
 \name{plotModuleReport}
 \alias{plotModuleReport}
-\title{Summarize and plot pathways' info from a MultiOmicsModule (MOM) object}
+\title{Plot a table of a MultiOmicsModule (MOM) object}
 \usage{
 plotModuleReport(
-  pathwayObj,
+  modulesObj,
   MOcolors = NULL,
   priority_to = NULL,
   fontsize = 12,
@@ -13,15 +13,21 @@ plotModuleReport(
 )
 }
 \arguments{
-\item{pathwayObj}{MultiOmicsModule of pathway object}
+\item{modulesObj}{MultiOmicsModules class object}
 
 \item{MOcolors}{character vector with the omic colors.
 The colors should be among the colors in \code{showMOSpalette()}}
 
-\item{priority_to}{a vector with the covariates (omic name) that should go first}
+\item{priority_to}{a vector with the covariates (omic name) that should go
+first}
+
+\item{fontsize}{Size of the font to be used in the plot}
 
 \item{...}{additional arguments to be passed to \code{pheatmap}}
 }
+\value{
+a Heatmap list object from ComplexHeatmap package
+}
 \description{
-Given a MOM, it plots the table.
+Given a MOM object, it plots a summary of its results in a tabular fashion
 }

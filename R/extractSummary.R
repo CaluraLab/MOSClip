@@ -4,7 +4,7 @@
 #' important features.
 #'
 #' @param omic a summarized omic
-#' @param multiOmicObj multi-omic object
+#' @param multiOmicObj `Omics` object
 #' @param n maximum number of features to retrieve
 #'
 #' @return Meant for internal use only. The summary for omic summarized 
@@ -93,6 +93,8 @@ KWtest <- function(moduleMat, classes) {
 #' to the loading
 #' @param atleast the minimum number of gene to retrieve
 #' @param minprop the minimal proportion of cutp
+#' @param multiOmicObj Omics object
+#' @param analysis two-class or survival type
 #'
 #' @return summary for omic summarized using pca
 #' \item{sigModule}{the original data for significant features}
@@ -115,6 +117,7 @@ extractSummaryFromPCA <- function(omic, multiOmicObj, moduleCox, analysis,
 }
 
 #' @importFrom survminer surv_cutpoint surv_categorize
+#' @importFrom stats median
 createDiscreteClasses <- function(coxObj, covs, analysis,
                                   labels= c("low", "high"), minprop=0.1) {
   
@@ -193,6 +196,8 @@ collapse <- function(list) {
 #'
 #' @inheritParams extractSummaryFromPCA
 #' @param labels the category labels
+#' @param multiOmicObj Omics object
+#' @param analysis two-class or survival type
 #'
 #' @return Meant for internal use only. The summary for omic summarized using 
 #' counting of events.

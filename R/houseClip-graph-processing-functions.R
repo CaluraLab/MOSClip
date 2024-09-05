@@ -2,23 +2,16 @@
 #'
 #' For internal use only. Extract the cliques.
 #'
-#'
 #' @param dag a Directed Aciclic Graph
 #' @param root a node to use as root
 #'
 #' @return list of nodes cliques
 #'
-#' @examples
-#'   graph <- gRbase::dag(c("me","ve"),c("me","al"),c("me","me"),
-#'     c("ve","al"),c("al","an"),
-#'     c("al","st"),c("an","st"))
-#'   extractCliquesFromDag(graph)
-#'
 #' @importFrom methods as
 #' @importFrom gRbase is.DAG moralize triangulate rip
 #' @importFrom checkmate assertClass
+#' @importFrom Matrix diag
 #' @rdname graph-processing
-#'
 extractCliquesFromDag <- function(dag, root=NULL) {
   checkmate::assertClass(dag, "graphNEL")
   idag <- igraph::graph_from_graphnel(dag)
@@ -36,7 +29,7 @@ extractCliquesFromDag <- function(dag, root=NULL) {
   tg <- gRbase::triangulate(moral)
   ripped <- gRbase::rip(tg, root=root)
   if (length(ripped)==0){
-    warning(pasteo0("This graph ", graph@title, "have 0 cliques"))
+    warning(paste0("This graph ", dag@title, "have 0 cliques"))
     return(NULL)
   }
   
@@ -52,11 +45,6 @@ extractCliquesFromDag <- function(dag, root=NULL) {
 #' @return a graphNEL object
 #'
 #'#' @rdname  graph-processing
-#' @examples
-#'   graph <- gRbase::dag(c("me","ve"),c("me","al"),c("me","me"),
-#'     c("ve","al"),c("al","an"),
-#'     c("al","st"),c("an","st"))
-#'   removeSelfLoops(graph)
 #'
 #' @importClassesFrom graph graphNEL
 #' @importFrom checkmate assertClass

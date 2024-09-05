@@ -7,6 +7,7 @@ results.}
 \usage{
 guessInvolvement(
   pathway,
+  multiOmic,
   moduleNumber,
   loadThr = 0.6,
   n = 3,
@@ -18,6 +19,8 @@ guessInvolvement(
 }
 \arguments{
 \item{pathway}{\code{MultiOmicsModules} object from a pathway}
+
+\item{multiOmic}{Omics object}
 
 \item{moduleNumber}{the module number}
 

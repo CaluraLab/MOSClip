@@ -17,10 +17,3 @@ a graphNEL object
 \description{
 Remove the self loops that a present in the graph graphNEL object
 }
-\examples{
-  graph <- gRbase::dag(c("me","ve"),c("me","al"),c("me","me"),
-    c("ve","al"),c("al","an"),
-    c("al","st"),c("an","st"))
-  removeSelfLoops(graph)
-
-}

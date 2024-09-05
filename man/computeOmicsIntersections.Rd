@@ -13,23 +13,28 @@ computeOmicsIntersections(
 )
 }
 \arguments{
-\item{multiPathwayReportData}{data.frame, the output of
-the \code{\link{multiPathwayReport}} or \code{\link{multiPathwayModuleReport}} functions.}
+\item{multiPathwayReportData}{data.frame, the output of the
+\code{\link{multiPathwayReport}} or \code{\link{multiPathwayModuleReport}}
+functions.}
 
-\item{pvalueThr}{numeric indicating the cut-off for overall pvalue}
+\item{pvalueThr}{numeric value. Overall pvalue cut-off to be used}
 
-\item{zscoreThr}{numeric indicating the cut-off for covariates coefficients}
+\item{zscoreThr}{numeric value. Covariates coefficient cut-off to be used.}
 
-\item{resampligThr}{numeric the number of success in the resamplig procedure}
+\item{resampligThr}{numeric value. Filters the modules according to the
+number of success in the resampling procedure, takes only the modules above
+this threshold.}
 
 \item{excludeColumns}{a vector of characters listing the columns of
 \code{multiPathwayReportData} object to be excluded by the analysis.
-In the case \code{multiPathwayReportData} derives from \code{\link{multiPathwayModuleReport}}
+In the case \code{multiPathwayReportData} derives from
+\code{\link{multiPathwayModuleReport}}
 you should set \code{excludeColumns = c("pathway","module")}.}
 }
 \value{
-a list of pathway omics intersection
+a list of pathway modules present for every intersection of omics
+present
 }
 \description{
-Compute Omics Intersections
+Finds the modules that have any intersection among the available omics
 }

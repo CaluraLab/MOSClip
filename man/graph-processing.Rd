@@ -24,10 +24,3 @@ For internal use only. Extract the cliques.
 
 For internal use only. Force Moralization
 }
-\examples{
-  graph <- gRbase::dag(c("me","ve"),c("me","al"),c("me","me"),
-    c("ve","al"),c("al","an"),
-    c("al","st"),c("an","st"))
-  extractCliquesFromDag(graph)
-
-}
