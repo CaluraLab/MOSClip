@@ -1,10 +1,17 @@
 #' Download Reactome Pathway Relations
+#' 
+#' Download Pathway Relations from Reactome. The file is retrieved from the url
+#' \link{https://reactome.org/download/current/ReactomePathwaysRelation.txt}
 #'
 #' @param url the location of the file. Can be local. If NULL pick the package 
 #' reactome file.
 #' @param speciesAbbr species acronim
 #'
-#' @return a data frame
+#' @return a data frame with 2 columns: 
+#' \describe{
+#' \item{parent} {reactome pathway id}
+#' \item{child} {reactome pathway id}}
+#' 
 #' @importFrom utils read.table data
 #'
 #' @examples
@@ -15,8 +22,8 @@
 #' @export
 downloadPathwayRelationFromReactome <- function(url=NULL, speciesAbbr = "HSA") {
   if (is.null(url)) {
-    url <- system.file("ReactomePathwaysRelation.txt", package = "biocmosclip",
-                      mustWork = TRUE)
+    url <- system.file("extdata", "ReactomePathwaysRelation.txt", 
+                       package = "biocmosclip", mustWork = TRUE)
   }
   df <- read.table(url, sep="\t", header=FALSE, quote="\"", 
                    stringsAsFactors=FALSE, check.names = FALSE)
@@ -27,17 +34,6 @@ downloadPathwayRelationFromReactome <- function(url=NULL, speciesAbbr = "HSA") {
   df
 }
 
-#' This is a copy of the file
-#' "https://reactome.org/download/current/ReactomePathwaysRelation.txt"
-#' downloaded Dec 2018.
-#'
-#' A brand new file can be downloaded using:
-#'  downloadPathwayRelationFromReactome
-#'
-#' @name ReactomePathwaysRelation
-#' @docType data
-#' @keywords data
-NULL
 
 #' Retrieves pathways relatives
 #'
