@@ -1,16 +1,16 @@
 #' Download Reactome Pathway Relations
 #' 
-#' Download Pathway Relations from Reactome. The file is retrieved from the url
-#' \link{https://reactome.org/download/current/ReactomePathwaysRelation.txt}
+#' Download Pathway Relations from Reactome. The file is retrieved from the 
+#' [url](https://reactome.org/download/current/ReactomePathwaysRelation.txt)
 #'
 #' @param url the location of the file. Can be local. If NULL pick the package 
 #' reactome file.
 #' @param speciesAbbr species acronim
 #'
-#' @return a data frame with 2 columns: 
-#' \describe{
-#' \item{parent} {reactome pathway id}
-#' \item{child} {reactome pathway id}}
+#' @return A data frame with 2 columns: 
+#'  \item{parent}{The Reactome pathway ID of the parent pathway.}
+#'  \item{child}{The Reactome pathway ID of the child pathway.}
+#' 
 #' 
 #' @importFrom utils read.table data
 #'
