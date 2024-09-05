@@ -17,22 +17,26 @@ extractSummaryFromNumberOfEvents(
 \arguments{
 \item{omic}{a summarized omic}
 
+\item{multiOmicObj}{multi-omic object}
+
 \item{moduleCox}{the coxObj of the interesting module}
 
-\item{n}{maximum number of features to retrieve}
+\item{analysis}{type of analysis: survival or twoClass}
 
 \item{minprop}{the minimal proportion of cutp}
 
 \item{labels}{the category labels}
 }
 \value{
-Meant for internal use only. The summary for omic summarized using clusters
+Meant for internal use only. The summary for omic summarized using
+counting of events.
 \item{sigModule}{the original data for significant features}
-\item{discrete}{the discrete version of the significant covariates converted (when needed)
-into the discrete version}
-\item{subset}{data.frame(row.names=names(topGenes), metClust=topGenes)}
+\item{discrete}{the discrete version of the significant covariates converted
+(when needed) into the discrete version}
+\item{subset}{data.frame(row.names=names(topGenes), covariates=covariate)}
 \item{covsConsidered}{the name of the considered omic}
 }
 \description{
-Given an omic summarized by "summarizeToBinaryEvents" extract the most important features.
+Given an omic summarized by "summarizeToNumberOfEvents" extract the most
+important features.
 }

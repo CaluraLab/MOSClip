@@ -2,7 +2,8 @@
 % Please edit documentation in R/guessInvolvement.R
 \name{guessInvolvementPathway}
 \alias{guessInvolvementPathway}
-\title{Guess the most influent features from MultiOmics Survival Results.}
+\title{Guess the most influent features from MultiOmics Survival or Two-class
+results.}
 \usage{
 guessInvolvementPathway(
   pathway,
@@ -15,28 +16,28 @@ guessInvolvementPathway(
 )
 }
 \arguments{
-\item{pathway}{MultiOmicsPathway from a pathway.}
+\item{pathway}{\code{MultiOmicsModules} object from a pathway}
 
-\item{loadThr}{the leading threshold to select genes (PCA only)}
+\item{loadThr}{the loading threshold to select genes (PCA only)}
 
-\item{n}{the maximum number of genes to retrive (cluster and binary only)}
+\item{n}{the maximum number of genes to retrieve (cluster and binary only)}
 
 \item{atleast}{the minimum number of features to select (PCA only)}
 
-\item{min_prop_pca}{the minimal proportion to compute the pca classes}
+\item{min_prop_pca}{the minimal proportion to compute the PCA classes}
 
 \item{min_prop_events}{the minimal proportion to compute the event classes}
 
 \item{...}{additional arguments passed to \code{get} function}
 }
 \value{
-For each omic analyzed a list that is the summary for omic summarized using the setted method: pvalues are present only for cluster method.
-\item{sigModule}{the original data for significant features}
-\item{discrete}{the discrete version of the significant covariates converted (when needed) into the discrete version}
-\item{subset}{data.frame(row.names=names(topGenes), metClust=topGenes)}
-\item{pvalues}{Kruskal Wallis pvalues of the selected features}
-\item{covsConsidered}{the name of the considered omic}
+a list. Each item of the list corresponds to an omic that is
+summarized with the specific 'extractSummary' functions. Each item is the
+summary for an omic summarized using the setted method: pvalues are present
+only for cluster method.
 }
 \description{
-Given a pathway analyzed by MultiOmicsPathwaySurvivalTest it retrieve for each omic the most influent fetures.
+Given a pathway analyzed by \code{multiOmicsSurvivalPathwayTest} or
+\code{multiOmicsTwoClassesPathwayTest}, it retrieves for each omic the most
+influent features.
 }

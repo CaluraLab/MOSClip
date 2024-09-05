@@ -32,6 +32,17 @@ summarizeWithPca(
 
 \item{loadThr}{loading threshold}
 }
+\value{
+a list with summary of the omic:
+\item{x}{summary of the omic for each sample (principal components)}
+\item{sdev}{standard deviation of the principal components}
+\item{loadings}{loadings of PCA}
+\item{usedGenes}{genes list of genes used to calculate the summary}
+\item{namesCov}{names of the covariates}
+\item{method}{method used for the analysis}
+\item{omicName}{name of the omic}
+}
 \description{
-Given a matrix it summarize to a 0 or 1
+Given a matrix it summarize to principal components.
+The user can specify the number of principal components. Default 3.
 }

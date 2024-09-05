@@ -9,7 +9,7 @@
 \S4method{showPathway}{MultiOmicsPathway}(object)
 }
 \arguments{
-\item{object}{an object of class MultiOmicsPathway}
+\item{object}{an object of class \code{MultiOmicsPathway}}
 }
 \description{
 This class organize the results of the Multi-Omics Pathway Survival Test

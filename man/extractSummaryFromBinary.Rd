@@ -9,15 +9,20 @@ extractSummaryFromBinary(omic, multiOmicObj, n = 3)
 \arguments{
 \item{omic}{a summarized omic}
 
+\item{multiOmicObj}{multi-omic object}
+
 \item{n}{maximum number of features to retrieve}
 }
 \value{
-Meant for internal use only. The summary for omic summarized using clusters
+Meant for internal use only. The summary for omic summarized
+using binary events.
 \item{sigModule}{the original data for significant features}
-\item{discrete}{the discrete version of the significant covariates converted (when needed) into the discrete version}
-\item{subset}{data.frame(row.names=names(topGenes), metClust=topGenes)}
+\item{discrete}{the discrete version of the significant covariates converted
+(when needed) into the discrete version}
+\item{subset}{data.frame(row.names=names(topGenes), cov=sum binary events)}
 \item{covsConsidered}{the name of the considered omic}
 }
 \description{
-Given an omic summarized by "summarizeToBinaryEvents" extract the most important features.
+Given an omic summarized by "summarizeToBinaryEvents" extract the most
+important features.
 }

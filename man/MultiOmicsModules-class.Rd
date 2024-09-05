@@ -9,7 +9,7 @@
 \S4method{showModule}{MultiOmicsModules}(object)
 }
 \arguments{
-\item{object}{an object of class MultiOmicsModules}
+\item{object}{an object of class \code{MultiOmicsModules}}
 }
 \description{
 This class organizes the results of the Multi-Omics Module Survival Test

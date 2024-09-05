@@ -2,13 +2,13 @@
 % Please edit documentation in R/AllMethods.R
 \name{showOmics}
 \alias{showOmics}
-\title{A generic functions showing parameter asociated with each omics}
+\title{A generic functions showing parameter associated with each omics}
 \usage{
 showOmics(object)
 }
 \arguments{
-\item{object}{an object of class Omics}
+\item{object}{an object of class \code{Omics}}
 }
 \description{
-A generic functions showing parameter asociated with each omics
+A generic functions showing parameter associated with each omics
 }

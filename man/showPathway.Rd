@@ -7,7 +7,7 @@
 showPathway(object)
 }
 \arguments{
-\item{object}{an object of class MultiOmicsPathway}
+\item{object}{an object of class \code{MultiOmicsPathway}}
 }
 \description{
 A generic function showing pathway info
