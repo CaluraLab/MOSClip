@@ -14,8 +14,6 @@
 #'   }
 #' @importFrom checkmate assertClass
 #'
-#' @export
-#'
 mapPathwaysIDfromGraphite <- function(pathways, pathwayNames=NULL) {
   assertClass(pathways, "PathwayList")
   if (is.null(pathwayNames)) {
@@ -23,10 +21,10 @@ mapPathwaysIDfromGraphite <- function(pathways, pathwayNames=NULL) {
   }
   l <- lapply(pathwayNames, function(p) {
     if (!(p %in% names(pathways))) {
-      warning(paste0("No id found for ", p ))
+      warning("No id found for ", p )
       return(NULL)
     }
-    data.frame(id=pathways[[p]]@id, pname=p, stringsAsFactors = F)
+    data.frame(id=pathways[[p]]@id, pname=p, stringsAsFactors = FALSE)
   })
   do.call(rbind, l)
 }

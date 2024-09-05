@@ -44,7 +44,7 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
     specificArgs <- omicsObj@specificArgs[[i]]
 
     # Inizialize cliques to null
-    cliques=NULL
+    cliques <- NULL
     if (omicsObj@modelInfo[i] == "summarizeWithPca") {
       # compute cliques
       genesToUse <- intersect(row.names(omicsObj@ExperimentList@listData[[i]]),
@@ -76,9 +76,9 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
     add_covs <- c(add_covs, add_annot_covs)
   }
 
-  formula = survFormula
+  formula <- survFormula
   if (autoCompleteFormula)
-    formula = paste0(survFormula, paste(add_covs, collapse="+"))
+    formula <- paste0(survFormula, paste(add_covs, collapse="+"))
 
   if (robust) {
     scox <- suppressWarnings(survivalcoxr(coxObj, formula))
@@ -127,8 +127,8 @@ multiOmicsSurvivalModuleTest <- function(omicsObj, graph,
 
   genes <- graph::nodes(graph)
   if (length(genes) == 0)
-    stop(paste0("There is no intersection between expression ",
-         "feature names and the node names in the graph."))
+    stop("There is no intersection between expression ",
+         "feature names and the node names in the graph.")
 
   # create the modules
   cliques <- extractCliquesFromDag(graph)
@@ -138,7 +138,7 @@ multiOmicsSurvivalModuleTest <- function(omicsObj, graph,
                     autoCompleteFormula=autoCompleteFormula,
                     robust=robust, include_from_annot=include_from_annot)
 
-  alphas <- as.numeric(sapply(results, extractPvalues))
+  alphas <- as.numeric(vapply(results, extractPvalues, as.numeric(1)))
   zlist <- lapply(results, function(x) x$zlist)
   momics <- lapply(results, function(x) x$moView)
   modules <- cliques

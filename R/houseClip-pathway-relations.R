@@ -1,6 +1,7 @@
 #' Download Reactome Pathway Relations
 #'
-#' @param url the location of the file. Can be local. If NULL pick the package reactome file.
+#' @param url the location of the file. Can be local. If NULL pick the package 
+#' reactome file.
 #' @param speciesAbbr species acronim
 #'
 #' @return a data frame
@@ -14,17 +15,14 @@
 #' @export
 downloadPathwayRelationFromReactome <- function(url=NULL, speciesAbbr = "HSA") {
   if (is.null(url)) {
-    url = system.file("ReactomePathwaysRelation.txt", package = "biocmosclip",
+    url <- system.file("ReactomePathwaysRelation.txt", package = "biocmosclip",
                       mustWork = TRUE)
-    # ReactomePathwaysRelation <- NULL
-    # data(ReactomePathwaysRelation)
-    # df <- ReactomePathwaysRelation
   }
-  df <- read.table(url, sep="\t", header=F, quote="\"", stringsAsFactors = F,
-                   check.names = F)
+  df <- read.table(url, sep="\t", header=FALSE, quote="\"", 
+                   stringsAsFactors=FALSE, check.names = FALSE)
   colnames(df) <- c("parent", "child")
   df <- df[grepl(speciesAbbr, df$parent) & grepl(speciesAbbr, df$child), ,
-           drop=F]
+           drop=FALSE]
   row.names(df) <- NULL
   df
 }
@@ -58,11 +56,11 @@ NULL
 #' @importFrom igraph V V<- as_ids make_ego_graph ego distances
 #' @export
 #'
-getPathFathers <- function(pathway, hierarchyGraph, ord=3, plot=F) {
+getPathFathers <- function(pathway, hierarchyGraph, ord=3, plot=FALSE) {
   checkmate::assertClass(hierarchyGraph, "igraph")
 
   if (!(pathway %in% names(V(hierarchyGraph)))){
-    warning(paste0("Id ", pathway, " is not in the hierarchy."))
+    warning("Id ", pathway, " is not in the hierarchy.")
     return(pathway)
   }
 
@@ -92,8 +90,6 @@ getPathFathers <- function(pathway, hierarchyGraph, ord=3, plot=F) {
 #' @param namedVect a named vector
 #'
 #' @return a character vector with the names
-#'
-#' @export
 #'
 id2name <- function(idList, namedVect) {
   stopifnot(!is.null(names(namedVect)))

@@ -18,7 +18,6 @@
 #' @importFrom gRbase is.DAG moralize triangulate rip
 #' @importFrom checkmate assertClass
 #' @rdname graph-processing
-#' @export
 #'
 extractCliquesFromDag <- function(dag, root=NULL) {
   checkmate::assertClass(dag, "graphNEL")
@@ -61,12 +60,11 @@ extractCliquesFromDag <- function(dag, root=NULL) {
 #'
 #' @importClassesFrom graph graphNEL
 #' @importFrom checkmate assertClass
-#' @export
 #'
 removeSelfLoops <- function(graph){
   checkmate::assertClass(graph, "graphNEL")
   edgeL <- graph@edgeL
-  for (i in 1:length(edgeL)) {
+  for (i in seq_along(edgeL)) {
     pos <- match(i,edgeL[[i]]$edges)
     if (!(is.na(pos)))
       edgeL[[i]]$edges <- edgeL[[i]]$edges[-pos]
@@ -86,7 +84,7 @@ removeSelfLoops <- function(graph){
 #' @rdname graph-processing
 #'
 mmmoralize <- function(graph) {
-  m <- igraph::as_adjacency_matrix(graph, sparse=F)
+  m <- igraph::as_adjacency_matrix(graph, sparse=FALSE)
   m <- gRbase::moralizeMAT(m)
   g <- igraph::graph_from_adjacency_matrix(m, mode="directed")
   g

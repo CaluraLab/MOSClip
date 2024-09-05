@@ -1,24 +1,24 @@
-#' Guess the most influent features from MultiOmics Survival Results.
+#' Guess the most influent features from MultiOmics Survival or Two-class 
+#' results.
 #'
-#' Given a pathway analyzed by MultiOmicsModuleSurvivalTest it retrieve for each omic the most influent fetures.
+#' Given a pathway analyzed by `multiOmicsModuleSurvivalTest` or 
+#' `multiOmicsTwoClassesModuleTest`, it retrieves for each omic the most 
+#' influent features.
 #'
-#' @param pathway MultiOmicsModule from a pathway.
+#' @param pathway `MultiOmicsModules` object from a pathway
 #' @param moduleNumber the module number
-#' @param loadThr the leading threshold to select genes (PCA only)
-#' @param n the maximum number of genes to retrive (cluster and binary only)
+#' @param loadThr the loading threshold to select genes (PCA only)
+#' @param n the maximum number of genes to retrieve (cluster and binary only)
 #' @param atleast the minimum number of features to select (PCA only)
-#' @param min_prop_pca the minimal proportion to compute the pca classes
+#' @param min_prop_pca the minimal proportion to compute the PCA classes
 #' @param min_prop_events the minimal proportion to compute the event classes
 #' @param ... additional arguments passed to `get` function
 #'
-#' @return For each omic analyzed a list that is the summary for omic summarized using the setted method: pvalues are present only for cluster method.
-#' \item{sigModule}{the original data for significant features}
-#' \item{discrete}{the discrete version of the significant covariates converted (when needed) into the discrete version}
-#' \item{subset}{data.frame(row.names=names(topGenes), metClust=topGenes)}
-#' \item{pvalues}{Kruskal Wallis pvalues of the selected features}
-#' \item{covsConsidered}{the name of the considered omic}
+#' @return a list. Each item of the list corresponds to an omic that is 
+#' summarized with the specific 'extractSummary' functions. Each item is the 
+#' summary for an omic summarized using the setted method: pvalues are present 
+#' only for cluster method.
 #'
-#' @export
 guessInvolvement <- function(pathway, moduleNumber, loadThr=0.6, n=3, atleast=1,
                              min_prop_pca=0.1, min_prop_events=0.1, ...) {
   multiOmicObj <- get(pathway@multiOmicObj, ...)
@@ -43,27 +43,17 @@ guessInvolvement <- function(pathway, moduleNumber, loadThr=0.6, n=3, atleast=1,
   })
 }
 
-#' Guess the most influent features from MultiOmics Survival Results.
+#' Guess the most influent features from MultiOmics Survival or Two-class 
+#' results.
 #'
-#' Given a pathway analyzed by MultiOmicsPathwaySurvivalTest it retrieve for each omic the most influent fetures.
+#' Given a pathway analyzed by `multiOmicsSurvivalPathwayTest` or 
+#' `multiOmicsTwoClassesPathwayTest`, it retrieves for each omic the most 
+#' influent features.
 #'
-#' @param pathway MultiOmicsPathway from a pathway.
-#' @param loadThr the leading threshold to select genes (PCA only)
-#' @param n the maximum number of genes to retrive (cluster and binary only)
-#' @param atleast the minimum number of features to select (PCA only)
-#' @param min_prop_pca the minimal proportion to compute the pca classes
-#' @param min_prop_events the minimal proportion to compute the event classes
-#' @param ... additional arguments passed to `get` function
+#' @inheritParams guessInvolvement
 #'
+#' @inherit guessInvolvement return
 #'
-#' @return For each omic analyzed a list that is the summary for omic summarized using the setted method: pvalues are present only for cluster method.
-#' \item{sigModule}{the original data for significant features}
-#' \item{discrete}{the discrete version of the significant covariates converted (when needed) into the discrete version}
-#' \item{subset}{data.frame(row.names=names(topGenes), metClust=topGenes)}
-#' \item{pvalues}{Kruskal Wallis pvalues of the selected features}
-#' \item{covsConsidered}{the name of the considered omic}
-#'
-#' @export
 guessInvolvementPathway <- function(pathway, loadThr=0.6, n=3, atleast=1,
                                     min_prop_pca=0.1,
                                     min_prop_events=0.1, ...) {
@@ -91,27 +81,3 @@ guessInvolvementPathway <- function(pathway, loadThr=0.6, n=3, atleast=1,
   })
 }
 
-# extractSigInvolved <- function(sigOmicsIndex, pathway, moduleNumber, loadThr=0.6, n=3, atleast=1) {
-#   if (is.null(sigOmicsIndex) || length(sigOmicsIndex)==0)
-#     return(NULL)
-#   omics <- pathway@modulesView[[moduleNumber]]
-#
-#   if (length(sigOmicsIndex)>length(omics))
-#     stop("sigOmicsIndex greater that omics considered.")
-#   if (max(sigOmicsIndex)>length(omics))
-#     stop("sigOmicsIndex greater that omics considered.")
-#
-#   moduleCox <- pathway@coxObjs[[moduleNumber]]
-#   lapply(sigOmicsIndex, function(idx) {
-#     omic<-omics[[idx]]
-#     if(omic$method=="pca") {
-#       extractSummaryFromPCA(omic, moduleCox, loadThr, atleast)
-#     } else if (omic$method=="cluster") {
-#       extractSummaryFromCluster(omic, n)
-#     } else if (omic$method=="binary") {
-#       extractSummaryFromBinary(omic, n)
-#     } else {
-#       stop("Unsupported method.")
-#     }
-#   })
-# }

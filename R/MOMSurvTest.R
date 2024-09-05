@@ -16,7 +16,7 @@ MOMSurvTest <- function(genes, omicsObj,
     }}
 
   moView <- createMOMView(omicsObj, genes)
-  formula = survFormula
+  formula <- survFormula
   coxObj <- createCoxObj(omicsObj@colData, moView)
 
   add_covs <- unlist(lapply(moView, function(mo) {mo$namesCov}))
@@ -28,10 +28,10 @@ MOMSurvTest <- function(genes, omicsObj,
   }
 
   if (autoCompleteFormula)
-    formula = paste0(survFormula, paste(add_covs, collapse="+"))
+    formula <- paste0(survFormula, paste(add_covs, collapse="+"))
 
   if (is.null(coxObj)) {
-    scox = list()
+    scox <- list()
   } else {
     if (robust) {
       scox <- suppressWarnings(survivalcoxr(coxObj, formula))

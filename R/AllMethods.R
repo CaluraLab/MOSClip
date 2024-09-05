@@ -137,7 +137,7 @@ setMethod("showOmics",  signature(object = "Omics"),
                   seq_along(object@specificArgs[[i]]), function(argI) {
                     values <- object@specificArgs[[i]][[argI]]
                     if (is.list(values)) {
-                      values <- values[1:2]
+                      values <- values[seq_len(2)]
                       values <- paste(paste(names(values),
                                             unlist(values), sep=" -> "),
                                       collapse = " ,")

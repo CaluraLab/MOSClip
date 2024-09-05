@@ -25,15 +25,15 @@ multiPathwayReport <- function(multiPathwayList, priority_to=NULL){
   }))))
 
   zMat <- do.call(rbind, lapply(multiPathwayList, function(p) {
-    fixedCols=rep(NA, length(zs))
-    names(fixedCols)<-zs
+    fixedCols <- rep(NA, length(zs))
+    names(fixedCols) <- zs
     fixedCols[names(p@zlist)] <- p@zlist
     fixedCols
   }))
 
   ord <- order(pvalues)
   df <- cbind(row.names=names(pvalues)[ord], pvalue=pvalues[ord],
-              data.frame(zMat[ord, , drop=F]))
+              data.frame(zMat[ord, , drop=FALSE]))
   order_by_covariates(df, 1, priority_to)
 }
 
@@ -41,8 +41,8 @@ multiPathwayReport <- function(multiPathwayList, priority_to=NULL){
 #'
 #' Given the list of MOMs, it creates the table.
 #'
-#' @param multiPathwayModuleList a list of `MultiOmicsModules` objects resulting 
-#' from a multi-omics module test.
+#' @param multiPathwayModuleList a list of `MultiOmicsModules` objects 
+#' resulting from a multi-omics module test.
 #' @param priority_to a vector with the covariates (omic name) that should go 
 #' first.
 #'
@@ -61,7 +61,8 @@ multiPathwayModuleReport <- function(multiPathwayModuleList, priority_to=NULL) {
   multiMatrixRes <- lapply(n_temp, function(name,list){
     summary <- formatModuleReport(list[[name]]);
     data.frame(pathway=name, module=row.names(summary), summary,
-               row.names=NULL, stringsAsFactors = F) }, multiPathwayModuleList)
+               row.names=NULL, stringsAsFactors = FALSE) }, 
+    multiPathwayModuleList)
   resDF <- mergeAll(multiMatrixRes)
   resDF <- resDF[order(resDF$pvalue), ]
   rownames(resDF) <- apply(resDF,1, function(r) paste(r["pathway"],
@@ -100,18 +101,18 @@ mergeAll <- function(list) {
 
   matrix <- do.call(rbind,
                     lapply(list, function(o) {
-                      fixedCols=matrix(NA, NROW(o),length(allColumnsNames))
-                      colnames(fixedCols)<-allColumnsNames
+                      fixedCols <- matrix(NA, NROW(o), length(allColumnsNames))
+                      colnames(fixedCols) <- allColumnsNames
                       for (col in colnames(o)) {
                         fixedCols[, col] <- o[,col]
                       }
                       fixedCols
                     }))
   removeCols <- match(c("pathway", "module","pvalue"), colnames(matrix))
-  numericMat <- matrix[,-removeCols, drop=F]
+  numericMat <- matrix[,-removeCols, drop=FALSE]
   data.frame(pathway=matrix[, "pathway"], module=matrix[, "module"],
              pvalue=as.numeric(matrix[, "pvalue"]),
-             apply(numericMat, 2, as.numeric), stringsAsFactors = F)
+             apply(numericMat, 2, as.numeric), stringsAsFactors = FALSE)
 }
 
 order_by_covariates <- function(dataF, skip_first_cols, priority_to=NULL) {
@@ -121,13 +122,13 @@ order_by_covariates <- function(dataF, skip_first_cols, priority_to=NULL) {
     return(dataF)
 
   covariates <- dataF[, seq_len(ncol(dataF)-skip_first_cols)+skip_first_cols,
-                      drop=F]
-  fixed <- dataF[, seq_len(skip_first_cols), drop=F]
+                      drop=FALSE]
+  fixed <- dataF[, seq_len(skip_first_cols), drop=FALSE]
   omics_cov <- guessOmics(colnames(covariates))
   to_sort <- unique(omics_cov) %in% priority_to
   priority_to <- c(priority_to, unique(omics_cov)[!to_sort])
   cov_factor <- factor(omics_cov, levels=priority_to)
   cov_factor <- droplevels(cov_factor)
-  covariates <- covariates[, order(cov_factor), drop=F]
+  covariates <- covariates[, order(cov_factor), drop=FALSE]
   cbind(fixed, covariates)
 }

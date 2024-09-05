@@ -20,21 +20,21 @@ conversionToSymbols <- function(idsGraphiteStyle, orgDbi="org.Hs.eg.db") {
 
 
 formatAnnotations <- function(listOfMostlyInvolvedGenesInOmics, sortBy) {
-  involved=listOfMostlyInvolvedGenesInOmics
+  involved <- listOfMostlyInvolvedGenesInOmics
   samplesList <- row.names(involved[[1]]$discrete)
   annotationFull <- lapply(seq_along(involved), function(i) {
     covNames <- involved[[i]]$covsConsidered
-    annotations <- involved[[i]]$discrete[samplesList, covNames, drop=F]
+    annotations <- involved[[i]]$discrete[samplesList, covNames, drop=FALSE]
     annotations
   })
   annotationFull <- do.call(cbind, annotationFull)
   if (is.null(sortBy)) {
     annotationFull <- annotationFull[
       order(annotationFull[, 1],annotationFull[, ncol(annotationFull)]), ,
-      drop=F]
+      drop=FALSE]
   } else {
     ord <- getMultiColOrder(annotationFull, sortBy)
-    annotationFull <- annotationFull[ord, , drop=F]
+    annotationFull <- annotationFull[ord, , drop=FALSE]
   }
   annotationFull
 }
@@ -48,7 +48,7 @@ sortAnnotations <- function(annotations, sortBy) {
     stop(paste0(paste(missing, collapse = ", "), ": covariates not found"))
   
   ord <- getMultiColOrder(annotations, sortBy)
-  annotations[ord, , drop=F]
+  annotations[ord, , drop=FALSE]
 }
 
 getMultiColOrder <- function(df, sortBy) {
@@ -105,7 +105,7 @@ mapColor <- function(omic, MOcolors) {
 }
 
 createColors <- function(omics, MOcolors) {
-  sapply(unique(omics), function(o) mapColor(o, MOcolors))
+  vapply(unique(omics), function(o) mapColor(o, MOcolors), character(1))
 }
 
 matchAnnotations <- function(d1, d2){
@@ -117,7 +117,7 @@ matchAnnotations <- function(d1, d2){
     stop(paste0("We found samples", paste(diff, collapse = ", "),
                 "that do not match MOM annotation"))
   
-  d2 <- d2[row.names(d1), , drop=F]
+  d2 <- d2[row.names(d1), , drop=FALSE]
   d2
 }
 
@@ -213,9 +213,9 @@ createDataModule <- function(omic, multiOmicObj){
   }
   
   if (isFALSE(omic$omicName %in% names(multiOmicObj@ExperimentList))) {
-    stop(paste0("omicName not found in ExperimentList.\n",
-                "Names of experiments in ExperimentList should match",
-                "the name arguments given in specificArgs"))
+    stop("omicName not found in ExperimentList.\n",
+         "Names of experiments in ExperimentList should match",
+         "the name arguments given in specificArgs")
   }
   assay <- assay(multiOmicObj, omic$omicName)
   dataModule <- assay[genes, , drop = FALSE]
@@ -236,10 +236,10 @@ createDataModule <- function(omic, multiOmicObj){
 #'
 #' @export
 showMOSpalette <- function(){
-  plot(c(1:6,1:6,1:6,1:6), c(rep(1,6),rep(2,6), rep(3,6), rep(4,6)),
+  plot(c(rep(seq_len(6), 4)), c(rep(1,6),rep(2,6), rep(3,6), rep(4,6)),
        col=apply(MOSpaletteSchema,2,c), pch=19, cex=13, xlim=c(0.5,6.5) , 
        ylim=c(0,4.8), xlab="", ylab="", axes=FALSE)
-  axis(3, at=1:6, labels=rownames(MOSpaletteSchema), las=1, 
+  axis(3, at=seq_len(6), labels=rownames(MOSpaletteSchema), las=1, 
        cex.axis=0.8, lwd=0, pos=4.5, font=4)
   title("MOSClip palette")
 }

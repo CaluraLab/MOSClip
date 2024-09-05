@@ -13,8 +13,8 @@ MOSpaletteSchema <- data.frame(
   stringsAsFactors = FALSE, check.names = FALSE)
 rownames(MOSpaletteSchema) <- c("red","green","blue","yellow","violet","teal")
 
-# The followings are functions, use it like redShades(100) where 100 is the number of shades.
-# In the case of binary map we can use redShades(2).
+# The followings are functions, use it like redShades(100) where 100 is the 
+# number of shades. In the case of binary map we can use redShades(2).
 redShades <- grDevices::colorRampPalette(
   colors=c(MOSpaletteSchema["red","white"],
            MOSpaletteSchema["red","smart"]),
