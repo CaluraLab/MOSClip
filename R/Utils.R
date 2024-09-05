@@ -228,6 +228,8 @@ createDataModule <- function(omic, multiOmicObj){
 #' This function shows the MOSClip palette. 
 #' Each omic should be coupled to a color panel, this match will be preserved 
 #' in plots.
+#' 
+#' @return NULL
 #'
 #' @examples
 #' showMOSpalette()

@@ -21,6 +21,9 @@ setClassUnion("characterOrNULL", c("character", "NULL"))
 #' to process each dataset
 #' @param specificArgs a list with length equal to length(data) to set 
 #' additional parameters specific of the modelInfo
+#' 
+#' @return an `Omics` class object
+#' 
 #' @export
 #' @importFrom S4Vectors DataFrame
 makeOmics <- function(experiments = ExperimentList(),
@@ -112,14 +115,18 @@ makeOmics <- function(experiments = ExperimentList(),
 
 
 
-#' A generic functions showing parameter asociated with each omics
+#' A generic functions showing parameter associated with each omics
 #' @param object an object of class `Omics`
+#' 
+#' @return NULL
+#' 
 #' @export
 setGeneric("showOmics", function(object) standardGeneric("showOmics"))
 
 #' @export
 #' @describeIn Omics shows model parameters
 #' @param object an object of class `Omics`
+#' @return NULL
 
 setMethod("showOmics",  signature(object = "Omics"),
           function(object) {
@@ -153,6 +160,9 @@ setMethod("showOmics",  signature(object = "Omics"),
 
 #' A generic function showing pathway's module info
 #' @param object an object of class `MultiOmicsModules`
+#' 
+#' @return NULL
+#' 
 #' @export
 setGeneric("showModule", function(object)
    standardGeneric("showModule") )
@@ -160,6 +170,7 @@ setGeneric("showModule", function(object)
 #' @export
 #' @describeIn MultiOmicsModules shows module info
 #' @param object an object of class `MultiOmicsModules`
+#' @return NULL
 setMethod("showModule",
           signature = "MultiOmicsModules",
           definition = function(object){
@@ -194,6 +205,8 @@ setMethod("showModule",
 
 #' A generic function showing pathway info
 #' @param object an object of class `MultiOmicsPathway`
+#' 
+#' @return NULL
 #' @export
 setGeneric("showPathway", function(object)
    standardGeneric("showPathway") )
@@ -201,6 +214,7 @@ setGeneric("showPathway", function(object)
 #' @export
 #' @describeIn MultiOmicsPathway shows module info
 #' @param object an object of class `MultiOmicsPathway`
+#' @return NULL
 setMethod("showPathway",
           signature = "MultiOmicsPathway",
           definition = function(object){

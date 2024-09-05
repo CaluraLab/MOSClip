@@ -24,7 +24,13 @@ availableOmicMethods <- function() {
 #' @param binaryClassMin the minimum number of event to include the covariate
 #' @param cliques the features organized in cliques. Only use for topology
 #' 
-#' @return NULL
+#' @return a list with summary of the omic:
+#'  \item{x}{summary of the omic for each sample}
+#'  \item{usedGenes}{genes list of genes used to calculate the summary}
+#'  \item{namesCov}{names of the covariates}
+#'  \item{method}{method used for the analysis}
+#'  \item{omicName}{name of the omic}
+#'  \item{evenThr}{threshold fot event counting}
 #'
 #' @export
 summarizeToBinaryEvents <- function(data, features, name="bin",
@@ -60,7 +66,15 @@ summarizeToBinaryEvents <- function(data, features, name="bin",
 #' @inheritParams summarizeToBinaryEvents
 #' @param min_prop minimal proportion in classes
 #'
-#' @return NULL
+#' @return a list with summary of the omic:
+#'  \item{x}{summary of the omic for each sample}
+#'  \item{usedGenes}{genes list of genes used to calculate the summary}
+#'  \item{namesCov}{names of the covariates}
+#'  \item{method}{method used for the analysis}
+#'  \item{omicName}{name of the omic}
+#'  \item{evenThr}{threshold fot event counting}
+#'  \item{min_prop}{minimum proportion of samples to exclude to check the 
+#'  variability of values}
 #'
 #' @export
 summarizeToNumberOfEvents <- function(data, features, name="event", 
@@ -101,7 +115,14 @@ summarizeToNumberOfEvents <- function(data, features, name="event",
 #' (row.names of the data)
 #' @param max_cluster_number the maximum number of cluster to evaluate
 #'
-#' @return NULL
+#' @return a list with summary of the omic:
+#'  \item{x}{summary of the omic for each sample}
+#'  \item{usedGenes}{genes list of genes used to calculate the summary}
+#'  \item{namesCov}{names of the covariates}
+#'  \item{cls}{the genes in clusters}
+#'  \item{method}{method used for the analysis}
+#'  \item{omicName}{name of the omic}
+#' 
 #' @importFrom stats cutree dist hclust
 #' @importFrom NbClust NbClust
 #' @export
@@ -187,7 +208,15 @@ sinkNbClust <- function(data, min.nc=2, max.nc=6, method="ward.D2",
 #' @param maxPCs maximum number of pcs to consider
 #' @param loadThr loading threshold
 #'
-#' @return NULL
+#' @return a list with summary of the omic:
+#'  \item{x}{summary of the omic for each sample (principal components)}
+#'  \item{sdev}{standard deviation of the principal components}
+#'  \item{loadings}{loadings of PCA}
+#'  \item{usedGenes}{genes list of genes used to calculate the summary}
+#'  \item{namesCov}{names of the covariates}
+#'  \item{method}{method used for the analysis}
+#'  \item{omicName}{name of the omic}
+#'
 #' @importFrom stats sd
 #' @export
 summarizeWithPca <- function(data, features, name="pca", shrink=FALSE,
@@ -230,7 +259,15 @@ summarizeWithPca <- function(data, features, name="pca", shrink=FALSE,
 #' @inheritParams summarizeToNumberOfEvents
 #' @param eventThr the absolute value to threshold an event
 #'
-#' @return NULL
+#' @return a list with summary of the omic:
+#'  \item{x}{summary of the omic for each sample}
+#'  \item{usedGenes}{genes list of genes used to calculate the summary}
+#'  \item{namesCov}{names of the covariates}
+#'  \item{method}{method used for the analysis}
+#'  \item{omicName}{name of the omic}
+#'  \item{evenThr}{threshold fot event counting}
+#'  \item{min_prop}{minimum proportion of samples to exclude to check the 
+#'  variability of values}
 #'
 #' @export
 summarizeToNumberOfDirectionalEvents <- function(data, features, name="dCount",
@@ -290,8 +327,14 @@ check_minimal_proportion <- function(x, min_prop=0.1){
 #' @inheritParams summarizeToNumberOfDirectionalEvents
 #' @inheritParams summarizeToBinaryEvents
 #'
-#' @return NULL
-#'
+#' @return a list with summary of the omic:
+#'  \item{x}{summary of the omic for each sample}
+#'  \item{usedGenes}{genes list of genes used to calculate the summary}
+#'  \item{namesCov}{names of the covariates}
+#'  \item{method}{method used for the analysis}
+#'  \item{omicName}{name of the omic}
+#'  \item{evenThr}{threshold fot event counting}
+#'  
 #' @export
 summarizeToBinaryDirectionalEvents <- function(data, features, name="dirBin",
                                                binaryClassMin=10, eventThr=2,
