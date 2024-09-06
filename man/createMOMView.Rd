@@ -6,6 +6,11 @@
 \usage{
 createMOMView(omicsObj, genes)
 }
+\arguments{
+\item{omicsObj}{\code{Omics} class object}
+
+\item{genes}{genes of the clique}
+}
 \value{
 list with
 1 reduced representation of the omics

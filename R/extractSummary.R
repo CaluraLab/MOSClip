@@ -93,7 +93,6 @@ KWtest <- function(moduleMat, classes) {
 #' to the loading
 #' @param atleast the minimum number of gene to retrieve
 #' @param minprop the minimal proportion of cutp
-#' @param multiOmicObj Omics object
 #' @param analysis two-class or survival type
 #'
 #' @return summary for omic summarized using pca
@@ -194,10 +193,10 @@ collapse <- function(list) {
 #' Given an omic summarized by "summarizeToNumberOfEvents" extract the most 
 #' important features.
 #'
+#' @inheritParams extractSummaryFromBinary
 #' @inheritParams extractSummaryFromPCA
 #' @param labels the category labels
-#' @param multiOmicObj Omics object
-#' @param analysis two-class or survival type
+#' 
 #'
 #' @return Meant for internal use only. The summary for omic summarized using 
 #' counting of events.

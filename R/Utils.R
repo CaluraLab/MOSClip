@@ -144,6 +144,9 @@ extractPositivePortion <- function(data, invert=FALSE) {
 
 
 #' Create the list of covariates that are going to be tested
+#' 
+#' @param omicsObj `Omics` class object
+#' @param genes genes of the clique 
 #'
 #' @importFrom methods new
 #' @importFrom survival Surv

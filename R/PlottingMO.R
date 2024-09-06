@@ -184,7 +184,7 @@ plotPathwayKM <- function(pathway,
                           risk.table=TRUE, pval=TRUE, size=1, inYears=FALSE,
                           discr_prop_pca=0.15, discr_prop_events=0.05,
                           additional_discrete=NULL,
-                          additional_continous=NULL, ...) {
+                          additional_continuous=NULL, ...) {
 
   checkmate::assertClass(pathway, "MultiOmicsPathway")
 

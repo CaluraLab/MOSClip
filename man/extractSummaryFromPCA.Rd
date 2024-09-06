@@ -17,7 +17,7 @@ extractSummaryFromPCA(
 \arguments{
 \item{omic}{a summarized omic}
 
-\item{multiOmicObj}{Omics object}
+\item{multiOmicObj}{\code{Omics} object}
 
 \item{moduleCox}{the coxObj of the interesting module}
 
