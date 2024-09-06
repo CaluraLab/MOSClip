@@ -22,7 +22,7 @@ Download Pathway Relations from Reactome. The file is retrieved from the
 \href{https://reactome.org/download/current/ReactomePathwaysRelation.txt}{url}
 }
 \examples{
-\dontrun{
+\donttest{
 url = "https://reactome.org/download/current/ReactomePathwaysRelation.txt"
 downloadPathwayRelationFromReactome(url, speciesAbbr = "HSA")
 }

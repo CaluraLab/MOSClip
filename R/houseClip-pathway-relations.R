@@ -15,7 +15,7 @@
 #' @importFrom utils read.table data
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' url = "https://reactome.org/download/current/ReactomePathwaysRelation.txt"
 #' downloadPathwayRelationFromReactome(url, speciesAbbr = "HSA")
 #' }
