@@ -112,8 +112,10 @@ plotPathwayHeat <- function(pathway, sortBy = NULL,
             MOSpaletteSchema[discreteColor, c("dark", "smart", "light")])
           names(annot) <- values
         } else {
-          annot <- getContinousPalette(discreteColor, length(values))
-          # names(annot) <- levels(values)
+          annot <- colorRamp2(c(min(values), max(values)),
+                              getContinousPalette(discreteColor, 2))
+          names(annot) <- levels(values)
+          
         }
         annot
       })
@@ -430,7 +432,7 @@ plotModuleKM <- function(MOM, moduleNumber,
                                min_prop_pca = discr_prop_pca,
                                min_prop_events = discr_prop_events, ...)
 
-  multiOmicObj <- get(pathway@multiOmicObj, ...)
+  multiOmicObj <- get(MOM@multiOmicObj, ...)
   coxObj <- createCoxObj(multiOmicObj@colData, MOM@modulesView[[moduleNumber]])
   
   annotationFull <- formatAnnotations(involved, sortBy=NULL)
