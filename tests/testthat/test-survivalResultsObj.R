@@ -1,7 +1,7 @@
 test_that("Survival Results object for pathways works", {
   genes <- paste0("ENTREZID:", c(10000, 90427, 5366, 23368, 637, 3002, 79792,
                                  840, 5414, 5599, 8655, 140735, 708))
-  dummy_react <- readRDS(test_path("fixtures", "reactSmallDummy.rds"))
+  dummy_react <- readRDS(test_path("fixtures", "reactBiggerDummy.rds"))
   dummy_Omics <- fake_mo(genes=genes, type="survival")
   dummy_survcolData <- dummy_colData(type="survival")
 
@@ -32,7 +32,7 @@ test_that("Survival Results object for pathways works", {
 test_that("Survival Results object  for modules works", {
   genes <- paste0("ENTREZID:", c(10000, 90427, 5366, 23368, 637, 3002, 79792,
                                  840, 5414, 5599, 8655, 140735, 708))
-  dummy_react <- readRDS(test_path("fixtures", "reactSmallDummy.rds"))
+  dummy_react <- readRDS(test_path("fixtures", "reactBiggerDummy.rds"))
   dummy_Omics <- fake_mo(genes=genes, type="survival")
   dummy_survcolData <- dummy_colData(type="survival")
 
@@ -90,7 +90,7 @@ test_that("Survival Results object  for modules works", {
 test_that("Survival Test works with additional covariates", {
   genes <- paste0("ENTREZID:", c(10000, 90427, 5366, 23368, 637, 3002, 79792,
                                  840, 5414, 5599, 8655, 140735, 708))
-  dummy_react <- readRDS(test_path("fixtures", "reactSmallDummy.rds"))
+  dummy_react <- readRDS(test_path("fixtures", "reactBiggerDummy.rds"))
   dummy_omics<-fake_mo(genes=genes, type="survival")
   moview<-createMOMView(dummy_omics, genes)
   values <- seq(-1, 1, length.out = 21)

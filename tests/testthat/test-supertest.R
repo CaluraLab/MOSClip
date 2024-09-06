@@ -8,11 +8,11 @@ test_that("superTest works", {
   dummy_annot <- dummy_colData(type="two-classes")
   
   twoCModuleObj <- lapply(dummy_react_bigger, function(g) {
-    fcl = multiOmicsTwoClassesModuleTest(dummy_omics,
-                                         g,
-                                         dummy_annot,
-                                         baseFormula = "classes ~",
-                                         nullModel = "classes ~ 1")
+    fcl = multiOmicsTwoClassModuleTest(dummy_omics,
+                                       g,
+                                       dummy_annot,
+                                       baseFormula = "classes ~",
+                                       nullModel = "classes ~ 1")
     fcl
   })
   

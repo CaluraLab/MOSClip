@@ -1,5 +1,5 @@
 test_that("Plots with two class object work", {
-  dummy_react <- readRDS(test_path("fixtures", "reactSmallDummy.rds"))
+  dummy_react <- readRDS(test_path("fixtures", "reactBiggerDummy.rds"))
   genes <- paste0("ENTREZID:", c(10000, 90427, 5366, 23368, 637, 3002, 79792,
                                  38840, 5414, 5599, 8655, 140735, 708, 2254,
                                  3957761, 5140, 5289, 10714, 7318, 1642, 
@@ -10,11 +10,11 @@ test_that("Plots with two class object work", {
   env <- environment()
   assign("dummy_omics", dummy_omics, envir=env)
 
-  twoCPathwayObj <- multiOmicsTwoClassesPathwayTest(dummy_omics,
-                                                    dummy_react[[1]],
-                                                    dummy_annot,
-                                                    baseFormula = "classes ~",
-                                                    nullModel = "classes ~ 1")
+  twoCPathwayObj <- multiOmicsTwoClassPathwayTest(dummy_omics,
+                                                  dummy_react[[1]],
+                                                  dummy_annot,
+                                                  baseFormula = "classes ~",
+                                                  nullModel = "classes ~ 1")
   res.pathwayHeat <- plotPathwayHeat(
     twoCPathwayObj, sortBy = c("expPC2", "mut", "classes"),
     paletteNames = c(exp = "red", met = "green", mut = "blue", cnv = "yellow"),
@@ -54,11 +54,11 @@ test_that("Plots with two class object work", {
       MOcolors = c(exp = "red", met = "green", mut = "blue"),
       top = 40, fontsize = 10), "Length of MOcolors differs")
 
-  twoCModuleObj <- multiOmicsTwoClassesModuleTest(dummy_omics,
-                                                  dummy_react[[1]],
-                                                  dummy_annot,
-                                                  baseFormula = "classes ~",
-                                                  nullModel = "classes ~ 1")
+  twoCModuleObj <- multiOmicsTwoClassModuleTest(dummy_omics,
+                                                dummy_react[[1]],
+                                                dummy_annot,
+                                                baseFormula = "classes ~",
+                                                nullModel = "classes ~ 1")
   res.moduleHeat <- plotModuleHeat(
     twoCModuleObj, 2, paletteNames = c(
       exp = "red", met = "green", mut = "blue", cnv = "yellow"),
@@ -113,7 +113,7 @@ test_that("Plots with two class object work", {
 
 
 test_that("Kaplan Meier plots work", {
-  dummy_react <- readRDS(test_path("fixtures", "reactSmallDummy.rds"))
+  dummy_react <- readRDS(test_path("fixtures", "reactBiggerDummy.rds"))
   genes <- paste0("ENTREZID:", c(10000, 90427, 5366, 23368, 637, 3002, 79792,
                                  840, 5414, 5599, 8655, 140735, 708))
   dummy_omicsSurv <- fake_mo(genes=genes, type="survival")

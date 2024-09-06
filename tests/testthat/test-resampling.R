@@ -1,6 +1,6 @@
 test_that("resamplingModulesTwoClass works", {
-  graphs <- readRDS(test_path("fixtures", "graph_list.rds"))
-  gSubset<-graphs[c(2,4,6,10)]
+  graphs <- readRDS(test_path("fixtures", "reactBiggerDummy.rds"))
+  gSubset<-graphs[c(2,4,5)]
   nodes <- sapply(gSubset, nodes)
   genes <- unlist(unname(lapply(nodes, function(x) sample(x, 5))))
   genes <- genes[!duplicated(genes)]
@@ -15,8 +15,8 @@ test_that("resamplingModulesTwoClass works", {
 
 
 test_that("resamplingPathwayTwoClass works", {
-  graphs <- readRDS(test_path("fixtures", "graph_list.rds"))
-  gSubset<-graphs[c(2,4,6,10)]
+  graphs <- readRDS(test_path("fixtures", "reactBiggerDummy.rds"))
+  gSubset<-graphs[c(1,3,5)]
   nodes <- sapply(gSubset, nodes)
   genes <- unlist(unname(lapply(nodes, function(x) sample(x, 5))))
   genes <- genes[!duplicated(genes)]
@@ -32,8 +32,8 @@ test_that("resamplingPathwayTwoClass works", {
 
 
 test_that("resamplingModulesSurvival works", {
-  graphs <- readRDS(test_path("fixtures", "graph_list.rds"))
-  gSubset<-graphs[c(2,4,6,10)]
+  graphs <- readRDS(test_path("fixtures", "reactBiggerDummy.rds"))
+  gSubset<-graphs[c(1,2,4)]
   nodes <- sapply(gSubset, nodes)
   genes <- unlist(unname(lapply(nodes, function(x) sample(x, 5))))
   genes <- genes[!duplicated(genes)]
@@ -48,8 +48,8 @@ test_that("resamplingModulesSurvival works", {
 
 
 test_that("resamplingPathwaySurvival works", {
-  graphs <- readRDS(test_path("fixtures", "graph_list.rds"))
-  gSubset<-graphs[c(2,4,6,10)]
+  graphs <- readRDS(test_path("fixtures", "reactBiggerDummy.rds"))
+  gSubset<-graphs[c(1,3,4)]
   nodes <- sapply(gSubset, nodes)
   genes <- unlist(unname(lapply(nodes, function(x) sample(x, 5))))
   genes <- genes[!duplicated(genes)]
@@ -64,8 +64,8 @@ test_that("resamplingPathwaySurvival works", {
 
 
 test_that("selectStablePathwaysModules works", {
-  graphs <- readRDS(test_path("fixtures", "graph_list.rds"))
-  gSubset <- graphs[c(2,4,6,10)]
+  graphs <- readRDS(test_path("fixtures", "reactBiggerDummy.rds"))
+  gSubset <- graphs[c(3,4,5)]
   nodes <- sapply(gSubset, nodes)
   genes <- unlist(unname(lapply(nodes, function(x) sample(x, 5))))
   genes <- genes[!duplicated(genes)]
