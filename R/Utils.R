@@ -232,7 +232,7 @@ createDataModule <- function(omic, multiOmicObj){
 #' Each omic should be coupled to a color panel, this match will be preserved 
 #' in plots.
 #' 
-#' @return NULL
+#' @return NULL. No value is returned
 #'
 #' @examples
 #' showMOSpalette()

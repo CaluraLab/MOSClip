@@ -29,7 +29,7 @@ extractCliquesFromDag <- function(dag, root=NULL) {
   tg <- gRbase::triangulate(moral)
   ripped <- gRbase::rip(tg, root=root)
   if (length(ripped)==0){
-    warning(paste0("This graph ", dag@title, "have 0 cliques"))
+    warning("This graph ", dag@title, "have 0 cliques")
     return(NULL)
   }
   

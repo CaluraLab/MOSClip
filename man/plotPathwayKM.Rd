@@ -53,8 +53,8 @@ include}
 \item{additional_continuous}{names of the additional continous variables to
 include}
 
-\item{...}{additional arguments passed to \code{guessInvolvementPathway} and \code{get}
-function}
+\item{...}{additional arguments passed to \code{guessInvolvementPathway} and
+\code{get} function}
 }
 \description{
 Given the pathway, it creates the Kaplan-meier curves following the formula.

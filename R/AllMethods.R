@@ -122,7 +122,7 @@ makeOmics <- function(experiments = ExperimentList(),
 #' A generic functions showing parameter associated with each omics
 #' @param object an object of class `Omics`
 #' 
-#' @return NULL
+#' @return NULL. No value is returned
 #' 
 #' @export
 setGeneric("showOmics", function(object) standardGeneric("showOmics"))
@@ -130,7 +130,6 @@ setGeneric("showOmics", function(object) standardGeneric("showOmics"))
 #' @export
 #' @describeIn Omics shows model parameters
 #' @param object an object of class `Omics`
-#' @return NULL
 
 setMethod("showOmics",  signature(object = "Omics"),
           function(object) {
@@ -165,7 +164,7 @@ setMethod("showOmics",  signature(object = "Omics"),
 #' A generic function showing pathway's module info
 #' @param object an object of class `MultiOmicsModules`
 #' 
-#' @return NULL
+#' @return NULL. No value is returned
 #' 
 #' @export
 setGeneric("showModule", function(object)
@@ -174,7 +173,7 @@ setGeneric("showModule", function(object)
 #' @export
 #' @describeIn MultiOmicsModules shows module info
 #' @param object an object of class `MultiOmicsModules`
-#' @return NULL
+
 setMethod("showModule",
           signature = "MultiOmicsModules",
           definition = function(object){
@@ -210,7 +209,7 @@ setMethod("showModule",
 #' A generic function showing pathway info
 #' @param object an object of class `MultiOmicsPathway`
 #' 
-#' @return NULL
+#' @return NULL. No value is returned
 #' @export
 setGeneric("showPathway", function(object)
    standardGeneric("showPathway") )
@@ -218,7 +217,7 @@ setGeneric("showPathway", function(object)
 #' @export
 #' @describeIn MultiOmicsPathway shows module info
 #' @param object an object of class `MultiOmicsPathway`
-#' @return NULL
+
 setMethod("showPathway",
           signature = "MultiOmicsPathway",
           definition = function(object){
@@ -232,6 +231,8 @@ setMethod("showPathway",
 #' A generic function to convert pathway
 #' @param graph a graphNEL object
 #' @param useThisGenes list of genes to be used
+#' 
+#' @return NULL. No value is returned
 setGeneric("convertPathway", function(graph, useThisGenes)
    standardGeneric("convertPathway"))
 

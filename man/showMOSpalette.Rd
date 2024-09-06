@@ -6,6 +6,9 @@
 \usage{
 showMOSpalette()
 }
+\value{
+NULL. No value is returned
+}
 \description{
 This function shows the MOSClip palette.
 Each omic should be coupled to a color panel, this match will be preserved

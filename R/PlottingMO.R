@@ -166,8 +166,8 @@ plotPathwayHeat <- function(pathway, sortBy = NULL,
 #' include
 #' @param additional_continuous names of the additional continous variables to
 #' include
-#' @param ... additional arguments passed to `guessInvolvementPathway` and `get` 
-#' function
+#' @param ... additional arguments passed to `guessInvolvementPathway` and 
+#' `get` function
 #'
 #' @return NULL
 #'
@@ -594,7 +594,7 @@ plotModuleInGraph <- function(modulesobj,  reactObj, moduleNumber,
 
     err <- setdiff(paletteNames, row.names(MOSpaletteSchema))
     if (length(err)!=0)
-      stop(paste0(err, " paletteNames value is not allowed."))
+      stop(err, " paletteNames value is not allowed.")
 
     mark.col <- MOSpaletteSchema[paletteNames, ]$transparent
   }
@@ -680,7 +680,8 @@ plotMultiPathwayReport <- function(multiPathwayList, top=25, MOcolors=NULL,
   ta <- HeatmapAnnotation(Omics = omics, col = list(Omics = colors))
 
   ht1 <- Heatmap(matrix = summary$pvalue[seq_len(top)],
-                 col = pvalueShades[1:round((summary$pvalue[top]*100)+1)],
+                 col = 
+                   pvalueShades[seq_len(round((summary$pvalue[top]*100)+1))],
                  cluster_rows = FALSE, show_heatmap_legend = FALSE,
                  name = "Pvalue",
                  column_names_gp = gpar(fontsize = fontsize),

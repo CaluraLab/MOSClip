@@ -11,6 +11,9 @@ convertPathway(graph, useThisGenes)
 
 \item{useThisGenes}{list of genes to be used}
 }
+\value{
+NULL. No value is returned
+}
 \description{
 A generic function to convert pathway
 }

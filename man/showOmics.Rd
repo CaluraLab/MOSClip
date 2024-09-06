@@ -9,6 +9,9 @@ showOmics(object)
 \arguments{
 \item{object}{an object of class \code{Omics}}
 }
+\value{
+NULL. No value is returned
+}
 \description{
 A generic functions showing parameter associated with each omics
 }

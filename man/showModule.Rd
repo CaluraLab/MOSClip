@@ -9,6 +9,9 @@ showModule(object)
 \arguments{
 \item{object}{an object of class \code{MultiOmicsModules}}
 }
+\value{
+NULL. No value is returned
+}
 \description{
 A generic function showing pathway's module info
 }

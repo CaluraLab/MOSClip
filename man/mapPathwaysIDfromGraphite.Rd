@@ -17,9 +17,3 @@ a data frame, id and pathway name
 \description{
 For internal use only. Retrieve pathway id and names from Pathways object.
 }
-\examples{
-  if (require(graphite)){
-    pathways <- pathways("hsapiens", "kegg")
-    mapPathwaysIDfromGraphite(pathways, names(pathways)[1:10])
-  }
-}
