@@ -172,8 +172,8 @@ computeOmicsIntersections <- function(multiPathwayReportData, pvalueThr=0.05,
     names(which(pp <= zscoreThr))})
   
   if (0 %in% lengths(MOlistPathSig)){
-    stop("One or more omics do not have a significant z score for any of their
-         modules. Try increasing the z score threshold.")
+    stop("One or more omics do not have a significant z score for any of ",
+         "their modules. Try increasing the z score threshold.")
   }
 
   df <- reshape::melt(MOlistPathSig)
