@@ -26,12 +26,12 @@
 #' 
 #' @export
 
-multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
-                                            baseFormula = "classes ~ ",
-                                            autoCompleteFormula = TRUE,
-                                            useThisGenes = NULL,
-                                            nullModel = "classes ~ 1",
-                                            pathName = NULL) {
+multiOmicsTwoClassPathwayTest <- function(omicsObj, graph, classAnnot,
+                                          baseFormula = "classes ~ ",
+                                          autoCompleteFormula = TRUE,
+                                          useThisGenes = NULL,
+                                          nullModel = "classes ~ 1",
+                                          pathName = NULL) {
 
   baseFormula_input <- strsplit(baseFormula, " ")[[1]]
   if (!(baseFormula_input[1] %in% colnames(classAnnot))){
@@ -49,6 +49,8 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
     stop("Invalid formula. Formula should be written as: 'classes ~'")
   }
   
+  if (nrow(classAnnot) != nrow(omicsObj@colData))
+    stop("Mismatch in the number of samples")
   if (is.null(pathName) && is(graph, "Pathway"))
     pathName <- graph@title
 
@@ -138,7 +140,7 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
 #' Performs topological two-class analysis using an `Omics` object. It
 #' decomposes graphs (pathways) into modules.
 #'
-#' @inheritParams multiOmicsTwoClassesPathwayTest
+#' @inheritParams multiOmicsTwoClassPathwayTest
 #'
 #' @return `MultiOmicsModule` object
 #'
@@ -146,12 +148,12 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
 #' @importFrom methods new is
 #' @export
 
-multiOmicsTwoClassesModuleTest <- function(omicsObj, graph, classAnnot,
-                                           baseFormula = "classes ~",
-                                           autoCompleteFormula=TRUE,
-                                           useThisGenes=NULL,
-                                           nullModel = "classes ~ 1",
-                                           pathName=NULL) {
+multiOmicsTwoClassModuleTest <- function(omicsObj, graph, classAnnot,
+                                         baseFormula = "classes ~",
+                                         autoCompleteFormula=TRUE,
+                                         useThisGenes=NULL,
+                                         nullModel = "classes ~ 1",
+                                         pathName=NULL) {
 
   if (is(graph, "character"))
     stop("graph argument should be a graphNEL object, not a gene list.")

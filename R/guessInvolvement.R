@@ -2,7 +2,7 @@
 #' results.
 #'
 #' Given a pathway analyzed by `multiOmicsModuleSurvivalTest` or 
-#' `multiOmicsTwoClassesModuleTest`, it retrieves for each omic the most 
+#' `multiOmicsTwoClassModuleTest`, it retrieves for each omic the most 
 #' influent features.
 #'
 #' @param pathway `MultiOmicsModules` object from a pathway
@@ -47,7 +47,7 @@ guessInvolvement <- function(pathway, moduleNumber, loadThr=0.6, n=3, atleast=1,
 #' results.
 #'
 #' Given a pathway analyzed by `multiOmicsSurvivalPathwayTest` or 
-#' `multiOmicsTwoClassesPathwayTest`, it retrieves for each omic the most 
+#' `multiOmicsTwoClassPathwayTest`, it retrieves for each omic the most 
 #' influent features.
 #'
 #' @inheritParams guessInvolvement

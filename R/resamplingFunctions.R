@@ -160,7 +160,7 @@ resamplingModulesSurvival <- function(fullMultiOmics, pathdb, nperm=100,
   perms
 }
 
-#' Resampling function for two-classes analysis on modules
+#' Resampling function for two-class analysis on modules
 #' 
 #' @inheritParams resamplingModulesSurvival
 #' @param classAnnot patients class annotations
@@ -189,8 +189,8 @@ resamplingModulesTwoClass <- function(fullMultiOmics, classAnnot,
     classes <- classAnnot[pts, , drop=FALSE]
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
-      fcl <- multiOmicsTwoClassesModuleTest(multiOmics, g, classAnnot = classes,
-                                            useThisGenes = genesToConsider)
+      fcl <- multiOmicsTwoClassModuleTest(multiOmics, g, classAnnot = classes,
+                                          useThisGenes = genesToConsider)
       fcl
     })
     
@@ -234,7 +234,7 @@ resamplingPathwaySurvival <- function(fullMultiOmics, pathdb, nperm=100,
   perms
 }
 
-#' Resampling function for pathways (two-classes analysis)
+#' Resampling function for pathways (two-class analysis)
 #' 
 #' @inheritParams resamplingModulesTwoClass
 #' 
@@ -243,8 +243,8 @@ resamplingPathwaySurvival <- function(fullMultiOmics, pathdb, nperm=100,
 #' @export
 #' 
 resamplingPathwayTwoClass <- function(fullMultiOmics, classAnnot, pathdb, 
-                                        nperm=100, pathwaySubset=NULL, 
-                                        nPatients=3, genesToConsider=NULL) {
+                                      nperm=100, pathwaySubset=NULL, 
+                                      nPatients=3, genesToConsider=NULL) {
   patientsPerms <- preparePerms(fullMultiOmics, nperm, nPatients)
   
   if (is.null(genesToConsider)) {
@@ -261,8 +261,8 @@ resamplingPathwayTwoClass <- function(fullMultiOmics, classAnnot, pathdb,
     classes <- classAnnot[pts, , drop=FALSE]
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
-      fcl <- multiOmicsTwoClassesPathwayTest(multiOmics, g, classes,
-                                             useThisGenes = genesToConsider)
+      fcl <- multiOmicsTwoClassPathwayTest(multiOmics, g, classes, 
+                                           useThisGenes = genesToConsider)
       fcl
     })
     multiPathwayReport(multiOmicsReactome)
