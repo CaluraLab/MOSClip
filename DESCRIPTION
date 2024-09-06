@@ -1,7 +1,7 @@
 Package: biocmosclip
 Title: Multi Omics Survival Clip
 Version: 0.98.0
-Depends: R (>= 3.5.0)
+Depends: R (>= 4.4.0)
 Authors@R: c(
    person(given = "Paolo", family = "Martini", role = c("aut", "cre"),
           email = "first.last@example.com"),
@@ -25,7 +25,7 @@ Imports: MultiAssayExperiment,methods, survminer, graph,
 Suggests: RUnit, BiocGenerics, MASS, BiocStyle, knitr, EDASeq, rmarkdown, testthat (>= 3.0.0)
 Encoding: UTF-8
 LazyData: false
-biocViews: Software, StatisticalMethod, GraphAndNetwork, Survival, Regression, DimensionReduction
+biocViews: Software, StatisticalMethod, GraphAndNetwork, Survival, Regression, DimensionReduction, Pathways
 BugReports: https://github.com/cavei/MOSClip/
 URL: https://github.com/cavei/MOSClip
 Roxygen: list(markdown = TRUE)
