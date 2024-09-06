@@ -5,12 +5,7 @@
 \title{Plot a Directed Graph of the MultiOmicsModules Object}
 \usage{
 plotModuleInGraph(
-<<<<<<< HEAD
-  pathway,
-=======
   modulesobj,
-  multiOmic,
->>>>>>> origin/anna_t
   reactObj,
   moduleNumber,
   orgDbi = "org.Hs.eg.db",
@@ -24,8 +19,6 @@ plotModuleInGraph(
 }
 \arguments{
 \item{modulesobj}{a \code{MultiOmicsModule} class object}
-
-\item{multiOmic}{an \code{Omics} object}
 
 \item{reactObj}{a \code{PathwayList} from \code{graphite} package that contains the
 reactome patways to be used}

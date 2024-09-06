@@ -17,21 +17,11 @@ extractSummaryFromNumberOfEvents(
 \arguments{
 \item{omic}{a summarized omic}
 
-<<<<<<< HEAD
-\item{multiOmicObj}{multi-omic object}
-
-\item{moduleCox}{the coxObj of the interesting module}
-
-\item{analysis}{type of analysis: survival or twoClass}
-=======
 \item{multiOmicObj}{Omics object}
 
 \item{moduleCox}{the coxObj of the interesting module}
 
 \item{analysis}{two-class or survival type}
-
-\item{n}{maximum number of features to retrieve}
->>>>>>> origin/anna_t
 
 \item{minprop}{the minimal proportion of cutp}
 

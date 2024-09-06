@@ -2,36 +2,20 @@
 % Please edit documentation in R/CreateTabulaReport.R
 \name{multiPathwayModuleReport}
 \alias{multiPathwayModuleReport}
-<<<<<<< HEAD
-\title{Summarize modules' info from a list of MultiOmicsModules objects (MOP)}
-=======
 \title{Provides a Table of the Modules Test Results}
->>>>>>> origin/anna_t
 \usage{
 multiPathwayModuleReport(multiPathwayModuleList, priority_to = NULL)
 }
 \arguments{
-<<<<<<< HEAD
 \item{multiPathwayModuleList}{a list of \code{MultiOmicsModules} objects
 resulting from a multi-omics module test.}
 
-\item{priority_to}{a vector with the covariates (omic name) that should go
-first.}
-}
-\value{
-a data.frame, modules in rows, overall pvalue of the coxph,
-followed by covariates pvalues, in columns.
-=======
-\item{multiPathwayModuleList}{a list of MultiOmicsModules object resulting
-from a multi-omics module test.}
-
-\item{priority_to}{a vector with the covariates (the omics names) to be at
+\item{priority_to}{a vector with the covariates (the omics names)
 that should appear first in the dataframe columns}
 }
 \value{
 a data.frame class object. Rows correspond to the modules, and the
 columns to the overall and covariates pvalues of the test.
->>>>>>> origin/anna_t
 }
 \description{
 Summarizes the results of a multi omics module test given a list of

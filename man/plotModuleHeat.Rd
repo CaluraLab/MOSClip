@@ -6,7 +6,6 @@
 \usage{
 plotModuleHeat(
   moduleobj,
-  multiOmic,
   moduleNumber,
   sortBy = NULL,
   paletteNames = NULL,
@@ -24,8 +23,6 @@ plotModuleHeat(
 }
 \arguments{
 \item{moduleobj}{\code{MultiOmicsModule} class object}
-
-\item{multiOmic}{\code{Omics} object}
 
 \item{moduleNumber}{module number of interest}
 
@@ -49,8 +46,6 @@ plotModuleHeat(
 \item{orgDbi}{a Dbi organism to be used. Default is \code{org.Hs.eg.db}}
 
 \item{discr_prop_pca}{the minimal proportion to compute the PCA classes}
-
-\item{discr_prop_pca}{the minimal proportion to compute the pca classes}
 
 \item{discr_prop_events}{the minimal proportion to compute the event classes}
 

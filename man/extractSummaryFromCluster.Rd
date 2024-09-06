@@ -9,11 +9,7 @@ extractSummaryFromCluster(omic, multiOmicObj, n = 3)
 \arguments{
 \item{omic}{a summarized omic}
 
-<<<<<<< HEAD
-\item{multiOmicObj}{multi-omic object}
-=======
-\item{multiOmicObj}{Omics object}
->>>>>>> origin/anna_t
+\item{multiOmicObj}{\code{Omics} object}
 
 \item{n}{maximum number of features to retrieve}
 }

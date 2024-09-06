@@ -23,7 +23,7 @@ first}
 
 \item{fontsize}{Size of the font to be used in the plot}
 
-\item{...}{additional arguments to be passed to \code{pheatmap}}
+\item{...}{additional argument to be passed to pheatmap}
 }
 \value{
 a Heatmap list object from ComplexHeatmap package

@@ -26,7 +26,7 @@ first}
 
 \item{fontsize}{the font size to be used}
 
-\item{...}{additional arguments to be passed to \code{pheatmap}}
+\item{\dots}{additional argument to be passed to pheatmap}
 }
 \description{
 Given the list of MOPs, it plots the table.

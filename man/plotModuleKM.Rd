@@ -6,7 +6,6 @@
 \usage{
 plotModuleKM(
   MOM,
-  multiOmic,
   moduleNumber,
   formula = "Surv(days, status) ~ PC1",
   fileName = NULL,
@@ -20,18 +19,12 @@ plotModuleKM(
   discr_prop_pca = 0.15,
   discr_prop_events = 0.05,
   additional_discrete = NULL,
-<<<<<<< HEAD
   additional_continuous = NULL,
   ...
-=======
-  additional_continuous = NULL
->>>>>>> origin/anna_t
 )
 }
 \arguments{
 \item{MOM}{a \code{MultiOmicsModule} class object}
-
-\item{multiOmic}{an \code{Omics} class object}
 
 \item{moduleNumber}{numeric value. The module number of interest}
 
@@ -62,17 +55,14 @@ separated by a "+" character after the separator (~)}
 \item{additional_discrete}{names of the additional discrete variables to
 include}
 
-<<<<<<< HEAD
-\item{...}{additional arguments passed to \code{guessInvolvement} and \code{get} function}
-
-\item{additional_continous}{names of the additional continous variables to include}
-=======
 \item{additional_continuous}{names of the additional continous variables to
 include}
+
+\item{...}{additional arguments passed to \code{guessInvolvement} and \code{get}
+function}
 }
 \value{
 a ggsurvplot class object
->>>>>>> origin/anna_t
 }
 \description{
 Given a \code{MultiOmicsModule} class object and a specific module number, it

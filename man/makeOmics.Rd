@@ -31,7 +31,6 @@ content describing the experiments}
 \item{drops}{A \code{list} of unmatched information
 (included after subsetting)}
 
-<<<<<<< HEAD
 \item{modelInfo}{A list with length equal to length(data) that are modelInfo
 to process each dataset}
 
@@ -42,24 +41,8 @@ additional parameters specific of the modelInfo}
 an \code{Omics} class object
 }
 \description{
-Function to build a multi-omic object of class \code{Omics}, based on
-\code{MultiAssayExperiment}. It contains \code{ExperimentList}, \code{colData}, \code{sampleMap},
-and additional slots \code{modelInfo} and \code{specificArgs}.
-=======
-\item{modelInfo}{a list with length equal to length(data) that are modelInfo
-to process each dataset.}
-
-\item{specificArgs}{a list with length equal to length(data) to set
-additional parameters specific of the modelInfo.}
-}
-\value{
-A Omics class object of the omics data, clinical data, and specific
-arguments
-}
-\description{
-makeOmics() creates the Omics object necessary to perform most of the
+makeOmics creates the \code{Omics} object necessary to perform most of the
 analyses of this package. It contains all the omics data in the format of a
-ExperimentList, the clinical data, and all the information necessary for the
-dimentionality reduction step.
->>>>>>> origin/anna_t
+\code{ExperimentList}, the clinical data, and all the information necessary for
+the dimensionality reduction step.
 }

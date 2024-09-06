@@ -6,11 +6,6 @@
 \usage{
 createMOMView(omicsObj, genes)
 }
-\arguments{
-\item{omicsObj}{Omics object}
-
-\item{genes}{genes to be used}
-}
 \value{
 list with
 1 reduced representation of the omics

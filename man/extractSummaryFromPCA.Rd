@@ -17,24 +17,14 @@ extractSummaryFromPCA(
 \arguments{
 \item{omic}{a summarized omic}
 
-<<<<<<< HEAD
-\item{multiOmicObj}{multi-omic object}
-
-\item{moduleCox}{the coxObj of the interesting module}
-
-\item{analysis}{type of analysis: survival or twoClass}
-
-\item{loadThr}{the thr value to select the most influent features according
-to the loading}
-=======
 \item{multiOmicObj}{Omics object}
 
 \item{moduleCox}{the coxObj of the interesting module}
 
 \item{analysis}{two-class or survival type}
 
-\item{loadThr}{the thr value to select the most influent features according to the loading}
->>>>>>> origin/anna_t
+\item{loadThr}{the thr value to select the most influent features according
+to the loading}
 
 \item{atleast}{the minimum number of gene to retrieve}
 
