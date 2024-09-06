@@ -1,11 +1,13 @@
 test_that("superTest works", {
-  whole_reactome <- readRDS(test_path("fixtures", "reactome-entrez.rds"))
   dummy_react_bigger <- readRDS(test_path("fixtures", "reactBiggerDummy.rds"))
-  dummy_omics <- createFakeOmics("two-classes")
-  dummy_annot <- dummy_colData("two-classes")
+  genes <- paste0("ENTREZID:", c(10000, 90427, 5366, 23368, 637, 3002, 79792,
+                                 840, 5414, 5599, 8655, 140735, 708, 2254,
+                                 57761, 5140, 5289, 10714, 7318, 1642, 121504))
+  
+  dummy_omics <-fake_mo(genes=genes, type="two-classes")
+  dummy_annot <- dummy_colData(type="two-classes")
   
   twoCModuleObj <- lapply(dummy_react_bigger, function(g) {
-    print(g@title)
     fcl = multiOmicsTwoClassesModuleTest(dummy_omics,
                                          g,
                                          dummy_annot,

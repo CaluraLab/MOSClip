@@ -1,7 +1,9 @@
 test_that("Plots with two class object work", {
   dummy_react <- readRDS(test_path("fixtures", "reactSmallDummy.rds"))
   genes <- paste0("ENTREZID:", c(10000, 90427, 5366, 23368, 637, 3002, 79792,
-                                 840, 5414, 5599, 8655, 140735, 708))
+                                 38840, 5414, 5599, 8655, 140735, 708, 2254,
+                                 3957761, 5140, 5289, 10714, 7318, 1642, 
+                                 121504))
   dummy_omics <- fake_mo(genes=genes, type="two-classes")
   dummy_annot <- dummy_colData(type="two-classes")
   
@@ -24,10 +26,10 @@ test_that("Plots with two class object work", {
   expect_identical(class(res.pathwayHeat), c("gg", "ggplot"))
   
   res.pathwayHeat_nopalette <- plotPathwayHeat(
-    twoCPathwayObj, dummy_omics, sortBy = c("expPC2", "mut", "classes"),
+    twoCPathwayObj, sortBy = c("expPC2", "mut", "classes"),
     additionalAnnotations = dummy_annot,
     additionalPaletteNames = list(classes = "teal"),
-    nrowsHeatmaps = 2, withSampleNames = F)
+    nrowsHeatmaps = 2, withSampleNames = F, envir=env)
   
   expect_false(is.null(res.pathwayHeat_nopalette))
   expect_identical(class(res.pathwayHeat_nopalette), c("gg", "ggplot"))

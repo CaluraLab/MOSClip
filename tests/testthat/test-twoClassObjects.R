@@ -24,7 +24,7 @@ test_that("Two Class Pathway Test works", {
                                               test_annot,
                                               baseFormula = "classes ~",
                                               nullModel = "classes ~ 1"), 
-               "Mismatch in covariates and classes annotations row names.")
+               "Mismatch in covariates and annotations row names.")
   
   test_annot <- dummy_annot
   test_annot[1,] <- "C"
@@ -32,7 +32,8 @@ test_that("Two Class Pathway Test works", {
                                               test_annot,
                                               baseFormula = "classes ~",
                                               nullModel = "classes ~ 1"), 
-               "Classes in column .* are not two: .*")
+               paste0("Classes should be only two. ", 
+                      "Check your dependent variables columns"))
   
   test_annot <- dummy_annot
   test_order <- sample(row.names(test_annot), 200, replace=FALSE)
@@ -67,7 +68,7 @@ test_that("Two Class Pathway Test works", {
                                               dummy_annot,
                                               baseFormula = "classes ~",
                                               nullModel = "classes ~ 1"),
-               "Genes not found in graph nodes")
+               "Genes not found in some experiments of the omics object")
 })
 
 
@@ -102,7 +103,7 @@ test_that("Two Class Module Test works", {
                                               test_annot,
                                               baseFormula = "classes ~",
                                               nullModel = "classes ~ 1"), 
-               "Mismatch in covariates and classes annotations row names.")
+               "Mismatch in the number of sample")
   
   test_annot <- dummy_annot
   test_annot[1,] <- "C"
@@ -110,7 +111,8 @@ test_that("Two Class Module Test works", {
                                               test_annot,
                                               baseFormula = "classes ~",
                                               nullModel = "classes ~ 1"), 
-               "Classes in column .* are not two: .*")
+               paste0("Classes should be only two. ", 
+                      "Check your dependent variables columns"))
   
   test_annot <- dummy_annot
   test_order <- sample(row.names(test_annot), 200, replace=FALSE)
@@ -124,7 +126,8 @@ test_that("Two Class Module Test works", {
   expect_error(multiOmicsTwoClassesModuleTest(dummy_Omics, dummy_react[[1]],
                                               test_annot,
                                               baseFormula = "classes ~",
-                                              nullModel = "classes ~ 1"), NA)
+                                              nullModel = "classes ~ 1"), 
+               "Mismatch in the number of samples")
   
   expect_error(multiOmicsTwoClassesModuleTest(dummy_Omics, dummy_react[[1]],
                                               dummy_annot,
@@ -136,7 +139,7 @@ test_that("Two Class Module Test works", {
                                               dummy_annot,
                                               baseFormula = "classes ~",
                                               nullModel = "classes ~ 1"),
-               "Module test can not handle gene list.")
+               "graph argument should be a graphNEL object, not a gene list.")
   
   expect_error(multiOmicsTwoClassesModuleTest(dummy_Omics, dummy_react[[1]],
                                               dummy_annot,

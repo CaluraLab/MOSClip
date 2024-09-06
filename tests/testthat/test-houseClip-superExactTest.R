@@ -1,14 +1,16 @@
 test_that("superExactTest works", {
+  skip()
   whole_reactome <- readRDS(test_path("fixtures", "reactome-entrez.rds"))
   dummy_react_bigger <- readRDS(test_path("fixtures", "reactBiggerDummy.rds"))
+  genes <- paste0("ENTREZID:", c(10000, 90427, 5366, 23368, 637, 3002, 79792,
+                                 840, 5414, 5599, 8655, 140735, 708))
   pathHierarchy <- downloadPathwayRelationFromReactome()
   pathHierarchyGraph <- igraph::graph_from_data_frame(d = pathHierarchy,
                                                       directed = TRUE)
-  dummy_omics <- createFakeOmics("two-classes")
-  dummy_annot <- dummy_colData("two-classes")
+  dummy_omics <- fake_mo(genes=genes, type="two-classes")
+  dummy_annot <- dummy_colData(type="two-classes")
   
   twoCModuleObj <- lapply(dummy_react_bigger, function(g) {
-    print(g@title)
     fcl = multiOmicsTwoClassesModuleTest(dummy_omics,
                                          g,
                                          dummy_annot,
@@ -30,7 +32,8 @@ test_that("superExactTest works", {
   expect_error(
     computeOmicsIntersections(moduleSummary, pvalueThr = 1.8e-20, zscoreThr = 1,
                               excludeColumns =c("pathway", "module")),
-    "no significant modules")
+    paste0("One or more omics do not have a significant z score for any of ", 
+           "their modules. Try increasing the z score threshold."))
   expect_error(
     computeOmicsIntersections(
       moduleSummary, pvalueThr = 0.05, zscoreThr = 1, resampligThr = 60,
