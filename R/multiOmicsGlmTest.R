@@ -93,7 +93,7 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
       classAnnot <- res$classAnnot
       covariates <- res$covariates 
     } 
-    else {stop("Mismatch in covariates and classes annotations row names.") }}
+    else {stop("Mismatch in covariates and annotations row names.") }}
   
   dataTest <- data.frame(classAnnot, covariates)
   
@@ -173,15 +173,15 @@ multiOmicsTwoClassesModuleTest <- function(omicsObj, graph, classAnnot,
   }
   
   if (nrow(classAnnot) != nrow(omicsObj@colData))
-    warning("Mismatch in the number of samples")
+    stop("Mismatch in the number of samples")
   if (is.null(pathName) & is(graph, "Pathway"))
     pathName <- graph@title
 
   graph <- convertPathway(graph, useThisGenes)
   genes <- graph::nodes(graph)
   if (length(genes) == 0)
-    stop("There is no intersection between expression feature names and
-         the node names in the graph.")
+    stop("There is no intersection between expression feature names and ",
+         "the node names in the graph.")
   
   cliques <- extractCliquesFromDag(graph)
 
