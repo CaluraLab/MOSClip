@@ -41,6 +41,6 @@ only for cluster method.
 }
 \description{
 Given a pathway analyzed by \code{multiOmicsModuleSurvivalTest} or
-\code{multiOmicsTwoClassesModuleTest}, it retrieves for each omic the most
+\code{multiOmicsTwoClassModuleTest}, it retrieves for each omic the most
 influent features.
 }

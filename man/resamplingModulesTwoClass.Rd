@@ -2,7 +2,7 @@
 % Please edit documentation in R/resamplingFunctions.R
 \name{resamplingModulesTwoClass}
 \alias{resamplingModulesTwoClass}
-\title{Resampling function for two-classes analysis on modules}
+\title{Resampling function for two-class analysis on modules}
 \usage{
 resamplingModulesTwoClass(
   fullMultiOmics,
@@ -34,5 +34,5 @@ genes found in the first experiment of the multiOmic object are used}
 list of the resampling tables of results
 }
 \description{
-Resampling function for two-classes analysis on modules
+Resampling function for two-class analysis on modules
 }

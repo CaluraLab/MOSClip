@@ -2,7 +2,7 @@
 % Please edit documentation in R/resamplingFunctions.R
 \name{resamplingPathwayTwoClass}
 \alias{resamplingPathwayTwoClass}
-\title{Resampling function for pathways (two-classes analysis)}
+\title{Resampling function for pathways (two-class analysis)}
 \usage{
 resamplingPathwayTwoClass(
   fullMultiOmics,
@@ -34,5 +34,5 @@ genes found in the first experiment of the multiOmic object are used}
 list of the resampling tables of results
 }
 \description{
-Resampling function for pathways (two-classes analysis)
+Resampling function for pathways (two-class analysis)
 }
