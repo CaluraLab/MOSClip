@@ -2,18 +2,21 @@
 % Please edit documentation in R/CreateTabulaReport.R
 \name{multiPathwayReport}
 \alias{multiPathwayReport}
-\title{Summarize pathways' info from a list of MultiOmicsPathway (MOP)}
+\title{Summarize pathways' info from a list of MultiOmicsPathway objects (MOP)}
 \usage{
 multiPathwayReport(multiPathwayList, priority_to = NULL)
 }
 \arguments{
-\item{multiPathwayList}{MultiOmicsPathway pathway object list}
+\item{multiPathwayList}{a list of \code{MultiOmicsPathway} objects resulting from
+a multi-omics pathway test.}
 
-\item{priority_to}{a vector with the covariates (omic name) that should go first}
+\item{priority_to}{a vector with the covariates (omic name) that should go
+first.}
 }
 \value{
-a data.frame with overal pvalue of the coxph, followed by covariates zs.
+a data.frame, pathways in rows, overall pvalue of the coxph,
+followed by covariates pvalues, in columns.
 }
 \description{
-Given the list of MOPs, it create the table.
+Given the list of MOPs, it creates the table.
 }

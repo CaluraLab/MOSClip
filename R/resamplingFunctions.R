@@ -67,7 +67,7 @@ checkStrenth <- function(boleanMatrix) {
 filterExpr <- function(exp, samples) {
   if (length(setdiff(samples, colnames(exp))) != 0)
     stop("Some samples are not present in the MultiOmic Object")
-  exp[, samples, drop=F]
+  exp[, samples, drop=FALSE]
 }
 
 #' Filter a multiOmics object by columns/samples
@@ -110,7 +110,6 @@ filterMultiOmicsForSamples <- function(MO, samples) {
 #' 
 #' @rdname resampling
 preparePerms <- function(fullMultiOmics, nperm=100, nPatients=3) {
-  set.seed(1234)
   nPatients <- as.numeric(nPatients)
   patients <- row.names(fullMultiOmics@colData)
   patientsPerms <- lapply(seq_len(nperm), function(x) {
@@ -123,6 +122,8 @@ preparePerms <- function(fullMultiOmics, nperm=100, nPatients=3) {
 #' 
 #' @param pathdb pathway database
 #' @param pathwaySubset a list of pathways to resample
+#' @param genesToConsider vector of genes used to filter pathways; if NULL, 
+#' genes found in the first experiment of the multiOmic object are used
 #' 
 #' @inheritParams preparePerms 
 #' 
@@ -130,25 +131,27 @@ preparePerms <- function(fullMultiOmics, nperm=100, nPatients=3) {
 #' 
 #' @export
 #' 
-resamplingSurvival <- function(fullMultiOmics, pathdb, nperm=100, 
-                               pathwaySubset=NULL, nPatients=3) {
+resamplingModulesSurvival <- function(fullMultiOmics, pathdb, nperm=100, 
+                                      pathwaySubset=NULL, nPatients=3, 
+                                      genesToConsider=NULL) {
   patientsPerms <- preparePerms(fullMultiOmics, nperm, nPatients)
   
-  genesToConsider <- row.names(experiments(fullMultiOmics)[[1]])
+  if (is.null(genesToConsider)) {
+    genesToConsider <- row.names(experiments(fullMultiOmics)[[1]])
+  }
+  
   rePathSmall <- pathdb
   if (!is.null(pathwaySubset))
-    rePathSmall <- pathdb[pathwaySubset] #ext the sig pathways in the first pass
+    rePathSmall <- pathdb[pathwaySubset] 
   
   perms <- lapply(seq_len(nperm), function(boot){
-    cat("boot", boot, "\n")
+    message("boot", boot, "\n")
     pts <- patientsPerms[[boot]]
     multiOmics <- fullMultiOmics[,pts]
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
-      # print(g@title)
-      set.seed(1234)
-      fcl = multiOmicsSurvivalModuleTest(multiOmics, g, 
-                                         useThisGenes = genesToConsider)
+      fcl <- multiOmicsSurvivalModuleTest(multiOmics, g, 
+                                          useThisGenes = genesToConsider)
       fcl
     })
     
@@ -157,35 +160,37 @@ resamplingSurvival <- function(fullMultiOmics, pathdb, nperm=100,
   perms
 }
 
-#' Resampling function for two-classes analysis on modules
+#' Resampling function for two-class analysis on modules
 #' 
-#' @inheritParams resamplingSurvival
+#' @inheritParams resamplingModulesSurvival
 #' @param classAnnot patients class annotations
 #' 
 #' @return list of the resampling tables of results
 #' 
 #' @export
 #' 
-resamplingTwoClasses <- function(fullMultiOmics, classAnnot, pathdb, nperm=100, 
-                               pathwaySubset=NULL, nPatients=3) {
+resamplingModulesTwoClass <- function(fullMultiOmics, classAnnot, 
+                                      pathdb, nperm=100, 
+                                      pathwaySubset=NULL, nPatients=3,
+                                      genesToConsider=NULL) {
   patientsPerms <- preparePerms(fullMultiOmics, nperm, nPatients)
   
-  genesToConsider <- row.names(experiments(fullMultiOmics)[[1]])
+  if (is.null(genesToConsider)) {
+    genesToConsider <- row.names(experiments(fullMultiOmics)[[1]])
+  }
   rePathSmall <- pathdb
   if (!is.null(pathwaySubset))
-    rePathSmall <- pathdb[pathwaySubset] #ext the sig pathways in the first pass
+    rePathSmall <- pathdb[pathwaySubset] 
   
   perms <- lapply(seq_len(nperm), function(boot){
-    cat("boot", boot, "\n")
+    message("boot", boot, "\n")
     pts <- patientsPerms[[boot]]
     multiOmics <- fullMultiOmics[,pts]
     classes <- classAnnot[pts, , drop=FALSE]
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
-      # print(g@title)
-      set.seed(1234)
-      fcl = multiOmicsTwoClassesModuleTest(multiOmics, g, classAnnot = classes,
-                                           useThisGenes = genesToConsider)
+      fcl <- multiOmicsTwoClassModuleTest(multiOmics, g, classAnnot = classes,
+                                          useThisGenes = genesToConsider)
       fcl
     })
     
@@ -196,30 +201,32 @@ resamplingTwoClasses <- function(fullMultiOmics, classAnnot, pathdb, nperm=100,
 
 #' Resampling function for pathways (survival analysis)
 #' 
-#' @inheritParams resamplingSurvival
+#' @inheritParams resamplingModulesSurvival
 #' 
 #' @return list of the resampling tables of results
 #' 
 #' @export
 #' 
 resamplingPathwaySurvival <- function(fullMultiOmics, pathdb, nperm=100,
-                              pathwaySubset=NULL, nPatients=3) {
+                                      pathwaySubset=NULL, nPatients=3,
+                                      genesToConsider=NULL) {
   patientsPerms <- preparePerms(fullMultiOmics, nperm, nPatients)
   
-  genesToConsider <- row.names(experiments(fullMultiOmics)[[1]])
+  if (is.null(genesToConsider)) {
+    genesToConsider <- row.names(experiments(fullMultiOmics)[[1]])
+  }
   rePathSmall <- pathdb
   if (!is.null(pathwaySubset))
-    rePathSmall <- pathdb[pathwaySubset] #ext the sig pathways in the first pass
+    rePathSmall <- pathdb[pathwaySubset] 
   
   perms <- lapply(seq_len(nperm), function(boot){
-    cat("boot", boot, "\n")
+    message("boot", boot, "\n")
     pts <- patientsPerms[[boot]]
     multiOmics <- fullMultiOmics[,pts]
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
-      set.seed(1234)
-      fcl = multiOmicsSurvivalPathwayTest(multiOmics, g, 
-                                          useThisGenes = genesToConsider)
+      fcl <- multiOmicsSurvivalPathwayTest(multiOmics, g,
+                                           useThisGenes = genesToConsider)
       fcl
     })
     multiPathwayReport(multiOmicsReactome)
@@ -227,34 +234,35 @@ resamplingPathwaySurvival <- function(fullMultiOmics, pathdb, nperm=100,
   perms
 }
 
-#' Resampling function for pathways (two-classes analysis)
+#' Resampling function for pathways (two-class analysis)
 #' 
-#' @inheritParams resamplingTwoClasses
+#' @inheritParams resamplingModulesTwoClass
 #' 
 #' @return list of the resampling tables of results
 #' 
 #' @export
 #' 
-resamplingPathwayTwoClasses <- function(fullMultiOmics, classAnnot, pathdb, 
-                                        nperm=100, pathwaySubset=NULL, 
-                                        nPatients=3) {
+resamplingPathwayTwoClass <- function(fullMultiOmics, classAnnot, pathdb, 
+                                      nperm=100, pathwaySubset=NULL, 
+                                      nPatients=3, genesToConsider=NULL) {
   patientsPerms <- preparePerms(fullMultiOmics, nperm, nPatients)
   
-  genesToConsider <- row.names(experiments(fullMultiOmics)[[1]])
+  if (is.null(genesToConsider)) {
+    genesToConsider <- row.names(experiments(fullMultiOmics)[[1]])
+  }
   rePathSmall <- pathdb
   if (!is.null(pathwaySubset))
     rePathSmall <- pathdb[pathwaySubset]
   
   perms <- lapply(seq_len(nperm), function(boot){
-    cat("boot", boot, "\n")
+    message("boot", boot, "\n")
     pts <- patientsPerms[[boot]]
     multiOmics <- fullMultiOmics[,pts]
     classes <- classAnnot[pts, , drop=FALSE]
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
-      set.seed(1234)
-      fcl = multiOmicsTwoClassesPathwayTest(multiOmics, g, classes,
-                                            useThisGenes = genesToConsider)
+      fcl <- multiOmicsTwoClassPathwayTest(multiOmics, g, classes, 
+                                           useThisGenes = genesToConsider)
       fcl
     })
     multiPathwayReport(multiOmicsReactome)
@@ -276,7 +284,8 @@ resamplingPathwayTwoClasses <- function(fullMultiOmics, classAnnot, pathdb,
 #' @importFrom graphics abline
 #' @export
 #' 
-selectStablePathwaysModules <- function(perms, moduleSummary, success=90, col="pvalue") {
+selectStablePathwaysModules <- function(perms, moduleSummary, success=90,
+                                        col="pvalue") {
   sortedPerms <- lapply(perms, function(x) {
     x[order(row.names(x)), ]
   })
@@ -287,13 +296,17 @@ selectStablePathwaysModules <- function(perms, moduleSummary, success=90, col="p
   row.names(pvalue) <- row.names(pathwayModuleName)
   
   allPvalues <- data.frame(pathwayModule=row.names(moduleSummary),
-                           pvalue = moduleSummary$pvalue, pvalue[row.names(moduleSummary), ],
-                           stringsAsFactors = F)
+                           pvalue = moduleSummary$pvalue,
+                           pvalue[row.names(moduleSummary), ],
+                           stringsAsFactors = FALSE)
   sortedAllPvalues <- allPvalues[order(allPvalues$pvalue), ]
-  sortedPerms <- as.matrix(sortedAllPvalues[,-c(1:2)])
+  sortedPerms <- as.matrix(sortedAllPvalues[,-c(seq_len(2))])
   resampligSuccess <- apply(sortedPerms <= 0.05, 1, sum)
   
-  plot(-log10(sortedAllPvalues$pvalue), resampligSuccess, xlab="-log10(pvalue)", ylab="resampling success"); abline(v = -log10(0.05), col=2) ; abline(h=success, col=4)
+  plot(-log10(sortedAllPvalues$pvalue), resampligSuccess, xlab="-log10(pvalue)",
+       ylab="resampling success");
+  abline(v = -log10(0.05), col=2) ;
+  abline(h=success, col=4)
   sigModuleNames <- names(which(resampligSuccess >= success))
   ms <- moduleSummary[row.names(moduleSummary) %in% sigModuleNames, ]
   ms$pathwayModule <- NULL
@@ -312,7 +325,8 @@ selectStablePathwaysModules <- function(perms, moduleSummary, success=90, col="p
 #' @rdname evaluateResampling
 #' @export
 #'
-getPathwaysModulesSuccess <- function(perms, moduleSummary, col="pvalue", thr=0.05) {
+getPathwaysModulesSuccess <- function(perms, moduleSummary, col="pvalue",
+                                      thr=0.05) {
   sortedPerms <- lapply(perms, function(x) {
     x[order(row.names(x)), ]
   })
@@ -320,7 +334,7 @@ getPathwaysModulesSuccess <- function(perms, moduleSummary, col="pvalue", thr=0.
   ref <- row.names(sortedPerms[[1]])
   lapply(sortedPerms, function(x) {
     if (!(identical(ref, row.names(x))))
-      stop("Perms row.names differs")
+      stop("Perms row.names are different")
   })
   
   pathwayModuleName <- moduleSummary[order(row.names(moduleSummary)),]
@@ -332,11 +346,12 @@ getPathwaysModulesSuccess <- function(perms, moduleSummary, col="pvalue", thr=0.
   row.names(pvalue) <- row.names(pathwayModuleName)
   
   allPvalues <- data.frame(pathwayModule=row.names(moduleSummary),
-                           pvalue = moduleSummary$pvalue, pvalue[row.names(moduleSummary), ],
-                           stringsAsFactors = F)
+                           pvalue = moduleSummary$pvalue,
+                           pvalue[row.names(moduleSummary), ],
+                           stringsAsFactors = FALSE)
   
   sortedAllPvalues <- allPvalues[order(allPvalues$pvalue), ]
-  sortedPerms <- as.matrix(sortedAllPvalues[,-c(1:2)])
+  sortedPerms <- as.matrix(sortedAllPvalues[,-c(seq_len(2))])
   resamplingSuccess <- apply(sortedPerms <= thr, 1, sum)
   pvalueSuccess <- sortedAllPvalues$pvalue <=thr
   resamplingSuccess[!pvalueSuccess] <- 0
@@ -357,8 +372,10 @@ addResamplingCounts <- function(moduleSummary, resamplingCounts) {
   moduleSummary$resamplingCount <- 0
   notFound <- setdiff(names(resamplingCounts),row.names(moduleSummary))
   if (length(notFound)>0)
-    stop(paste0("Modules ", paste(notFound, collapse = ", ", " were not found in the module Summary")))
+    stop(paste0("Modules ", paste(notFound, collapse = ", ",
+                                  " were not found in the module Summary")))
   
-  moduleSummary[names(resamplingCounts), "resamplingCount"] <- as.numeric(resamplingCounts)
+  moduleSummary[names(resamplingCounts), 
+                "resamplingCount"] <- as.numeric(resamplingCounts)
   moduleSummary
 }

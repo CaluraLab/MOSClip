@@ -2,24 +2,16 @@
 #'
 #' For internal use only. Extract the cliques.
 #'
-#'
 #' @param dag a Directed Aciclic Graph
 #' @param root a node to use as root
 #'
 #' @return list of nodes cliques
 #'
-#' @examples
-#'   graph <- gRbase::dag(c("me","ve"),c("me","al"),c("me","me"),
-#'     c("ve","al"),c("al","an"),
-#'     c("al","st"),c("an","st"))
-#'   extractCliquesFromDag(graph)
-#'
 #' @importFrom methods as
 #' @importFrom gRbase is.DAG moralize triangulate rip
 #' @importFrom checkmate assertClass
+#' @importFrom Matrix diag
 #' @rdname graph-processing
-#' @export
-#'
 extractCliquesFromDag <- function(dag, root=NULL) {
   checkmate::assertClass(dag, "graphNEL")
   idag <- igraph::graph_from_graphnel(dag)
@@ -36,8 +28,11 @@ extractCliquesFromDag <- function(dag, root=NULL) {
 
   tg <- gRbase::triangulate(moral)
   ripped <- gRbase::rip(tg, root=root)
-  if (length(ripped)==0)
+  if (length(ripped)==0){
+    warning("This graph ", dag@title, "have 0 cliques")
     return(NULL)
+  }
+  
   ripped$cliques
 }
 
@@ -50,20 +45,14 @@ extractCliquesFromDag <- function(dag, root=NULL) {
 #' @return a graphNEL object
 #'
 #'#' @rdname  graph-processing
-#' @examples
-#'   graph <- gRbase::dag(c("me","ve"),c("me","al"),c("me","me"),
-#'     c("ve","al"),c("al","an"),
-#'     c("al","st"),c("an","st"))
-#'   removeSelfLoops(graph)
 #'
 #' @importClassesFrom graph graphNEL
 #' @importFrom checkmate assertClass
-#' @export
 #'
 removeSelfLoops <- function(graph){
   checkmate::assertClass(graph, "graphNEL")
   edgeL <- graph@edgeL
-  for (i in 1:length(edgeL)) {
+  for (i in seq_along(edgeL)) {
     pos <- match(i,edgeL[[i]]$edges)
     if (!(is.na(pos)))
       edgeL[[i]]$edges <- edgeL[[i]]$edges[-pos]
@@ -83,7 +72,7 @@ removeSelfLoops <- function(graph){
 #' @rdname graph-processing
 #'
 mmmoralize <- function(graph) {
-  m <- igraph::as_adjacency_matrix(graph, sparse=F)
+  m <- igraph::as_adjacency_matrix(graph, sparse=FALSE)
   m <- gRbase::moralizeMAT(m)
   g <- igraph::graph_from_adjacency_matrix(m, mode="directed")
   g

@@ -2,7 +2,7 @@
 % Please edit documentation in R/supertest.R
 \name{runSupertest}
 \alias{runSupertest}
-\title{Performs statistical tests of the pathway intersections among omics.}
+\title{Performs a Exact test - analysis of omics intersection}
 \usage{
 runSupertest(
   multiPathwayReportData,
@@ -17,18 +17,21 @@ runSupertest(
 )
 }
 \arguments{
-\item{multiPathwayReportData}{data.frame, the output of
-the \code{\link{multiPathwayReport}} or \code{\link{multiPathwayModuleReport}} functions.}
+\item{multiPathwayReportData}{data.frame, the output of the
+\code{\link{multiPathwayReport}} or \code{\link{multiPathwayModuleReport}}
+functions.}
 
-\item{pvalueThr}{numeric indicating the cut-off for overall pvalue}
+\item{pvalueThr}{numeric value. Overall pvalue cut-off to be used}
 
-\item{zscoreThr}{numeric indicating the cut-off for covariates coefficients}
+\item{zscoreThr}{numeric value. Covariates coefficient cut-off to be used.}
 
-\item{resampligThr}{numeric the number of success in the resamplig procedure}
+\item{resampligThr}{numeric value. Filters the modules according to the
+number of success in the resampling procedure, takes only the modules above
+this threshold.}
 
-\item{plot}{character indicating the layout for plotting.
-It is one of \code{circular}, \code{landscape} or \code{no}.
-By default, plot="circular", if plot="no" no plot will be provided.}
+\item{plot}{character indicating the layout for plotting. It is one of
+\code{circular}, \code{landscape} or \code{noplot}. By default,
+plot="circular", if plot="noplot" no plot will be provided.}
 
 \item{sort.by}{character indicating how to sort the
 intersections in the plot. It is one of "set" (by omics), "size"
@@ -37,26 +40,30 @@ and "p-value".}
 
 \item{excludeColumns}{a vector of characters listing the columns of
 \code{multiPathwayReportData} object to be excluded by the analysis.
-In the case \code{multiPathwayReportData} derives from \code{\link{multiPathwayModuleReport}}
+In the case \code{multiPathwayReportData} derives from
+\code{\link{multiPathwayModuleReport}}
 you should set \code{excludeColumns = c("pathway","module")}.}
 
 \item{color.on}{color that represent the active omics in the sector}
 
-\item{color.off}{color that represent the omics mnot considered in the sector}
+\item{color.off}{color that represent the omics mnot considered in the
+sector}
 }
 \value{
-a data.frame containing all the numeric information of the plot included
-the pathways shared by different omics.
+a data.frame containing all the numeric information of the plot
+included the pathways shared by different omics.
 }
 \description{
-This function calculates intersection sizes among the pathway sets
-significative in each omic and performs statistical intersection test.
+This function performs a exact test implementing a theorical framework using
+the SuperExactTest package. It calculates the statistical distributions of
+multi omics set intersections. It can be used with both a MultiOmicsModules
+or MultiOmicsPathway class objects.
 }
 \details{
-This function calculates intersection sizes between multiple set of pathways or modules
-and performs statistical test of the intersections using the total amout of
-analyzed pathways or modules as background. The super exact test of this function
-was described in Wang et al 2015.
+This function calculates intersection sizes between multiple set of
+pathways or modules and performs statistical test of the intersections using
+the total amout of analyzed pathways or modules as background. The super
+exact test of this function was described in Wang et al 2015.
 }
 \references{
 Minghui Wang, Yongzhong Zhao, and Bin Zhang (2015).

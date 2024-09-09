@@ -14,11 +14,12 @@ plotPathwayHeat(
   discr_prop_events = 0.05,
   withSampleNames = TRUE,
   nrowsHeatmaps = 3,
-  orgDbi = "org.Hs.eg.db"
+  orgDbi = "org.Hs.eg.db",
+  ...
 )
 }
 \arguments{
-\item{pathway}{MultiOmicsPathway pathway object}
+\item{pathway}{\code{MultiOmicsPathway} class object}
 
 \item{sortBy}{a covariate to sort by}
 
@@ -34,8 +35,14 @@ plotPathwayHeat(
 
 \item{withSampleNames}{create also the samples names}
 
-\item{nrowsHeatmaps}{magnification respect to annotation of sample (annotations take 1 row)}
+\item{nrowsHeatmaps}{magnification respect to annotation of sample
+(annotations take 1 row)}
+
+\item{orgDbi}{a Dbi organism to be used. Default is \code{org.Hs.eg.db}}
+
+\item{...}{additional arguments passed to \code{guessInvolvementPathway} function}
 }
 \description{
-Given the pathway, it creates the heatmaps of the mostly involved genes for each omic.
+Given the pathway, it creates the heatmaps of the mostly involved genes for
+each omic.
 }

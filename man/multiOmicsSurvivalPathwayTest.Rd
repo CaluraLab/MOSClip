@@ -8,33 +8,37 @@ multiOmicsSurvivalPathwayTest(
   omicsObj,
   graph,
   survFormula = "Surv(days, status) ~",
-  autoCompleteFormula = T,
+  autoCompleteFormula = TRUE,
   useThisGenes = NULL,
   pathName = NULL,
   robust = FALSE,
-  include_from_annot = F
+  include_from_annot = FALSE
 )
 }
 \arguments{
-\item{omicsObj}{Object of class 'Omics'}
+\item{omicsObj}{Object of class \code{Omics}}
 
-\item{graph}{a pathway in graphNEL, Pathway or geneset format.}
+\item{graph}{a pathway in \code{graphNEL}, \code{Pathway} or geneset format}
 
-\item{survFormula}{Formula to compute survival}
+\item{survFormula}{a character with the formula to compute survival}
 
-\item{autoCompleteFormula}{logical. If TRUE autocomplete the survFormula using all the available covariates}
+\item{autoCompleteFormula}{logical. If TRUE autocomplete the \code{survFormula}
+using all the available covariates}
 
 \item{useThisGenes}{vector of genes used to filter pathways}
 
-\item{pathName}{title of the pathway. If NULL and graph is "Pathway" graph@title is used as title}
+\item{pathName}{title of the pathway. If NULL and graph is \code{Pathway},
+\code{graph@title} is used as title}
 
-\item{robust}{should be used the robust mode for cox}
+\item{robust}{logical, whether the robust mode should be used
+for cox model analysis}
 
-\item{include_from_annot}{compute cox using additional covariates from annot}
+\item{include_from_annot}{logical. If TRUE compute cox model analysis
+using additional covariates from \code{colData}}
 }
 \value{
-MultiOmicsPathway object
+\code{MultiOmicsPathway} object
 }
 \description{
-Performs topological survival analysis using an 'Omics' object.
+Performs topological survival analysis using an \code{Omics} object.
 }

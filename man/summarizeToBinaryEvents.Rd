@@ -21,7 +21,16 @@ summarizeToBinaryEvents(
 
 \item{binaryClassMin}{the minimum number of event to include the covariate}
 
-\item{cliques}{the features organized in cliques. Only use for topology.}
+\item{cliques}{the features organized in cliques. Only use for topology}
+}
+\value{
+a list with summary of the omic:
+\item{x}{summary of the omic for each sample}
+\item{usedGenes}{genes list of genes used to calculate the summary}
+\item{namesCov}{names of the covariates}
+\item{method}{method used for the analysis}
+\item{omicName}{name of the omic}
+\item{evenThr}{threshold fot event counting}
 }
 \description{
 Given a matrix it summarize to a 0 or 1

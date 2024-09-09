@@ -9,10 +9,11 @@
 \S4method{showModule}{MultiOmicsModules}(object)
 }
 \arguments{
-\item{object}{an object of class MultiOmicsModules}
+\item{object}{an object of class \code{MultiOmicsModules}}
 }
 \description{
-This class organize the results of the Multi Omics Module Survival Test analysis.
+This class organizes the results of the Multi Omics Module Test analysis, in
+which corresponds to one pathway decomposed into modules.
 }
 \section{Methods (by generic)}{
 \itemize{
@@ -22,20 +23,19 @@ This class organize the results of the Multi Omics Module Survival Test analysis
 \section{Slots}{
 
 \describe{
-\item{\code{alphas}}{numeric vector of the pvalues of all the modules.}
+\item{\code{alphas}}{a numeric vector of the pvalues of all the modules.}
 
-\item{\code{zlists}}{a list of all the zs of the covariates.}
+\item{\code{zlists}}{a list of numeric vectors with the zs of the covariates
+for each module.}
 
-\item{\code{coxObjs}}{a list with all the data.frame used for coxph of each module.}
+\item{\code{modulesView}}{a list of module information: for each omic,
+the name of the omic, the genes used, the method, the name of the
+covariates analyzed and other specific information based on the omic.}
 
-\item{\code{modulesView}}{a list of module information: for each omic the module data, the method used and the covariate analyzed.}
-
-\item{\code{modules}}{a list woth the genes that belong to the module.}
-
-\item{\code{formulas}}{a list, for each module the character of the formula used in the coxph.}
+\item{\code{modules}}{a list with the genes that belong to the module.}
 
 \item{\code{title}}{the name of the pathway.}
 
-\item{\code{analysis}}{The type of analysis done: survival or two-class.}
+\item{\code{analysis}}{the type of analysis done: survival or two-class.}
 }}
 

@@ -10,10 +10,11 @@
 \S4method{showOmics}{Omics}(object)
 }
 \arguments{
-\item{object}{an object of class Omics}
+\item{object}{an object of class \code{Omics}}
 }
 \description{
-This class is the storage for the different omic datasets that we need to analyze.
+This class is the storage for the different omic datasets that we need to
+analyze. It is based on \code{MultiAssayExperiment}.
 }
 \section{Methods (by generic)}{
 \itemize{
@@ -23,8 +24,10 @@ This class is the storage for the different omic datasets that we need to analyz
 \section{Slots}{
 
 \describe{
-\item{\code{modelInfo}}{a list with length equal to length(data) that are modelInfo to process each dataset.}
+\item{\code{modelInfo}}{a list with length equal to length(data) that are modelInfo
+to process each dataset.}
 
-\item{\code{specificArgs}}{a list with length equal to length(data) to set additional parameters specific of the modelInfo.}
+\item{\code{specificArgs}}{a list with length equal to length(data) to set
+additional parameters specific of the modelInfo.}
 }}
 

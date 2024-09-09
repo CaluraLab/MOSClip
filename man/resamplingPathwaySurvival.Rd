@@ -9,7 +9,8 @@ resamplingPathwaySurvival(
   pathdb,
   nperm = 100,
   pathwaySubset = NULL,
-  nPatients = 3
+  nPatients = 3,
+  genesToConsider = NULL
 )
 }
 \arguments{
@@ -22,6 +23,9 @@ resamplingPathwaySurvival(
 \item{pathwaySubset}{a list of pathways to resample}
 
 \item{nPatients}{number of patients to remove for resampling}
+
+\item{genesToConsider}{vector of genes used to filter pathways; if NULL,
+genes found in the first experiment of the multiOmic object are used}
 }
 \value{
 list of the resampling tables of results

@@ -16,7 +16,7 @@
 #' @importFrom survival coxph Surv
 #'
 survivalcox <- function(coxObj, formula){
-  originalCoxObj=coxObj
+  originalCoxObj <- coxObj
   coxObj <- na.omit(coxObj)
   coxRes <- survival::coxph(as.formula(formula), na.omit(coxObj))
   coxSummary <- summary(coxRes)
@@ -45,7 +45,7 @@ survivalcox <- function(coxObj, formula){
 #' @importFrom coxrobust coxr
 #'
 survivalcoxr <- function(coxObj, formula){
-  originalCoxObj=coxObj
+  originalCoxObj <- coxObj
   coxObj <- na.omit(coxObj)
   coxRes <- coxrobust::coxr(as.formula(formula), na.omit(coxObj))
   coxSummary <- coxrsummary(coxRes)
@@ -65,8 +65,6 @@ survivalcoxr <- function(coxObj, formula){
 #'
 #' @importFrom stats pchisq pnorm
 #'
-#' @export
-#'
 coxrsummary <- function(x) {
   sd.ple <- sqrt( diag( x$var.ple ) )
   sd <- sqrt(diag(x$var))
@@ -78,25 +76,16 @@ coxrsummary <- function(x) {
   dimnames(tmp)[[1]] <- names(x$coef)
   dimnames(tmp)[[2]] <- c("coef", "exp(coef)", "se(coef)", "p")
 
-  # cat("Partial likelihood estimator\n")
-  # print(tmp)
   partialLikelihood <- tmp
   wald <- 1 - pchisq(x$wald.test, df)
-
-  # cat("\nWald test=", x$wald.test, " on ", df, " df,", " p=",
-  #     1 - pchisq(x$wald.test, df), "\n", sep="")
 
   tmp <- cbind(x$coef, exp(x$coef), sd, 2*(1-pnorm(abs(x$coef/sd))))
   dimnames(tmp)[[1]] <- names(x$coef)
   dimnames(tmp)[[2]] <- c("coef", "exp(coef)", "se(coef)", "p")
 
-  # cat("\nRobust estimator\n")
-  # print(tmp)
   robustEstimator <- tmp
   extWald <- 1 - pchisq(x$ewald.test, df)
 
-  # cat("\nExtended Wald test=", x$ewald.test, " on ", df, " df,", " p=",
-  #     1 - pchisq(x$ewald.test, df), "\n\n", sep="")
-
-  list(wald=wald, partial=partialLikelihood, extWakd=extWald, robust=robustEstimator)
+  list(wald=wald, partial=partialLikelihood, extWakd=extWald,
+       robust=robustEstimator)
 }

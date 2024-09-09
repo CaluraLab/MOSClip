@@ -9,10 +9,11 @@
 \S4method{showPathway}{MultiOmicsPathway}(object)
 }
 \arguments{
-\item{object}{an object of class MultiOmicsPathway}
+\item{object}{an object of class \code{MultiOmicsPathway}}
 }
 \description{
-This class organize the results of the Multi Omics Module Survival Test analysis.
+This class organize the results of the Multi-Omics Pathway Survival Test
+analysis.
 }
 \section{Methods (by generic)}{
 \itemize{
@@ -22,16 +23,16 @@ This class organize the results of the Multi Omics Module Survival Test analysis
 \section{Slots}{
 
 \describe{
-\item{\code{pvalue}}{numeric, the pvalues of the whole module.}
+\item{\code{pvalue}}{a numeric vector of the pvalues of the pathways.}
 
-\item{\code{zlist}}{a vector of all the zs of the covariates.}
+\item{\code{zlist}}{a numeric vector with the zs of all the covariates.}
 
-\item{\code{coxObj}}{a data.frame used for the coxph model.}
-
-\item{\code{pathView}}{a list, for each omic the pathway data, the method used and the covariate analyzed.}
+\item{\code{pathView}}{a list of pathway information: for each omic,
+the name of the omic, the genes used, the method, the name of the
+covariates analyzed and other specific information based on the omic.}
 
 \item{\code{title}}{the name of the pathway.}
 
-\item{\code{analysis}}{The type of analysis done: survival or two-class.}
+\item{\code{analysis}}{the type of analysis done: survival or two-class.}
 }}
 

@@ -1,45 +1,76 @@
-#' Compute Multi Omics two-class in Pathways
+#' Compute Multi Omics Two-Class in Pathways
 #'
-#' Performs topological two-class analysis using an 'Omics' object.
+#' Performs topological two-class analysis using an `Omics` object.
+#' 
+#' @param omicsObj object of class `Omics`
+#' @param graph a pathway as a `graphNEL` object.
+#' @param classAnnot a `data.frame` with the class annotation. It is necessary
+#' at least a column with the classes labels, and the row.names as the samples 
+#' labels
+#' @param baseFormula model formula to be used for the test. It should be
+#' written as "classes ~ ", while "classes" being the column name for the class
+#' labels
+#' @param autoCompleteFormula a logical value. If TRUE. It autocompletes the
+#' formula used to fit generalized lienar models function  using all the
+#' available covariates (omics)
+#' @param useThisGenes (optional) vector of specific genes to be used
+#' @param nullModel the null model formula. It should be written the same as 
+#' the baseFormula, followed by " 1". (e.g. "classes ~ 1")
+#' @param pathName (optional) title of the pathway. If NULL, `graph@title` is
+#' used as title
 #'
-#' @param omicsObj Object of class 'Omics'
-#' @param graph a pathway in graphNEL, Pathway or geneset format.
-#' @param classAnnot class annotation: name of the classes, row.names are samples
-#' @param baseFormula model to be used for the test
-#' @param autoCompleteFormula logical. If TRUE autocomplete the survFormula using all the available covariates
-#' @param useThisGenes vector of genes used to filter pathways
-#' @param nullModel the null model
-#' @param pathName title of the pathway. If NULL and graph is "Pathway" graph@title is used as title
-#'
-#' @return MultiOmicsPathway object
+#' @return `MultiOmicsPathway` object
 #'
 #' @importFrom graph nodes
 #' @importFrom methods new is
+#' 
 #' @export
-multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
-                                            baseFormula = "classes ~ ",
-                                            autoCompleteFormula=T,
-                                            useThisGenes=NULL,
-                                            nullModel = "classes ~ 1",
-                                            pathName=NULL) {
 
+multiOmicsTwoClassPathwayTest <- function(omicsObj, graph, classAnnot,
+                                          baseFormula = "classes ~ ",
+                                          autoCompleteFormula = TRUE,
+                                          useThisGenes = NULL,
+                                          nullModel = "classes ~ 1",
+                                          pathName = NULL) {
+
+  baseFormula_input <- strsplit(baseFormula, " ")[[1]]
+  if (!(baseFormula_input[1] %in% colnames(classAnnot))){
+    stop("Invalid formula. Class column not found in classAnnot")
+  } else if (length(baseFormula_input) == 1 | baseFormula_input[2] != "~") {
+    stop("Invalid formula. Formula should be written as: 'classes ~'")
+  }
+  
+  nullModel_input <- strsplit(nullModel, " ")[[1]]
+  if (!(nullModel_input[1] %in% colnames(classAnnot))){
+    stop("Invalid formula. Class column not found in classAnnot")
+  } else if (length(nullModel_input) == 1) {
+    stop("Formula is too short. Formula should be written as 'classes ~ 1")
+  } else if (nullModel_input[2] != "~" | nullModel_input[3] != "1") {
+    stop("Invalid formula. Formula should be written as: 'classes ~'")
+  }
+  
+  if (nrow(classAnnot) != nrow(omicsObj@colData))
+    stop("Mismatch in the number of samples")
   if (is.null(pathName) && is(graph, "Pathway"))
     pathName <- graph@title
 
   graph <- convertPathway(graph, useThisGenes)
   genesToUse <- graph::nodes(graph)
-  if (length(genesToUse)== 0)
+  if (length(genesToUse) == 0)
     stop("There is no nodes on the graph.")
 
   moduleView <- lapply(seq_along(omicsObj@ExperimentList@listData), function(i) 
-    { 
+    {
     test <- get(omicsObj@modelInfo[i]) 
     specificArgs <- omicsObj@specificArgs[[i]]
 
-    cliques=NULL
-    if (omicsObj@modelInfo[i]=="summarizeWithPca") {
+    cliques <- NULL
+    if (omicsObj@modelInfo[i] == "summarizeWithPca") {
       genesToUse <- intersect(row.names(omicsObj@ExperimentList@listData[[i]]),
                               genesToUse)
+      if (identical(genesToUse, character(0))) {
+        stop("Genes not found in some experiments of the omics object")
+      }
       graph <- graph::subGraph(genesToUse, graph)
       cliques <- extractCliquesFromDag(graph)
     } 
@@ -50,24 +81,21 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
     do.call(test, args)
   })
   
-  moduleView <- moduleView[!sapply(moduleView, is.null)]
+  moduleView <- moduleView[!vapply(moduleView, is.null, logical(1))]
   covariates <- lapply(moduleView, function(mo) {mo$x})
   covariates <- do.call(cbind, covariates)
 
   if (is.null(covariates))
     return(NULL)
 
-  #if (nrow(classAnnot) != nrow(covariates))
-   # warning("Mismatch in the number of samples.")
-
   if (!identical(row.names(classAnnot), row.names(covariates))) {
     if (all(row.names(classAnnot) %in% row.names(covariates))) {
       res <- resolveAndOrder(list(classAnnot = classAnnot, 
                                   covariates = covariates))
-      classAnnot = res$classAnnot
-      covariates = res$covariates 
+      classAnnot <- res$classAnnot
+      covariates <- res$covariates 
     } 
-    else {stop("Mismatch in covariates and classes annotations row names.") }}
+    else {stop("Mismatch in covariates and annotations row names.") }}
   
   dataTest <- data.frame(classAnnot, covariates)
   
@@ -75,13 +103,11 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
   
   dependentVar <- all.vars(as.formula(nullModelFormula))[1]
   if(!(dependentVar %in% colnames(dataTest)))
-    stop(paste0(
-      "Data does not contain the model dependent variable: ", dependentVar))
+    stop("Data does not contain one of the model dependent variables")
 
   twoClasses <- unique(dataTest[,dependentVar])
   if(length(twoClasses) != 2)
-    stop(paste0(
-      "Classes in column ", dependentVar, " are not two: ", twoClasses))
+    stop("Classes should be only two. Check your dependent variables columns")
 
   if(!all(twoClasses == c(0,1))) {
     dataTest[dataTest[, dependentVar] == twoClasses[1], dependentVar] <- 0
@@ -89,12 +115,13 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
     dataTest[, dependentVar] <- as.numeric(dataTest[, dependentVar])
   }
 
-  fullModelFormula = baseFormula
-  if (autoCompleteFormula)
-    fullModelFormula = paste0(baseFormula,
-                             paste(colnames(covariates), collapse="+"))
+  fullModelFormula <- baseFormula
+  if (autoCompleteFormula) 
+    fullModelFormula <- paste0(baseFormula,
+                             paste(colnames(covariates), collapse ="+"))
 
-  res <- suppressWarnings(glmTest(dataTest, fullModelFormula, nullModelFormula))
+  res <- suppressWarnings(
+    glmTest(dataTest, fullModelFormula, nullModelFormula))
 
   new("MultiOmicsPathway", 
       pvalue=res$pvalue, 
@@ -108,45 +135,56 @@ multiOmicsTwoClassesPathwayTest <- function(omicsObj, graph, classAnnot,
 ###****************************fine Pathway***************************
 
 
-#' Compute Multi Omics two-class in Pathway Modules
+#' Computes Multi Omics Two-Class in Pathway Modules
 #'
-#' Performs topological two-class analysis using an 'Omics' object on pathway module.
+#' Performs topological two-class analysis using an `Omics` object. It
+#' decomposes graphs (pathways) into modules.
 #'
-#' @param omicsObj Object of class 'Omics'
-#' @param graph a pathway in graphNEL, Pathway or geneset format.
-#' @param classAnnot class annotation: name of the classes, row.names are samples
-#' @param baseFormula model to be used for the test
-#' @param autoCompleteFormula logical. If TRUE autocomplete the survFormula using all the available covariates
-#' @param useThisGenes vector of genes used to filter pathways
-#' @param nullModel the null model
-#' @param pathName title of the pathway. If NULL and graph is "Pathway" graph@title is used as title
+#' @inheritParams multiOmicsTwoClassPathwayTest
 #'
-#' @return MultiOmicsModule object
+#' @return `MultiOmicsModule` object
 #'
 #' @importFrom graph nodes
 #' @importFrom methods new is
 #' @export
-multiOmicsTwoClassesModuleTest <- function(omicsObj, graph, classAnnot,
-                                           baseFormula = "classes ~ ",
-                                           autoCompleteFormula=TRUE,
-                                           useThisGenes=NULL,
-                                           nullModel = "classes ~ 1",
-                                           pathName=NULL) {
+
+multiOmicsTwoClassModuleTest <- function(omicsObj, graph, classAnnot,
+                                         baseFormula = "classes ~",
+                                         autoCompleteFormula=TRUE,
+                                         useThisGenes=NULL,
+                                         nullModel = "classes ~ 1",
+                                         pathName=NULL) {
 
   if (is(graph, "character"))
-    stop("Module test can not handle gene list.")
-
+    stop("graph argument should be a graphNEL object, not a gene list.")
+  
+  baseFormula_input <- strsplit(baseFormula, " ")[[1]]
+  if (!(baseFormula_input[1] %in% colnames(classAnnot))){
+    stop("Invalid formula. Class column not found in classAnnot")
+  } else if (length(baseFormula_input) == 1 | baseFormula_input[2] != "~") {
+    stop("Invalid formula. Formula should be written as: 'classes ~'")
+  }
+  
+  nullModel_input <- strsplit(nullModel, " ")[[1]]
+  if (!(nullModel_input[1] %in% colnames(classAnnot))){
+    stop("Invalid null formula. Class column not found in classAnnot")
+  } else if (length(nullModel_input) == 1) {
+    stop("Null formula should be written as 'classes ~ 1")
+  } else if (nullModel_input[2] != "~" | nullModel_input[3] != "1") {
+    stop("Invalid null formula. Formula should be written as: 'classes ~'")
+  }
+  
+  if (nrow(classAnnot) != nrow(omicsObj@colData))
+    stop("Mismatch in the number of samples")
   if (is.null(pathName) & is(graph, "Pathway"))
     pathName <- graph@title
 
   graph <- convertPathway(graph, useThisGenes)
-
   genes <- graph::nodes(graph)
-  if (length(genes)== 0)
-    stop("There is no intersection between expression feature names and 
-         the node names on the graph.")
-
-  # create the modules
+  if (length(genes) == 0)
+    stop("There is no intersection between expression feature names and ",
+         "the node names in the graph.")
+  
   cliques <- extractCliquesFromDag(graph)
 
   results <- lapply(cliques, MOMglmTest, omicsObj=omicsObj,
@@ -154,11 +192,8 @@ multiOmicsTwoClassesModuleTest <- function(omicsObj, graph, classAnnot,
                     baseFormula=baseFormula,
                     autoCompleteFormula=autoCompleteFormula,
                     nullModel=nullModel)
-  
-  #if (nrow(classAnnot) != nrow(multiOmics@colData))
-   # warning("Mismatch in the number of samples")
 
-  alphas   <- as.numeric(sapply(results, extractPvalues))
+  alphas   <- as.numeric(vapply(results, extractPvalues, numeric(1)))
   zlists    <- lapply(results, function(x) x$zlist)
   momics   <- lapply(results, function(x) x$moView)
   analysis <- "twoClass"
@@ -174,4 +209,3 @@ multiOmicsTwoClassesModuleTest <- function(omicsObj, graph, classAnnot,
       title=pathName
       )
 }
-# NO graphNEL slot

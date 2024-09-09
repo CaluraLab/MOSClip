@@ -2,23 +2,27 @@
 % Please edit documentation in R/extractSummary.R
 \name{extractSummaryFromCluster}
 \alias{extractSummaryFromCluster}
-\title{Extract Summary CLuster from MultiOmics Objects}
+\title{Extract Summary Cluster from MultiOmics Objects}
 \usage{
 extractSummaryFromCluster(omic, multiOmicObj, n = 3)
 }
 \arguments{
 \item{omic}{a summarized omic}
 
+\item{multiOmicObj}{\code{Omics} object}
+
 \item{n}{maximum number of features to retrieve}
 }
 \value{
 summary for omic summarized using clusters
 \item{sigModule}{the original data for significant features}
-\item{discrete}{the discrete version of the significant covariates converted (when needed) into the discrete version}
+\item{discrete}{the discrete version of the significant covariates converted
+(when needed) into the discrete version}
 \item{subset}{data.frame(row.names=names(topGenes), metClust=topGenes)}
 \item{pvalues}{Kruskal Wallis pvalues of the selected features}
 \item{covsConsidered}{the name of the considered omic}
 }
 \description{
-Given an omic summarized by "summarizeToBinaryEvents" extract the most important features.
+Given an omic summarized by "summarizeInCluster" extract the most
+important features.
 }

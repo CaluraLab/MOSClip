@@ -1,43 +1,39 @@
 #' Download Reactome Pathway Relations
+#' 
+#' Download Pathway Relations from Reactome. The file is retrieved from the 
+#' [url](https://reactome.org/download/current/ReactomePathwaysRelation.txt)
 #'
-#' @param url the location of the file. Can be local. If NULL pick the package reactome file.
+#' @param url the location of the file. Can be local. If NULL pick the package 
+#' reactome file.
 #' @param speciesAbbr species acronim
 #'
-#' @return a data frame
+#' @return A data frame with 2 columns: 
+#'  \item{parent}{The Reactome pathway ID of the parent pathway.}
+#'  \item{child}{The Reactome pathway ID of the child pathway.}
+#' 
+#' 
 #' @importFrom utils read.table data
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' url = "https://reactome.org/download/current/ReactomePathwaysRelation.txt"
 #' downloadPathwayRelationFromReactome(url, speciesAbbr = "HSA")
 #' }
 #' @export
 downloadPathwayRelationFromReactome <- function(url=NULL, speciesAbbr = "HSA") {
   if (is.null(url)) {
-    url = system.file("ReactomePathwaysRelation.txt", package = "biocmosclip",
-                      mustWork = TRUE)
-    # ReactomePathwaysRelation <- NULL
-    # data(ReactomePathwaysRelation)
-    # df <- ReactomePathwaysRelation
+    url <- system.file("extdata", "ReactomePathwaysRelation.txt", 
+                       package = "biocmosclip", mustWork = TRUE)
   }
-  df <- read.table(url, sep="\t", header=F, quote="\"", stringsAsFactors = F, check.names = F)
+  df <- read.table(url, sep="\t", header=FALSE, quote="\"", 
+                   stringsAsFactors=FALSE, check.names = FALSE)
   colnames(df) <- c("parent", "child")
-  df <- df[grepl(speciesAbbr, df$parent) & grepl(speciesAbbr, df$child), , drop=F]
+  df <- df[grepl(speciesAbbr, df$parent) & grepl(speciesAbbr, df$child), ,
+           drop=FALSE]
   row.names(df) <- NULL
   df
 }
 
-#' This is a copy of the file
-#' "https://reactome.org/download/current/ReactomePathwaysRelation.txt"
-#' downloaded Dec 2018.
-#'
-#' A brand new file can be downloaded using:
-#'  downloadPathwayRelationFromReactome
-#'
-#' @name ReactomePathwaysRelation
-#' @docType data
-#' @keywords data
-NULL
 
 #' Retrieves pathways relatives
 #'
@@ -56,11 +52,11 @@ NULL
 #' @importFrom igraph V V<- as_ids make_ego_graph ego distances
 #' @export
 #'
-getPathFathers <- function(pathway, hierarchyGraph, ord=3, plot=F) {
+getPathFathers <- function(pathway, hierarchyGraph, ord=3, plot=FALSE) {
   checkmate::assertClass(hierarchyGraph, "igraph")
 
   if (!(pathway %in% names(V(hierarchyGraph)))){
-    warning(paste0("Id ", pathway, " is not in the hierarchy."))
+    warning("Id ", pathway, " is not in the hierarchy.")
     return(pathway)
   }
 
@@ -90,8 +86,6 @@ getPathFathers <- function(pathway, hierarchyGraph, ord=3, plot=F) {
 #' @param namedVect a named vector
 #'
 #' @return a character vector with the names
-#'
-#' @export
 #'
 id2name <- function(idList, namedVect) {
   stopifnot(!is.null(names(namedVect)))

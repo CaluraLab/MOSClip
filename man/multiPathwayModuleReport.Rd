@@ -2,19 +2,22 @@
 % Please edit documentation in R/CreateTabulaReport.R
 \name{multiPathwayModuleReport}
 \alias{multiPathwayModuleReport}
-\title{Provide a data.frame of pathways module test results from list of Multi Omics Module (MOM) objects}
+\title{Provides a Table of the Modules Test Results}
 \usage{
 multiPathwayModuleReport(multiPathwayModuleList, priority_to = NULL)
 }
 \arguments{
-\item{multiPathwayModuleList}{a list of Multi Omics Modules resulting from a multi-omics module test.}
+\item{multiPathwayModuleList}{a list of \code{MultiOmicsModules} objects
+resulting from a multi-omics module test.}
 
-\item{priority_to}{a vector with the covariates (omic name) that should go first}
+\item{priority_to}{a vector with the covariates (the omics names)
+that should appear first in the dataframe columns}
 }
 \value{
-a data.frame, modules in rows, overall and covariate pvalues of the test in columns.
-#'
+a data.frame class object. Rows correspond to the modules, and the
+columns to the overall and covariates pvalues of the test.
 }
 \description{
-Given the list of MOMs, it creates the table.
+Summarizes the results of a multi omics module test given a list of
+MultiOmicsModules objects
 }

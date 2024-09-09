@@ -4,7 +4,7 @@
 \alias{getPathFathers}
 \title{Retrieves pathways relatives}
 \usage{
-getPathFathers(pathway, hierarchyGraph, ord = 3, plot = F)
+getPathFathers(pathway, hierarchyGraph, ord = 3, plot = FALSE)
 }
 \arguments{
 \item{pathway}{a pathway id}

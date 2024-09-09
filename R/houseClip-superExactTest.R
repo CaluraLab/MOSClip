@@ -13,7 +13,7 @@
 #' @export
 #'
 summarizeOmicsResByMinPvalue <- function(col, mat) {
-  apply(as.matrix(mat[, col, drop=F]), 1, minOrNA)
+  apply(as.matrix(mat[, col, drop = FALSE]), 1, minOrNA)
 }
 
 
@@ -34,44 +34,51 @@ summarizeOmicsResByMinPvalue <- function(col, mat) {
 minOrNA <- function(x) {
   if (all(is.na(x)))
     return(NA)
-  min(x, na.rm=T)
+  min(x, na.rm = TRUE)
 }
 
 
-#' Compute frequences from list
+#' Compute Frequencies in a Named List
 #'
-#' For internal use only. Compute frequences
+#' Compute frequencies in a named list. This function is necessary for
+#' \code{\link{plotFrequencies}}, in which it will calculate the frequency of
+#' each pathway father for every omics intersection.
 #'
-#' @param elementsIntersections a names list
+#' @param elementsIntersections a named list
 #'
-#' @return a 'data.frame' with the frequences
+#' @return a data.frame of the frequencies
 #'
 #' @export
-#'
+
 computeFreqs <- function(elementsIntersections) {
   freques <- lapply(names(elementsIntersections), function(x) {
     counts <- table(elementsIntersections[[x]])
-    data.frame(category=names(counts), frequencies=as.numeric(counts), class=x, stringsAsFactors = F)
+    data.frame(category=names(counts), frequencies=as.numeric(counts),
+               class=x, stringsAsFactors = FALSE)
   })
   do.call(rbind, freques)
 }
 
 
-#' Plot frequences
+#' Plot Frequencies of Pathway Fathers for Omics intersection
 #'
-#' For internal use only. Plot supertest frequences
+#' Plots the frequencies of the pathway fathers by every omics intersection
+#' from a data.frame of the frequencies returned with the function
+#' \code{\link{computeFreqs}}. 
 #'
 #' @param frequencies a data.frame created from 'computeFreqs'
-#' @param manualColors optional vector of colors
-#' @param minSize the minimal fontsize. Maximal frequencies will be added for each class
-#' @param maxSize the maximal fontsize dimension, all values above are clipped
+#' @param manualColors optional vector of colors to be used
+#' @param minSize the minimal font size. Maximal frequencies will be added for
+#' each class
+#' @param maxSize the maximal font size dimension, all values above are clipped
 #' @param width the number of character to wrap the labels
-#' @param relMagnificationOfLegend the relative magnification of the text of the legend
+#' @param relMagnificationOfLegend the relative magnification of the text of the
+#'  legend
 #' @param lineSize the thickness of the lines
 #'
-#' @return NULL
+#' @return a circular plot of the frequencies of pathway fathers
 #' @examples
-#' df <- data.frame(category=c("talk", "too","mutch", "dear"),
+#' df <- data.frame(category=c("PathwayA", "PathwayB", "PathwayC", "PathwayD"),
 #'   frequencies=c(1,2,1,3),
 #'   class=rep("Mut",4), stringsAsFactors = FALSE)
 #' plotFrequencies(df)
@@ -81,13 +88,16 @@ computeFreqs <- function(elementsIntersections) {
 #'   ggplot_gtable ggplot_build rel element_line
 #' @importFrom grid grid.draw grid.newpage
 #' @importFrom stats reorder
+#' 
 #' @export
-#'
+
 plotFrequencies <- function(frequencies, manualColors=NULL, minSize=4,
-                            maxSize=20, width=20, relMagnificationOfLegend=0.5, lineSize=1){
+                            maxSize=20, width=20, relMagnificationOfLegend=0.5,
+                            lineSize=1){
   category <- NULL
   if (!all(colnames(frequencies) %in% c("category", "frequencies", "class")))
-    stop("Frequences dataframe must contain columns category, frequencies and class")
+    stop("Frequences dataframe must contain columns category, frequencies and 
+         class")
   if (!is.null(manualColors)) {
     g <- ggplot2::ggplot(frequencies, aes(y = frequencies,
                                           x = factor(category),
@@ -98,22 +108,31 @@ plotFrequencies <- function(frequencies, manualColors=NULL, minSize=4,
                                           x = factor(category),
                                           group = class, colour = class))
   }
-  size <- tapply(seq_along(frequencies$frequencies), factor(frequencies$category), function(idx) max(frequencies$frequencies[idx]))
+  size <- tapply(seq_along(frequencies$frequencies),
+                 factor(frequencies$category), function(idx) 
+                   max(frequencies$frequencies[idx]))
   size <- as.numeric(size)+minSize
   size[size > maxSize] <- maxSize
-  g <- g + ggplot2::coord_polar() +
-    ggplot2::geom_point(stat='identity') +
-    ggplot2::geom_polygon(fill=NA)+
-    ggplot2::geom_path(size=lineSize) +
-    ggplot2::labs(x = NULL) +
-    ggplot2::theme_bw() +
-    ggplot2::theme(panel.border = element_blank(), axis.line.x = element_blank(), axis.line.y = element_blank()) +
-    ggplot2::theme(panel.grid=ggplot2::element_line(size = lineSize*0.5),
-                   axis.text.x=element_text(size=size, colour="black"),
-                   axis.text=element_text(colour="black")) +
-    ggplot2::scale_x_discrete(labels=function(x) lapply(strwrap(x, width = width, simplify = FALSE), paste, collapse="\n"))
-  g <- g + theme(legend.position = c(1,1), legend.justification=c(0, 1),
-                 legend.text=element_text(size=ggplot2::rel(relMagnificationOfLegend)))
+  g <- suppressWarnings(
+    g + ggplot2::coord_polar() +
+      ggplot2::geom_point(stat='identity') +
+      ggplot2::geom_polygon(fill=NA) +
+      ggplot2::geom_path(linewidth=lineSize) +
+      ggplot2::labs(x = NULL) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(panel.border = element_blank(),
+                     axis.line.x = element_blank(),
+                     axis.line.y = element_blank()) +
+      ggplot2::theme(
+        panel.grid = ggplot2::element_line(linewidth = lineSize*0.5),
+        axis.text.x = element_text(size=size, colour="black"),
+        axis.text=element_text(colour="black")) +
+      ggplot2::scale_x_discrete(
+        labels=function(x) lapply(strwrap(x, width = width, simplify = FALSE),
+                                  paste, collapse="\n")))
+  g <- g + theme(legend.position.inside = c(1,1), legend.justification=c(0, 1),
+                 legend.text=element_text(
+                   size=ggplot2::rel(relMagnificationOfLegend)))
   grid::grid.newpage()
   gt <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(g))
   gt$layout$clip <- "off"

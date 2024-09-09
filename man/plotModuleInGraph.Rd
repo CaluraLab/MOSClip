@@ -2,36 +2,48 @@
 % Please edit documentation in R/PlottingMO.R
 \name{plotModuleInGraph}
 \alias{plotModuleInGraph}
-\title{Plot graph of the module by omics}
+\title{Plot a Directed Graph of the MultiOmicsModules Object}
 \usage{
 plotModuleInGraph(
-  pathway,
+  modulesobj,
+  reactObj,
   moduleNumber,
   orgDbi = "org.Hs.eg.db",
   paletteNames = NULL,
   legendLabels = NULL,
   fileName = NULL,
   discr_prop_pca = 0.15,
-  discr_prop_events = 0.05
+  discr_prop_events = 0.05,
+  ...
 )
 }
 \arguments{
-\item{pathway}{MultiOmicsModule pathway object}
+\item{modulesobj}{a \code{MultiOmicsModule} class object}
+
+\item{reactObj}{a \code{PathwayList} from \code{graphite} package that contains the
+reactome patways to be used}
 
 \item{moduleNumber}{a module number}
 
-\item{orgDbi}{if needed, a organism Dbi to translate vectors}
+\item{orgDbi}{if needed, indicates an organism Dbi to translate the vectors}
 
-\item{paletteNames}{named vector of MOpalettes, names replace makeLegend arguments}
+\item{paletteNames}{named vector of MOSpalettes, names replace makeLegend
+arguments}
 
 \item{legendLabels}{set up your favourite names for the omics}
 
 \item{fileName}{optional filenames to save the plot}
 
-\item{discr_prop_pca}{the minimal proportion to compute the pca classes}
+\item{discr_prop_pca}{the minimal proportion to compute the PCA classes}
 
 \item{discr_prop_events}{the minimal proportion to compute the event classes}
+
+\item{...}{additional arguments passed to \code{guessInvolvement} function}
+}
+\value{
+a MOSClip plot in form of a list class object
 }
 \description{
-Given the pathway, it creates the Kaplan-meier curves following the formula.
+From a \code{MultiOmicsModules} object, it plots the position of a given module
+in the pathway. The omics are also represented in the graph.
 }

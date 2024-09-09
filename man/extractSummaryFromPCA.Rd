@@ -17,21 +17,28 @@ extractSummaryFromPCA(
 \arguments{
 \item{omic}{a summarized omic}
 
+\item{multiOmicObj}{\code{Omics} object}
+
 \item{moduleCox}{the coxObj of the interesting module}
 
-\item{loadThr}{the thr value to select the most influent features according to the loading}
+\item{analysis}{two-class or survival type}
+
+\item{loadThr}{the thr value to select the most influent features according
+to the loading}
 
 \item{atleast}{the minimum number of gene to retrieve}
 
 \item{minprop}{the minimal proportion of cutp}
 }
 \value{
-summary for omic summarized using clusters
+summary for omic summarized using pca
 \item{sigModule}{the original data for significant features}
-\item{discrete}{the discrete version of the significant covariates converted (when needed) into the discrete version}
-\item{subset}{data.frame(row.names=names(topGenes), metClust=topGenes)}
+\item{discrete}{the discrete version of the significant covariates converted
+(when needed) into the discrete version}
+\item{subset}{data.frame(row.names=names(topGenes), covariate)}
 \item{covsConsidered}{the name of the considered omic}
 }
 \description{
-Given an omic summarized by "summarizeToBinaryEvents" extract the most important features.
+Given an omic summarized by "summarizeWithPca" extract the most important
+features.
 }

@@ -1,8 +1,9 @@
 #' Plot heatmaps of the pathway by omics
 #'
-#' Given the pathway, it creates the heatmaps of the mostly involved genes for each omic.
+#' Given the pathway, it creates the heatmaps of the mostly involved genes for
+#' each omic.
 #'
-#' @param pathway MultiOmicsPathway pathway object
+#' @param pathway `MultiOmicsPathway` class object
 #' @param sortBy a covariate to sort by
 #' @param paletteNames three palettes
 #' @param additionalAnnotations optional additional sample annotations
@@ -10,62 +11,66 @@
 #' @param discr_prop_pca the minimal proportion to compute the pca classes
 #' @param discr_prop_events the minimal proportion to compute the event classes
 #' @param withSampleNames create also the samples names
-#' @param nrowsHeatmaps magnification respect to annotation of sample (annotations take 1 row)
+#' @param nrowsHeatmaps magnification respect to annotation of sample
+#' (annotations take 1 row)
+#' @param orgDbi a Dbi organism to be used. Default is `org.Hs.eg.db`
+#' @param ... additional arguments passed to `guessInvolvementPathway` function
 #'
 #' @return NULL
-#' 
+#'
 #' @importFrom checkmate assertClass
 #' @importFrom grid gpar grid.newpage grid.draw rectGrob
 #' @importFrom ComplexHeatmap Heatmap HeatmapAnnotation '%v%' draw
 #' @importFrom stats relevel
 #' @importFrom ggplotify as.ggplot
+#' @importFrom org.Hs.eg.db org.Hs.eg.db 
 #' 
 #' @export
-plotPathwayHeat <- function(pathway, sortBy = NULL, paletteNames = NULL,
-                            additionalAnnotations = NULL, 
+plotPathwayHeat <- function(pathway, sortBy = NULL,
+                            paletteNames = NULL,
+                            additionalAnnotations = NULL,
                             additionalPaletteNames = NULL,
                             discr_prop_pca = 0.15, discr_prop_events = 0.05,
-                            withSampleNames = TRUE, nrowsHeatmaps = 3, 
-                            orgDbi = "org.Hs.eg.db") {
-  
+                            withSampleNames = TRUE, nrowsHeatmaps = 3,
+                            orgDbi = "org.Hs.eg.db", ...) {
+
   checkmate::assertClass(pathway, "MultiOmicsPathway")
-  
+
   involved <- guessInvolvementPathway(pathway, min_prop_pca = discr_prop_pca,
-                                      min_prop_events = discr_prop_events)
-  
+                                      min_prop_events = discr_prop_events, ...)
+
   if(length(paletteNames)!=length(involved)) {
     repTimes <- ceiling(length(involved)/length(paletteNames))
     paletteNames <- rep(paletteNames, repTimes)[seq_along(involved)]
   }
-  
-  # Create annotation and sort
+
   annotationFull <- formatAnnotations(involved, sortBy = NULL)
   idx <- which(unlist(lapply(annotationFull, class))=="numeric")
   if (length(idx)>0) {
-    for (i in idx) {
-      annotationFull[,i] <- stats::relevel(
-        as.factor(annotationFull[,i]), ref = "1")}
+    annotationFull[, idx] <- lapply(annotationFull[, idx], function(col) {
+      stats::relevel(as.factor(col), ref = "1")
+    })
   }
-  
+
   omics <- guessOmics(colnames(annotationFull))
   if(is.null(paletteNames)){
-    paletteNames <- names(paletteNames)[1:length(unique(omics))]
+    paletteNames <- names(paletteNames)[seq_along(unique(omics))]
     paletteNames <- guessOmicsColors(omics)
   }
-  
+
   if(length(paletteNames) != length(unique(omics))){
     stop(paste0("Length of MOcolors differs from the number of omics: ",
                 paste(unique(omics), collapse = " ,")))
   }
-  
+
   if (is.null(names(paletteNames))) {names(paletteNames) <- unique(omics)}
-  
+
   annotationPalettes <- paletteNames
-  
+
   ann_col <- lapply(colnames(annotationFull), function(name) {
     omic <- guessOmic(name)
     if (!omic %in% names(annotationPalettes)){
-      stop(paste0(omic, " omic not found in annotationPalettes"))
+      stop("Missing omic in annotationPalettes")
     }
     discreteColor <- annotationPalettes[[omic]]
     values <- sort(unique(annotationFull[, name]))
@@ -82,22 +87,22 @@ plotPathwayHeat <- function(pathway, sortBy = NULL, paletteNames = NULL,
         MOSpaletteSchema[discreteColor, c("dark", "smart", "light")])
       names(annot) <- values
     } else {
-      stop("I'm puzzled too much values to map")
+      stop("I'm puzzled! Too many values to map")
     }
     annot
   })
   names(ann_col) <- colnames(annotationFull)
-  
+
   if (!is.null(additionalAnnotations)) {
-    additionalAnnotations <- matchAnnotations(
-      annotationFull, additionalAnnotations)
+    additionalAnnotations <- matchAnnotations(annotationFull,
+                                              additionalAnnotations)
     annotationFull <- cbind(annotationFull, additionalAnnotations)
-    
+
     if (!is.null(additionalPaletteNames)) {
       add_ann_col <- lapply(colnames(additionalAnnotations), function(name) {
         values <- sort(unique(additionalAnnotations[[name]]))
         discreteColor <- additionalPaletteNames[[name]]
-        
+
         if (length(values)==2) {
           annot <- as.character(
             MOSpaletteSchema[discreteColor, c("smart", "light")])
@@ -107,30 +112,33 @@ plotPathwayHeat <- function(pathway, sortBy = NULL, paletteNames = NULL,
             MOSpaletteSchema[discreteColor, c("dark", "smart", "light")])
           names(annot) <- values
         } else {
-          annot <- getContinousPalette(discreteColor, length(values))
-          # names(annot) <- levels(values)
+          annot <- colorRamp2(c(min(values), max(values)),
+                              getContinousPalette(discreteColor, 2))
+          names(annot) <- levels(values)
+          
         }
         annot
       })
       names(add_ann_col) <- colnames(additionalAnnotations)
-      ann_col=c(ann_col, add_ann_col)
+      ann_col <- c(ann_col, add_ann_col)
     }
   }
-  
+
   annotationFull <- sortAnnotations(annotationFull, sortBy)
   annotationFull <- annotationFull[, rev(colnames(annotationFull))]
-  
+
   ha <- HeatmapAnnotation(df = annotationFull, col = ann_col)
-  ht_list = ha
+  ht_list <- ha
   for(n in seq_along(involved)){
     heatMatrix <- involved[[n]]$sigModule
-    heatMatrix <- heatMatrix[, row.names(annotationFull), drop=F]
+    heatMatrix <- heatMatrix[, row.names(annotationFull), drop = FALSE]
     row.names(heatMatrix) <- conversionToSymbols(row.names(heatMatrix), orgDbi)
     Ht <- Heatmap(
-      heatMatrix, cluster_columns = F, cluster_rows = F, show_column_names = F,
-      heatmap_legend_param = list(title = NULL), col = c("#FFFFFF", 
+      heatMatrix, cluster_columns = FALSE, cluster_rows = FALSE,
+      show_column_names = FALSE, heatmap_legend_param = list(title = NULL),
+      col = c("#FFFFFF",
               rev(as.vector(ann_col[involved[[n]]$covsConsidered][[1]]))))
-    ht_list = ht_list %v% Ht}
+    ht_list <- ht_list %v% Ht}
   suppressMessages(ComplexHeatmap::draw(ht_list, legend_grouping = "original"))
   gb <- grid::grid.grabExpr(ComplexHeatmap::draw(
     ht_list, legend_grouping = "original"))
@@ -142,7 +150,7 @@ plotPathwayHeat <- function(pathway, sortBy = NULL, paletteNames = NULL,
 #'
 #' Given the pathway, it creates the Kaplan-meier curves following the formula.
 #'
-#' @param pathway MultiOmicsModule pathway object
+#' @param pathway `MultiOmicsModule` class object
 #' @param formula a formula to compute the plot
 #' @param fileName optional filenames to save the plot
 #' @param paletteNames three palettes
@@ -154,8 +162,12 @@ plotPathwayHeat <- function(pathway, sortBy = NULL, paletteNames = NULL,
 #' @param inYears set time in years
 #' @param discr_prop_pca the minimal proportion to compute the pca classes
 #' @param discr_prop_events the minimal proportion to compute the event classes
-#' @param additional_discrete names of the additional discrete variables to include
-#' @param additional_continous names of the additional continous variables to include
+#' @param additional_discrete names of the additional discrete variables to
+#' include
+#' @param additional_continuous names of the additional continous variables to
+#' include
+#' @param ... additional arguments passed to `guessInvolvementPathway` and 
+#' `get` function
 #'
 #' @return NULL
 #'
@@ -164,45 +176,48 @@ plotPathwayHeat <- function(pathway, sortBy = NULL, paletteNames = NULL,
 #' @importFrom gridExtra arrangeGrob
 #' @importFrom survminer ggsurvplot surv_fit
 #' @importFrom ggplot2 ggsave
-#' 
+#'
 #' @export
-plotPathwayKM <- function(pathway, formula = "Surv(days, status) ~ PC1",
-                          fileName=NULL, paletteNames = NULL, h = 9, w=7, 
+plotPathwayKM <- function(pathway,
+                          formula = "Surv(days, status) ~ PC1",
+                          fileName=NULL, paletteNames = NULL, h = 9, w=7,
                           risk.table=TRUE, pval=TRUE, size=1, inYears=FALSE,
                           discr_prop_pca=0.15, discr_prop_events=0.05,
-                          additional_discrete=NULL, additional_continous=NULL) {
-  
+                          additional_discrete=NULL,
+                          additional_continuous=NULL, ...) {
+
   checkmate::assertClass(pathway, "MultiOmicsPathway")
-  
+
   involved <- guessInvolvementPathway(pathway,min_prop_pca=discr_prop_pca,
-                                      min_prop_events=discr_prop_events)
+                                      min_prop_events=discr_prop_events, ...)
   annotationFull <- formatAnnotations(involved, sortBy=NULL)
-  multiOmicObj <- get(pathway@multiOmicObj)
+  multiOmicObj <- get(pathway@multiOmicObj, ...)
+
   coxObj <- createCoxObj(multiOmicObj@colData, pathway@pathView)
-  daysAndStatus <- coxObj[, c("status", "days"), drop=F]
+  daysAndStatus <- coxObj[, c("status", "days"), drop = FALSE]
   
   if (inYears)
     daysAndStatus$days <- daysAndStatus$days/365.24
   
   coxObj <- data.frame(daysAndStatus, 
-                       annotationFull[row.names(daysAndStatus), , drop=F])
+                       annotationFull[row.names(daysAndStatus), , drop=FALSE])
   
   fit <- survminer::surv_fit(formula(formula), data = coxObj)
   
-  palette=NULL
+  palette <- NULL
   if (!is.null(paletteNames)) {
-    if (length(paletteNames)==1) {
-      palette=paletteNames
+    if (length(paletteNames) == 1) {
+      palett <- paletteNames
     } else {
       classes <- names(fit$strata)
-      if (length(classes)==length(paletteNames))
-        palette = paletteNames
+      if (length(classes) == length(paletteNames))
+        palette <- paletteNames
     }
   }
-  
-  p <- survminer::ggsurvplot(fit, data = coxObj, risk.table = risk.table, 
+
+  p <- survminer::ggsurvplot(fit, data = coxObj, risk.table = risk.table,
                              pval=pval, palette=palette, size=size)
-  
+
   if(!is.null(fileName)) {
     ggplot2::ggsave(filename = fileName, p, height = h, width = w)
   } else {
@@ -211,23 +226,28 @@ plotPathwayKM <- function(pathway, formula = "Surv(days, status) ~ PC1",
   # invisible(list(plot = p, fit = fit, coxObj = coxObj))
 }
 
-#' Plot heatmaps of the module by omics
+#' Plot a Heatmap of a Module by Omics
 #'
-#' Given the pathway and the module, it creates the heatmaps of the mostly involved genes for each omic.
+#' It creates a heatmap of the most involved genes of each omic of a specific 
+#' module from a `MultiOmicsModule` object.
 #'
-#' @param pathway MultiOmicsModule pathway object
-#' @param moduleNumber a module number
-#' @param sortBy a covariate to sort by
-#' @param paletteNames three palettes
+#' @param moduleobj `MultiOmicsModule` class object
+#' @param moduleNumber module number of interest
+#' @param sortBy a covariate (omic) to sort by
+#' @param paletteNames a palette containing three colors
 #' @param additionalAnnotations optional additional sample annotations
 #' @param additionalPaletteNames optional additional colors for annotations
-#' @param withSampleNames create also the samples names
-#' @param fontsize_row size of the fonts for rows
-#' @param fontsize_col like fontsize_row but for columns
-#' @param nrowsHeatmaps magnification respect to annotation of sample (annotations take 1 row)
+#' @param withSampleNames show sample names 
+#' @param fontsize_row font size for row labels
+#' @param fontsize_col font size for column labels
+#' @param nrowsHeatmaps magnification respect to annotation of sample
+#' (annotations take 1 row)
+#' @param orgDbi a Dbi organism to be used. Default is `org.Hs.eg.db`
+#' @param discr_prop_pca the minimal proportion to compute the PCA classes
 #' @param discr_prop_events the minimal proportion to compute the event classes
+#' @param ... additional arguments passed to `guessInvolvement` function
 #'
-#' @return NULL
+#' @return A heatmap of a pathway module (results of the module test)
 #' @importFrom checkmate assertClass
 #' @importFrom ComplexHeatmap Heatmap HeatmapAnnotation '%v%'
 #' @importFrom gridExtra arrangeGrob
@@ -235,58 +255,58 @@ plotPathwayKM <- function(pathway, formula = "Surv(days, status) ~ PC1",
 #' @importFrom graphics plot
 #' @importFrom stats relevel
 #' @importFrom ggplotify as.ggplot
-#' 
+#'
 #' @export
-plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
-                           fileName = NULL, paletteNames = NULL,
-                           additionalAnnotations = NULL,
+plotModuleHeat <- function(moduleobj, moduleNumber, sortBy = NULL,
+                           paletteNames = NULL, additionalAnnotations = NULL,
                            additionalPaletteNames = NULL,
                            withSampleNames = TRUE, fontsize_row = 10,
                            fontsize_col = 1, nrowsHeatmaps = 3,
                            orgDbi = "org.Hs.eg.db", discr_prop_pca = 0.15,
-                           discr_prop_events = 0.05) {
+                           discr_prop_events = 0.05, ...) {
   
-  checkmate::assertClass(pathway, "MultiOmicsModules")
+  checkmate::assertClass(moduleobj, "MultiOmicsModules")
   
-  moduleGenes <- pathway@modules[[moduleNumber]]
+  moduleGenes <- moduleobj@modules[[moduleNumber]]
   
-  involved <- guessInvolvement(pathway, moduleNumber = moduleNumber,
+  involved <- guessInvolvement(moduleobj,
+                               moduleNumber = moduleNumber,
                                min_prop_pca = discr_prop_pca,
-                               min_prop_events = discr_prop_events)
-  
+                               min_prop_events = discr_prop_events, ...)
+
   if(length(paletteNames)!=length(involved)) {
     repTimes <- ceiling(length(involved)/length(paletteNames))
     paletteNames <- rep(paletteNames, repTimes)[seq_along(involved)]
   }
-  
+
   # Create annotation and sort
   annotationFull <- formatAnnotations(involved, sortBy = NULL)
   idx <- which(unlist(lapply(annotationFull, class))=="numeric")
   if (length(idx)>0) {
-    for (i in idx) {
-      annotationFull[,i] <- stats::relevel(
-        as.factor(annotationFull[,i]), ref="1")}
+    annotationFull[, idx] <- lapply(annotationFull[, idx], function(col) {
+      stats::relevel(as.factor(col), ref = "1")
+    })
   }
-  
+
   omics <- guessOmics(colnames(annotationFull))
   if(is.null(paletteNames)){
-    paletteNames <- names(paletteNames)[1:length(unique(omics))]
+    paletteNames <- names(paletteNames)[seq_along(unique(omics))]
     paletteNames <- guessOmicsColors(omics)
   }
-  
+
   if(length(paletteNames) != length(unique(omics))){
     stop(paste0("Length of MOcolors differs from the number of omics: ",
                 paste(unique(omics), collapse = ", ")))
   }
-  
+
   if (is.null(names(paletteNames))) {names(paletteNames) <- unique(omics)}
-  
+
   annotationPalettes <- paletteNames
-  
+
   ann_col <- lapply(colnames(annotationFull), function(name) {
     omic <- guessOmic(name)
     if (!omic %in% names(annotationPalettes)) {
-      stop(paste0(omic, " omic not found in annotationPalettes"))
+      stop("Missing omic in annotationPalettes")
     }
     discreteColor <- annotationPalettes[[omic]]
     values <- sort(unique(annotationFull[, name]))
@@ -302,22 +322,22 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
         MOSpaletteSchema[discreteColor, c("dark", "smart", "light")])
       names(annot) <- values
     } else {
-      stop("I'm puzzled too many values to map")
+      stop("I'm puzzled! Too many values to map")
     }
     annot
   })
   names(ann_col) <- colnames(annotationFull)
-  
+
   if (!is.null(additionalAnnotations)) {
-    additionalAnnotations <- matchAnnotations(
-      annotationFull, additionalAnnotations)
+    additionalAnnotations <- matchAnnotations(annotationFull,
+                                              additionalAnnotations)
     annotationFull <- cbind(annotationFull, additionalAnnotations)
-    
+
     if (!is.null(additionalPaletteNames)) {
       add_ann_col <- lapply(colnames(additionalAnnotations), function(name) {
         values <- sort(unique(additionalAnnotations[[name]]))
         discreteColor <- additionalPaletteNames[[name]]
-        
+
         if (length(values)==2) {
           annot <- as.character(
             MOSpaletteSchema[discreteColor, c("smart", "light")])
@@ -327,160 +347,169 @@ plotModuleHeat <- function(pathway, moduleNumber, sortBy = NULL,
             MOSpaletteSchema[discreteColor, c("dark", "smart", "light")])
           names(annot) <- values
         } else {
-          # annot <- getContinousPalette(discreteColor, length(values))
-          annot <- colorRamp2(c(min(values), max(values)), 
+          annot <- colorRamp2(c(min(values), max(values)),
                               getContinousPalette(discreteColor, 2))
           names(annot) <- levels(values)
         }
         annot
       })
       names(add_ann_col) <- colnames(additionalAnnotations)
-      ann_col = c(ann_col, add_ann_col)
+      ann_col <- c(ann_col, add_ann_col)
     }
   }
-  
+
   annotationFull <- sortAnnotations(annotationFull, sortBy)
   annotationFull <- annotationFull[, rev(colnames(annotationFull))]
-  
+
   ha <- HeatmapAnnotation(df = annotationFull, col = ann_col)
-  ht_list = ha
+  ht_list <- ha
   for(n in seq_along(involved)){
     heatMatrix <- involved[[n]]$sigModule
-    heatMatrix <- heatMatrix[, row.names(annotationFull), drop=F]
+    heatMatrix <- heatMatrix[, row.names(annotationFull), drop = FALSE]
     row.names(heatMatrix) <- conversionToSymbols(row.names(heatMatrix), orgDbi)
-    Ht <- Heatmap(heatMatrix, cluster_columns = F, cluster_rows = F,
-                 show_column_names = F, 
+
+    Ht <- Heatmap(heatMatrix, cluster_columns = FALSE, cluster_rows = FALSE,
+                 show_column_names = FALSE, 
                  heatmap_legend_param = list(title = NULL),
-                 col = c("#FFFFFF", 
+                 col = c("#FFFFFF",
                          as.vector(ann_col[[involved[[n]]$covsConsidered[1]]]))
                  )
-    ht_list = ht_list %v% Ht}
+    ht_list <- ht_list %v% Ht}
   suppressMessages(ComplexHeatmap::draw(ht_list, legend_grouping = "original"))
-  gb = grid::grid.grabExpr(ComplexHeatmap::draw(
+  gb <- grid::grid.grabExpr(ComplexHeatmap::draw(
     ht_list, legend_grouping = "original"))
-  # invisible(ht_list)
   return(gb)
 }
 
 
-#' Plot KM of the module by omics
+#' Plot Kaplan-Meier survival curves of a specific module
 #'
-#' Given the pathway, it creates the Kaplan-meier curves following the formula.
+#' Given a `MultiOmicsModule` class object and a specific module number, it
+#' plots Kaplan-Meier curves, in which the strata corresponds to the omics
 #'
-#' @param pathway MultiOmicsModule pathway object
-#' @param moduleNumber a module number
-#' @param formula a formula to compute the plot
+#' @param MOM a `MultiOmicsModule` class object
+#' @param moduleNumber numeric value. The module number of interest
+#' @param formula a formula for the survival analysis. It should be written as
+#' "Surv(days, status) ~ omic". To plot more than one omic, write them
+#' separated by a "+" character after the separator (~) 
 #' @param fileName optional filenames to save the plot
-#' @param paletteNames three palettes
+#' @param paletteNames a palette name to be used
 #' @param h the height of the plot
 #' @param w the width of the plot
-#' @param risk.table logical to show risk.table
-#' @param pval logical to show pvalue
+#' @param risk.table logical value. If true, shows the risk.table
+#' @param pval logical value. If true, shows the pvalue
 #' @param size line width of the KM curves
 #' @param inYears set time in years
 #' @param discr_prop_pca the minimal proportion to compute the pca classes
 #' @param discr_prop_events the minimal proportion to compute the event classes
-#' @param additional_discrete names of the additional discrete variables to include
-#' @param additional_continous names of the additional continous variables to include
+#' @param additional_discrete names of the additional discrete variables to
+#' include
+#' @param additional_continuous names of the additional continous variables to
+#' include
+#' @param ... additional arguments passed to `guessInvolvement` and `get` 
+#' function
 #'
-#' @return NULL
+#' @return a ggsurvplot class object
 #' @importFrom checkmate assertClass
 #' @importFrom pheatmap pheatmap
 #' @importFrom gridExtra arrangeGrob
 #' @importFrom survminer ggsurvplot surv_fit
 #' @importFrom ggplot2 ggsave
-#' 
+#'
 #' @export
-plotModuleKM <- function(pathway, moduleNumber, 
+plotModuleKM <- function(MOM, moduleNumber,
                          formula = "Surv(days, status) ~ PC1",
                          fileName = NULL, paletteNames = NULL, h = 9, w = 7,
-                         risk.table = TRUE, pval = TRUE, size = 1, 
-                         inYears = FALSE, discr_prop_pca = 0.15, 
+                         risk.table = TRUE, pval = TRUE, size = 1,
+                         inYears = FALSE, discr_prop_pca = 0.15,
                          discr_prop_events = 0.05,
-                         additional_discrete = NULL, 
-                         additional_continous = NULL) {
+                         additional_discrete = NULL,
+                         additional_continuous = NULL, ...) {
   
-  checkmate::assertClass(pathway, "MultiOmicsModules")
+  checkmate::assertClass(MOM, "MultiOmicsModules")
   
-  involved <- guessInvolvement(pathway, moduleNumber = moduleNumber,
+  involved <- guessInvolvement(MOM, moduleNumber = moduleNumber,
                                min_prop_pca = discr_prop_pca,
-                               min_prop_events = discr_prop_events)
+                               min_prop_events = discr_prop_events, ...)
+
+  multiOmicObj <- get(MOM@multiOmicObj, ...)
+  coxObj <- createCoxObj(multiOmicObj@colData, MOM@modulesView[[moduleNumber]])
   
-  multiOmicObj <- get(pathway@multiOmicObj)
-  coxObj <- createCoxObj(
-    multiOmicObj@colData, pathway@modulesView[[moduleNumber]])
   annotationFull <- formatAnnotations(involved, sortBy=NULL)
-  
+
   days_status_names <- c("status", "days")
   
-  daysAndStatus <- coxObj[, days_status_names, drop=F]
+  daysAndStatus <- coxObj[, days_status_names, drop = FALSE]
   if (inYears)
     daysAndStatus$days <- daysAndStatus$days/365.24
   
-  additional_clinic = NULL
+  additional_clinic <- NULL
   if (!is.null(additional_discrete)){
     not_found <- setdiff(additional_discrete, colnames(coxObj))
     if (length(not_found) > 0)
-      stop(paste0("Some discrete variables were not found: ", 
+      stop(paste0("Some discrete variables were not found: ",
                   paste(not_found, collapse = ", ", "\n"),
-                  "We found the following variables: ", 
+                  "We found the following variables: ",
                   paste(colnames(coxObj), collapse = ", ")))
-    
+
     fixed_covs <- setdiff(additional_discrete, colnames(annotationFull))
-    additional_clinic <- coxObj[row.names(daysAndStatus), fixed_covs, drop=F]
+    additional_clinic <- coxObj[row.names(daysAndStatus), fixed_covs,
+                                drop = FALSE]
   }
-  
-  if (!is.null(additional_continous)){
-    not_found <- setdiff(additional_continous, colnames(coxObj))
+
+  if (!is.null(additional_continuous)){
+    not_found <- setdiff(additional_continuous, colnames(coxObj))
     if (length(not_found) > 0)
-      stop(paste0("Some continous variables were not found: ", 
+      stop(paste0("Some continuous variables were not found: ",
                   paste(not_found, collapse = ", ", "\n"),
-                  "We found the following variables: ", 
+                  "We found the following variables: ",
                   paste(colnames(coxObj), collapse = ", ")))
-    
-    fixed_covs <- setdiff(additional_continous, colnames(annotationFull))
+
+    fixed_covs <- setdiff(additional_continuous, colnames(annotationFull))
     df <- cbind(
-      daysAndStatus, coxObj[row.names(daysAndStatus), fixed_covs, drop=F])
+      daysAndStatus, coxObj[row.names(daysAndStatus), fixed_covs, drop=FALSE])
     discretized_covs <- createDiscreteClasses(df, fixed_covs)
-    
+
     if (!is.null(additional_clinic)){
       additional_clinic <- cbind(
-        additional_clinic, discretized_covs[, fixed_covs, drop=F])
+        additional_clinic, discretized_covs[, fixed_covs, drop = FALSE])
     } else {
-      additional_clinic <- discretized_covs[, fixed_covs, drop=F]
+      additional_clinic <- discretized_covs[, fixed_covs, drop = FALSE]
     }
   }
-  
+
   if (is.null(additional_clinic)){
     coxObj <- data.frame(daysAndStatus, 
-                         annotationFull[row.names(daysAndStatus), , drop=F])
+                         annotationFull[row.names(daysAndStatus), ,
+                                        drop = FALSE])
   } else {
     coxObj <- data.frame(daysAndStatus, 
-                         annotationFull[row.names(daysAndStatus), , drop=F], 
+                         annotationFull[row.names(daysAndStatus), ,
+                                        drop = FALSE],
                          additional_clinic)
   }
-  
+
   fit <- survminer::surv_fit(formula(formula), data = coxObj)
   
-  palette=NULL
+  palette <- NULL
   if (!is.null(paletteNames)) {
-    if (length(paletteNames)==1) {
-      palette=paletteNames
+    if (length(paletteNames) == 1) {
+      palette <- paletteNames
     } else {
       classes <- names(fit$strata)
-      if (length(classes)==length(paletteNames))
-        palette = paletteNames
+      if (length(classes) == length(paletteNames))
+        palette <- paletteNames
       if (!is.null(names(paletteNames))) {
-        diff = setdiff(names(paletteNames), classes)
-        if (length(diff)!=0)
-          stop("names of paletteNames must be equal to classes")
+        diff <- setdiff(names(paletteNames), classes)
+        if (length(diff) != 0)
+          stop("Names of paletteNames must be equal to classes")
       }
     }
   }
-  
-  p <- survminer::ggsurvplot(fit, data = coxObj, risk.table = risk.table, 
+
+  p <- survminer::ggsurvplot(fit, data = coxObj, risk.table = risk.table,
                              pval=pval, palette=unname(palette), size=size)
-  
+
   if(!is.null(fileName)) {
     ggplot2::ggsave(filename = fileName, p, height = h, width = w)
   } else {
@@ -488,105 +517,109 @@ plotModuleKM <- function(pathway, moduleNumber,
   }
 }
 
-#' Plot graph of the module by omics
+#' Plot a Directed Graph of the MultiOmicsModules Object
 #'
-#' Given the pathway, it creates the Kaplan-meier curves following the formula.
+#' From a `MultiOmicsModules` object, it plots the position of a given module
+#' in the pathway. The omics are also represented in the graph.
 #'
-#' @param pathway MultiOmicsModule pathway object
+#' @param modulesobj a `MultiOmicsModule` class object
+#' @param reactObj a `PathwayList` from `graphite` package that contains the
+#' reactome patways to be used
 #' @param moduleNumber a module number
-#' @param orgDbi if needed, a organism Dbi to translate vectors
+#' @param orgDbi if needed, indicates an organism Dbi to translate the vectors
 #' @param legendLabels set up your favourite names for the omics
-#' @param paletteNames named vector of MOpalettes, names replace makeLegend arguments
+#' @param paletteNames named vector of MOSpalettes, names replace makeLegend
+#' arguments
 #' @param fileName optional filenames to save the plot
-#' @param discr_prop_pca the minimal proportion to compute the pca classes
+#' @param discr_prop_pca the minimal proportion to compute the PCA classes
 #' @param discr_prop_events the minimal proportion to compute the event classes
+#' @param ... additional arguments passed to `guessInvolvement` function
 #'
-#' @return NULL
+#' @return a MOSClip plot in form of a list class object
+#' 
 #' @importFrom checkmate assertClass
 #' @importFrom igraph V V<- simplify graph_from_graphnel
 #' @importFrom AnnotationDbi select
 #' @importFrom graphics plot legend
 #' @importFrom grDevices dev.off pdf rainbow
-#' 
+#'
 #' @export
-plotModuleInGraph <- function(pathway, moduleNumber, orgDbi="org.Hs.eg.db",
-                              paletteNames=NULL, legendLabels=NULL,
-                              fileName=NULL, discr_prop_pca=0.15,
-                              discr_prop_events=0.05) {
+plotModuleInGraph <- function(modulesobj,  reactObj, moduleNumber,
+                              orgDbi = "org.Hs.eg.db",
+                              paletteNames = NULL, legendLabels = NULL,
+                              fileName = NULL, discr_prop_pca = 0.15,
+                              discr_prop_events = 0.05, ...) {
   
-  checkmate::assertClass(pathway, "MultiOmicsModules")
-  
-  # dentro pathway dovrebbe esserci l'oggetto graphNEL
+  checkmate::assertClass(modulesobj, "MultiOmicsModules")
+
   net <- igraph::graph_from_graphnel(
-    convertPathway(reactome[[pathway@title]], NULL))
-  moduleGenes <- pathway@modules[[moduleNumber]]
-  net <- igraph::simplify(net, remove.multiple = T, remove.loops = T)
+    convertPathway(reactObj[[modulesobj@title]], NULL))
+  moduleGenes <- modulesobj@modules[[moduleNumber]]
+  net <- igraph::simplify(net, remove.multiple = TRUE, remove.loops = TRUE)
   color <- rep("grey", length(V(net)))
   color[names(V(net)) %in% moduleGenes] <- "tomato"
-  involved <- guessInvolvement(pathway, moduleNumber = moduleNumber,
-                               min_prop_pca=discr_prop_events,
-                               min_prop_events=discr_prop_events)
-  mark.groups=lapply(involved, function(x) {
+
+  involved <- guessInvolvement(modulesobj,
+                               moduleNumber = moduleNumber,
+                               min_prop_pca = discr_prop_events,
+                               min_prop_events = discr_prop_events, ...)
+  mark.groups <- lapply(involved, function(x) {
     row.names(x$subset)
   })
   
-  group.names <- sapply(involved, function(x) {
+  group.names <- vapply(involved, function(x) {
     guessOmic(x$covsConsidered)
-  })
+  },
+  character(1))
   
   colLength <- length(mark.groups)
   if (colLength<3) {
-    mark.col=rainbow(3, alpha=0.33)[seq_len(colLength)]
+    mark.col <- rainbow(3, alpha=0.33)[seq_len(colLength)]
   } else {
-    mark.col=rainbow(colLength, alpha=0.33)
+    mark.col <- rainbow(colLength, alpha=0.33)
   }
-  mark.border=NA
+
+  mark.border <- NA
   
   if (!is.null(paletteNames)) {
-    # if (is.null(names(paletteNames)))
-    #   stop("paletteNames must be named vector")
+    if (is.null(names(paletteNames)))
+      stop("paletteNames must be named vector")
     
     if (!is.null(names(paletteNames))) {
       mismatch <- setdiff(group.names, names(paletteNames))
       if (length(mismatch)>0)
-        stop(paste0("Missing palet for omics:" , paste(mismatch,
-                                                       collapse = ", ")))
+        stop("Missing palette for one or more omics")
       paletteNames <- paletteNames[group.names]
     }
-    
-    # legendLabels <- names(paletteNames)
+
     err <- setdiff(paletteNames, row.names(MOSpaletteSchema))
     if (length(err)!=0)
-      stop(paste0(err, " paletteNames value is not allowed."))
-    
+      stop(err, " paletteNames value is not allowed.")
+
     mark.col <- MOSpaletteSchema[paletteNames, ]$transparent
   }
-  
+
   if (is.null(legendLabels)) {
-    # legendLabels <- c(paste("omic",seq_len(length(pathway@modulesView[[moduleNumber]]))))
     legendLabels <- group.names
   } else {
     if (length(legendLabels)!=length(group.names))
-      warning("Your legendLabels are more than those found")
+      warning("Some legendLabels were not found in data")
     legendLabels <- legendLabels[seq_along(group.names)]
   }
-  
+
   labels <- conversionToSymbols(names(V(net)), orgDbi)
-  
+
   if (!is.null(fileName)) {
     pdf(fileName)
   }
   plot(net, edge.arrow.size=.5, edge.curved=.2,
-       vertex.label=labels, vertex.label.cex=.6, vertex.label.family="sans", 
-       vertex.label.font=2, vertex.color=color, vertex.frame.color="gray", 
+       vertex.label=labels, vertex.label.cex=.6, vertex.label.family="sans",
+       vertex.label.font=2, vertex.color=color, vertex.frame.color="gray",
        vertex.label.color="black", vertex.size=15,
        mark.groups=mark.groups, mark.col=mark.col, mark.border=NA
   )
   legend(x=-1, y=-1, legendLabels, pch=21, horiz=TRUE,
          col="#777777", pt.bg=mark.col, pt.cex=2, cex=.8, bty="n", ncol=1)
-  if (!is.null(fileName)) {
-    dev.off()
-  }
 }
 
 #' Summarize and plot pathways' info from a list of MultiOmicsPathway (MOP)
@@ -597,81 +630,87 @@ plotModuleInGraph <- function(pathway, moduleNumber, orgDbi="org.Hs.eg.db",
 #' @param top use top number of pathways
 #' @param MOcolors character vector with the omic colors.
 #' The colors should be among the colors in \code{showMOSpalette()}
-#' @param priority_to a vector with the covariates (omic name) that should go first
+#' @param priority_to a vector with the covariates (omic name) that should go
+#' first
+#' @param fontsize the font size to be used
 #' @param \dots additional argument to be passed to pheatmap
-#' 
 #'
 #' @return NULL
 #'
 #' @importFrom pheatmap pheatmap
-#' 
+#'
 #' @export
 plotMultiPathwayReport <- function(multiPathwayList, top=25, MOcolors=NULL,
                                    priority_to=NULL, fontsize=6, ...){
-  
+
   if(!is.list(multiPathwayList)) {stop("multiPathwayList must be a list.")}
-  
+
   summary <- multiPathwayReport(multiPathwayList)
   top <- min(top, NROW(summary))
-  
+
   annCol <- guessOmics(colnames(summary))
   omics <- annCol[2:length(annCol)]
-  
+
   if (is.null(priority_to) & (!is.null(MOcolors))){
     if (!is.null(names(MOcolors)))
-      priority_to = names(MOcolors)
+      priority_to <- names(MOcolors)
   }
-  
+
   if(is.null(MOcolors)) {MOcolors <- guessOmicsColors(omics)}
-  
+
   if(length(MOcolors) != length(unique(omics))){
     stop(paste0("Length of MOcolors differs from the number of omics: ",
                 paste(unique(omics), collapse = ", ")))
   }
-  
+
   if (is.null(names(MOcolors))) {names(MOcolors) <- unique(omics)}
-  
+
   omics <- omics[order(match(omics, priority_to))]
   colors <- createColors(omics, MOcolors)
   names(colors) <- unique(omics)
   
-  msummary <- as.matrix(summary[seq_len(top),2:ncol(summary)])
+  msummary <- as.matrix(summary[seq_len(top), 2:(ncol(summary))])
+  
   msummary <- order_by_covariates(msummary, 0, priority_to)
-  
+
   cell_text <- function(j, i, x, y, width, height, fill) {
-    grid.text(sprintf("%.2f",
-                      msummary[i, j]), x, y, gp = gpar(fontsize = fontsize))}
-  
+    grid.text(sprintf("%.2f", msummary[i, j]), x, y,
+              gp = gpar(fontsize = fontsize))}
+
   ta <- HeatmapAnnotation(Omics = omics, col = list(Omics = colors))
-  
+
   ht1 <- Heatmap(matrix = summary$pvalue[seq_len(top)],
-                 col = pvalueShades[1:round((summary$pvalue[top]*100)+1)],
-                 cluster_rows = F, show_heatmap_legend = F, name = "Pvalue",
+                 col = 
+                   pvalueShades[seq_len(round((summary$pvalue[top]*100)+1))],
+                 cluster_rows = FALSE, show_heatmap_legend = FALSE,
+                 name = "Pvalue",
                  column_names_gp = gpar(fontsize = fontsize),
                  cell_fun = function(j, i, x, y, width, height, fill) {
-                   grid.text(sprintf("%.2f", summary$pvalue[i]), x, y, 
+                   grid.text(sprintf("%.2f", summary$pvalue[i]), x, y,
                              gp = gpar(fontsize = fontsize))
                  })
   dots <- list(...)
   defargs <- list(matrix = msummary, name = "p-Value", col = pvalueShades,
-                  cluster_rows = F, cluster_columns = F, cell_fun = cell_text,
-                  top_annotation = ta, row_names_gp = gpar(fontsize = fontsize),
+                  cluster_rows = FALSE, cluster_columns = FALSE,
+                  cell_fun = cell_text, top_annotation = ta,
+                  row_names_gp = gpar(fontsize = fontsize),
                   column_names_gp = gpar(fontsize = fontsize))
   args <- matchArguments(dots, defargs)
-  
+
   ht2 <- do.call(Heatmap, args)
-  suppressWarnings(ht1 + ht2)
+  ht1 + ht2
 }
 
-#' Summarize and plot pathways' info from a MultiOmicsModule (MOM) object
-#'
-#' Given a MOM, it plots the table.
+#' Plot a table of a MultiOmicsModule (MOM) object
+#' 
+#' Given a MOM object, it plots a summary of its results in a tabular fashion
 #'
 #' @inheritParams plotMultiPathwayReport
-#' @param pathwayObj MultiOmicsModule of pathway object
-#' 
+#' @param modulesObj MultiOmicsModules class object
+#' @param fontsize Size of the font to be used in the plot
 #'
-#' @return NULL
+#' @return a Heatmap list object from ComplexHeatmap package
+#' 
 #' @importFrom checkmate assertClass
 #' @importFrom pheatmap pheatmap
 #' @importFrom ComplexHeatmap Heatmap HeatmapAnnotation rowAnnotation
@@ -680,20 +719,21 @@ plotMultiPathwayReport <- function(multiPathwayList, top=25, MOcolors=NULL,
 #' @importFrom grDevices colorRampPalette
 #' @importFrom RColorBrewer brewer.pal
 #' @export
-plotModuleReport <- function(pathwayObj, MOcolors=NULL, priority_to=NULL, 
+
+plotModuleReport <- function(modulesObj, MOcolors=NULL, priority_to=NULL,
                              fontsize = 12, ...) {
   
-  checkmate::assertClass(pathwayObj, "MultiOmicsModules")
+  checkmate::assertClass(modulesObj, "MultiOmicsModules")
   
-  summary <- formatModuleReport(pathwayObj)
-  rownames(summary) <- paste0(rownames(summary), "° module")
+  summary <- formatModuleReport(modulesObj)
+  rownames(summary) <- paste0(rownames(summary), "o module")
   
   annCol <- guessOmics(colnames(summary))
   omics <- annCol[2:length(annCol)]
-  
+
   if (is.null(priority_to) & (!is.null(MOcolors))) {
     if (!is.null(names(MOcolors)))
-      priority_to = names(MOcolors)
+      priority_to <- names(MOcolors)
   }
   if (is.null(MOcolors)) {MOcolors <- guessOmicsColors(omics)}
   if (length(MOcolors) != length(unique(omics))) {
@@ -701,35 +741,37 @@ plotModuleReport <- function(pathwayObj, MOcolors=NULL, priority_to=NULL,
                  paste(unique(omics), collapse = ", ")))
   }
   if (is.null(names(MOcolors))){names(MOcolors) <- unique(omics)}
-  
+
   omics <- omics[order(match(omics,priority_to))]
   colors <- createColors(omics, MOcolors)
   names(colors) <- unique(omics)
   pvalcol <- colorRamp2(c(0,1), c("#edf7f5", "#2796bd"))
-  
+
   msummary <- as.matrix(summary[,2:ncol(summary)])
   msummary <- order_by_covariates(msummary, 0, priority_to)
-  
+
   cell_text <- function(j, i, x, y, width, height, fill) {
-    grid.text(sprintf("%.2f", msummary[i, j]), x, y, 
+    grid.text(sprintf("%.2f", msummary[i, j]), x, y,
               gp = gpar(fontsize = fontsize))}
-  
+
   ta <- HeatmapAnnotation(Omics = omics, col = list(Omics = colors))
   
-  ht1 <- Heatmap(matrix = summary$pvalue, col = pvalueShades, cluster_rows = F,
-                 show_heatmap_legend = F, name = "Pvalue", 
+  ht1 <- Heatmap(matrix = summary$pvalue, col = pvalueShades,
+                 cluster_rows = FALSE,
+                 show_heatmap_legend = FALSE, name = "Pvalue",
                  column_names_gp = gpar(fontsize = fontsize),
                  cell_fun = function(j, i, x, y, width, height, fill) {
-                   grid.text(sprintf("%.2f", summary$pvalue[i]), x, y, 
+                   grid.text(sprintf("%.2f", summary$pvalue[i]), x, y,
                              gp = gpar(fontsize = fontsize))
                  })
   dots <- list(...)
   defargs <- list(matrix = msummary, name = "p-Value", col = pvalueShades,
-                  cluster_rows = F, cluster_columns = F, cell_fun = cell_text,
-                  top_annotation = ta, row_names_gp = gpar(fontsize = fontsize),
+                  cluster_rows = FALSE, cluster_columns = FALSE,
+                  cell_fun = cell_text, top_annotation = ta,
+                  row_names_gp = gpar(fontsize = fontsize),
                   column_names_gp = gpar(fontsize = fontsize))
   args <- matchArguments(dots, defargs)
-  
+
   ht2 <- do.call(Heatmap, args)
-  suppressWarnings(ht1 + ht2)
+  (ht1 + ht2)
 }

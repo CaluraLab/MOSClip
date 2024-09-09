@@ -31,12 +31,18 @@ content describing the experiments}
 \item{drops}{A \code{list} of unmatched information
 (included after subsetting)}
 
-\item{modelInfo}{a list with length equal to length(data) that are modelInfo to process each dataset.}
+\item{modelInfo}{A list with length equal to length(data) that are modelInfo
+to process each dataset}
 
-\item{specificArgs}{a list with length equal to length(data) to set additional parameters specific of the modelInfo.}
-
-\item{pathResult}{a list containing pathways result}
+\item{specificArgs}{a list with length equal to length(data) to set
+additional parameters specific of the modelInfo}
+}
+\value{
+an \code{Omics} class object
 }
 \description{
-Omics class initializer function
+makeOmics creates the \code{Omics} object necessary to perform most of the
+analyses of this package. It contains all the omics data in the format of a
+\code{ExperimentList}, the clinical data, and all the information necessary for
+the dimensionality reduction step.
 }

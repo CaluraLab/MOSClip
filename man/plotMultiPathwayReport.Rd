@@ -21,7 +21,10 @@ plotMultiPathwayReport(
 \item{MOcolors}{character vector with the omic colors.
 The colors should be among the colors in \code{showMOSpalette()}}
 
-\item{priority_to}{a vector with the covariates (omic name) that should go first}
+\item{priority_to}{a vector with the covariates (omic name) that should go
+first}
+
+\item{fontsize}{the font size to be used}
 
 \item{\dots}{additional argument to be passed to pheatmap}
 }
