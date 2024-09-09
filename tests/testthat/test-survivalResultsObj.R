@@ -21,7 +21,7 @@ test_that("Survival Results object for pathways works", {
   expect_error(multiOmicsSurvivalPathwayTest(
     dummy_Omics, dummy_react[[1]], survFormula = "Surv(days, status) ~",
     autoCompleteFormula = TRUE, include_from_annot = TRUE, 
-    useThisGenes = c("test1", "test2")), "There is no nodes on the graph.")
+    useTheseGenes = c("test1", "test2")), "There is no nodes on the graph.")
   
   expect_s4_class(multiOmicsSurvivalPathwayTest(
     dummy_Omics, dummy_react[[1]], survFormula = "Surv(days, status) ~",
@@ -76,7 +76,7 @@ test_that("Survival Results object  for modules works", {
   
   expect_error(multiOmicsSurvivalModuleTest(
     dummy_Omics, dummy_react[[1]], survFormula = "Surv(days, status) ~",
-    autoCompleteFormula = T, useThisGenes = c("test1", "test2")), 
+    autoCompleteFormula = T, useTheseGenes = c("test1", "test2")), 
     paste0("There is no intersection between expression feature ",
     "names and the node names in the graph"))
   

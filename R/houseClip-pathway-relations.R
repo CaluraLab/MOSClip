@@ -34,48 +34,6 @@ downloadPathwayRelationFromReactome <- function(url=NULL, speciesAbbr = "HSA") {
   df
 }
 
-
-#' Retrieves pathways relatives
-#'
-#' For internal use only. Retrieves relatives given a pathway id.
-#'
-#' Pathway Hierarchy is needed as igraph object.
-#'
-#' @param pathway a pathway id
-#' @param hierarchyGraph a igraph with pathway hierarchy
-#' @param ord how far you need to go backward
-#' @param plot plot relatives. For checking purpose
-#'
-#' @return a character vector with the relatives
-#'
-#' @importFrom checkmate assertClass
-#' @importFrom igraph V V<- as_ids make_ego_graph ego distances
-#' @export
-#'
-getPathFathers <- function(pathway, hierarchyGraph, ord=3, plot=FALSE) {
-  checkmate::assertClass(hierarchyGraph, "igraph")
-
-  if (!(pathway %in% names(V(hierarchyGraph)))){
-    warning("Id ", pathway, " is not in the hierarchy.")
-    return(pathway)
-  }
-
-  mm <- make_ego_graph(hierarchyGraph, ord, nodes = pathway, mode="in")
-  mmlist <- ego(hierarchyGraph, ord, nodes = pathway, mode="in")
-
-  if (plot)
-    plot(mm[[1]])
-
-  chain <- as_ids(mmlist[[1]])
-  parents <- chain[-1]
-  if (length(parents)==0)
-    return(chain)
-
-  dis <- distances(mm[[1]])
-  idx <- which.max(dis[pathway, ])
-  return(colnames(dis)[idx])
-}
-
 #' Convert id to pathway name
 #'
 #' For internal use only. Retrieves name from pathway id.

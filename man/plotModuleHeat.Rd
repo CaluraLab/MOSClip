@@ -58,3 +58,24 @@ A heatmap of a pathway module (results of the module test)
 It creates a heatmap of the most involved genes of each omic of a specific
 module from a \code{MultiOmicsModule} object.
 }
+\examples{
+ data(multiOmics)
+ data(reactSmall)
+ 
+ survAnnot <- data.frame(status = multiOmics$status,
+                         days = multiOmics$days,
+                         row.names = colnames(multiOmics[[1]]))
+                         
+ genesToUse <- row.names(multiOmics[[1]])
+
+ MOM_survival <- multiOmicsSurvivalModuleTest(multiOmics, reactSmall[[1]],
+   survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+   useTheseGenes = genesToUse)
+ 
+ plotModuleHeat(MOM_survival, 1,
+ sortBy = c("mut", "expPC1", "status", "days"),
+ additionalAnnotations = survAnnot,
+ additionalPaletteNames = list(status = "teal", days = "violet"),
+ withSampleNames = F)
+
+}

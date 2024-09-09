@@ -59,7 +59,7 @@ test_that("Two Class Pathway Test works", {
                                                dummy_annot,
                                                baseFormula = "classes ~",
                                                nullModel = "classes ~ 1",
-                                               useThisGenes = 
+                                               useTheseGenes = 
                                                  c("test1", "test2")),
                "There is no nodes on the graph")
   
@@ -145,7 +145,7 @@ test_that("Two Class Module Test works", {
                                               dummy_annot,
                                               baseFormula = "classes ~",
                                               nullModel = "classes ~ 1",
-                                              useThisGenes = 
+                                              useTheseGenes = 
                                                 c("test1", "test2")), 
                paste0("There is no intersection between expression feature ",
                       "names and the node names in the graph."))

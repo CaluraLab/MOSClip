@@ -4,6 +4,9 @@
 #'
 #' @return character vector with the implemented methods.
 #'
+#' @examples
+#' availableOmicMethods()
+#' 
 #' @export
 availableOmicMethods <- function() {
   return(c("summarizeToBinaryEvents",
@@ -31,8 +34,7 @@ availableOmicMethods <- function() {
 #'  \item{method}{method used for the analysis}
 #'  \item{omicName}{name of the omic}
 #'  \item{evenThr}{threshold fot event counting}
-#'
-#' @export
+
 summarizeToBinaryEvents <- function(data, features, name="bin",
                                     binaryClassMin=10, cliques=NULL) {
   if (is.null(data))
@@ -75,8 +77,7 @@ summarizeToBinaryEvents <- function(data, features, name="bin",
 #'  \item{evenThr}{threshold fot event counting}
 #'  \item{min_prop}{minimum proportion of samples to exclude to check the 
 #'  variability of values}
-#'
-#' @export
+
 summarizeToNumberOfEvents <- function(data, features, name="event", 
                                       min_prop=0.1, cliques=NULL){
   if (is.null(data))
@@ -125,7 +126,7 @@ summarizeToNumberOfEvents <- function(data, features, name="event",
 #' 
 #' @importFrom stats cutree dist hclust
 #' @importFrom NbClust NbClust
-#' @export
+
 summarizeInCluster <- function(data, features, name="clu",
                                dictionary=NULL, max_cluster_number=3, 
                                cliques=NULL) {
@@ -218,7 +219,7 @@ sinkNbClust <- function(data, min.nc=2, max.nc=6, method="ward.D2",
 #'  \item{omicName}{name of the omic}
 #'
 #' @importFrom stats sd
-#' @export
+
 summarizeWithPca <- function(data, features, name="pca", shrink=FALSE,
                              method="regular", cliques=NULL, maxPCs=3,
                              loadThr=0.6) {
@@ -268,8 +269,7 @@ summarizeWithPca <- function(data, features, name="pca", shrink=FALSE,
 #'  \item{evenThr}{threshold fot event counting}
 #'  \item{min_prop}{minimum proportion of samples to exclude to check the 
 #'  variability of values}
-#'
-#' @export
+
 summarizeToNumberOfDirectionalEvents <- function(data, features, name="dCount",
                                                  eventThr=2, min_prop=0.1, 
                                                  cliques=NULL) {
@@ -335,7 +335,6 @@ check_minimal_proportion <- function(x, min_prop=0.1){
 #'  \item{omicName}{name of the omic}
 #'  \item{evenThr}{threshold fot event counting}
 #'  
-#' @export
 summarizeToBinaryDirectionalEvents <- function(data, features, name="dirBin",
                                                binaryClassMin=10, eventThr=2,
                                                cliques=NULL) {

@@ -9,7 +9,7 @@ multiOmicsSurvivalPathwayTest(
   graph,
   survFormula = "Surv(days, status) ~",
   autoCompleteFormula = TRUE,
-  useThisGenes = NULL,
+  useTheseGenes = NULL,
   pathName = NULL,
   robust = FALSE,
   include_from_annot = FALSE
@@ -25,7 +25,7 @@ multiOmicsSurvivalPathwayTest(
 \item{autoCompleteFormula}{logical. If TRUE autocomplete the \code{survFormula}
 using all the available covariates}
 
-\item{useThisGenes}{vector of genes used to filter pathways}
+\item{useTheseGenes}{vector of genes used to filter pathways}
 
 \item{pathName}{title of the pathway. If NULL and graph is \code{Pathway},
 \code{graph@title} is used as title}
@@ -41,4 +41,15 @@ using additional covariates from \code{colData}}
 }
 \description{
 Performs topological survival analysis using an \code{Omics} object.
+}
+\examples{
+data(multiOmics)
+data(reactSmall)
+
+genesToUse <- row.names(multiOmics[[1]])
+
+MOP_survival <- multiOmicsSurvivalPathwayTest(multiOmics, reactSmall[[1]],
+  survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+  useTheseGenes = genesToUse)
+
 }

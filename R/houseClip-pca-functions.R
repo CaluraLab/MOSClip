@@ -17,9 +17,7 @@
 #'   \item{loadings}{the loadings}
 #'
 #' @importFrom FactoMineR estim_ncp
-#'
-#' @export
-#'
+
 computePCs <- function(exp, shrink=FALSE, method=c("regular", "topological",
                                                    "sparse"),
                        cliques=NULL, maxPCs=3) {
@@ -44,7 +42,6 @@ computePCs <- function(exp, shrink=FALSE, method=c("regular", "topological",
 #'   \item{loadings}{the loadings}
 #'
 #' @importFrom qpgraph qpIPF
-#' @export
 #'
 topoCompPCs <- function(exp, shrink, cliques, k) {
   if (is.null(cliques))
@@ -77,10 +74,8 @@ topoCompPCs <- function(exp, shrink, cliques, k) {
 #'   \item{sdev}{the standard deviation captured by the PCs}
 #'   \item{loadings}{the loadings}
 #'
-#' @rdname computePCs
 #' @importFrom elasticnet spca
-#' @export
-#'
+
 sparseCompPCs <- function(exp, shrink, k) {
   nms <- colnames(exp)
   covmat <- estimateExprCov(exp, shrink)
@@ -107,9 +102,6 @@ sparseCompPCs <- function(exp, shrink, k) {
 #'   \item{x}{the computed PCs}
 #'   \item{sdev}{the standard deviation captured by the PCs}
 #'   \item{loadings}{the loadings}
-#'
-#' @rdname computePCs
-#' @export
 #'
 compPCs <- function(exp, shrink, k) {
   nms <- colnames(exp)
