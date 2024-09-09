@@ -39,7 +39,7 @@ MOMglmTest <- function(genes, omicsObj, classAnnot,
           stop("Invalid method for module analysis: topological")
         }}
       else if (is.null(omicsObj@specificArgs[[i]]$method)) {
-        omicsObj@specificArgs[[i]]$method="sparse"}
+        omicsObj@specificArgs[[i]]$method <- "sparse"}
     }
   }
 
@@ -87,10 +87,11 @@ MOMglmTest <- function(genes, omicsObj, classAnnot,
 
   fullModelFormula <- baseFormula
   if (autoCompleteFormula)
-    fullModelFormula <- paste0(baseFormula, paste(colnames(additionalCovariates),
-                                                 collapse="+"))
+    fullModelFormula <- paste0(baseFormula, paste(
+      colnames(additionalCovariates), collapse="+"))
 
-  res <- suppressWarnings(glmTest(dataTest, fullModelFormula, nullModelFormula))
+  res <- suppressWarnings(glmTest(
+    dataTest, fullModelFormula, nullModelFormula))
 
   res$moView <- moView
   res

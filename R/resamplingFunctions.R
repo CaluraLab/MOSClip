@@ -151,7 +151,7 @@ resamplingModulesSurvival <- function(fullMultiOmics, pathdb, nperm=100,
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
       fcl <- multiOmicsSurvivalModuleTest(multiOmics, g, 
-                                          useThisGenes = genesToConsider)
+                                          useTheseGenes = genesToConsider)
       fcl
     })
     
@@ -190,7 +190,7 @@ resamplingModulesTwoClass <- function(fullMultiOmics, classAnnot,
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
       fcl <- multiOmicsTwoClassesModuleTest(multiOmics, g, classAnnot = classes,
-                                            useThisGenes = genesToConsider)
+                                            useTheseGenes = genesToConsider)
       fcl
     })
     
@@ -226,7 +226,7 @@ resamplingPathwaySurvival <- function(fullMultiOmics, pathdb, nperm=100,
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
       fcl <- multiOmicsSurvivalPathwayTest(multiOmics, g,
-                                           useThisGenes = genesToConsider)
+                                           useTheseGenes = genesToConsider)
       fcl
     })
     multiPathwayReport(multiOmicsReactome)
@@ -262,7 +262,7 @@ resamplingPathwayTwoClass <- function(fullMultiOmics, classAnnot, pathdb,
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
       fcl <- multiOmicsTwoClassesPathwayTest(multiOmics, g, classes,
-                                             useThisGenes = genesToConsider)
+                                             useTheseGenes = genesToConsider)
       fcl
     })
     multiPathwayReport(multiOmicsReactome)
