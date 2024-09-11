@@ -135,7 +135,7 @@ annotePathwayToFather <- function(pathways, graphiteDB, hierarchy) {
   names(pathwayDict) <- pathway2id$id
 
   ids <- mapPathwaysIDfromGraphite(graphiteDB, pathways)$id
-  path2fathers <- lapply(ids, annotePathwayToFather, hierarchy,
+  path2fathers <- lapply(ids, getPathFathers, hierarchy,
                          ord=ord)
   names(path2fathers) <- ids
   ids2father <- id2name(path2fathers, pathwayDict)
@@ -156,9 +156,9 @@ annotePathwayToFather <- function(pathways, graphiteDB, hierarchy) {
 #'                  cnv = c(0.07, 0.03, 0.02, 0.04, 0.01),
 #'                  mut = c(0.08, 0.02, 0.01, 0.04, 0.04),
 #'                  row.names = c("PathwayA", "PathwayB", "PathwayC",
-#'                                "PathwayD", "PathwayE")
+#'                                "PathwayD", "PathwayE"))
 #'                  
-#'  omicsClasses2pathways <- computeOmicsIntersections(df,
+#' omicsClasses2pathways <- computeOmicsIntersections(df,
 #'      pvalueThr = 0.05, zscoreThr = 0.05)
 #'      
 #' @importFrom reshape melt

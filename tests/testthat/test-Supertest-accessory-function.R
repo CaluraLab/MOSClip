@@ -12,4 +12,4 @@ test_that("generateWarn", {
                                                 annotePathwayToFather, 
                                                 graphiteDB=reactome,
                                                 hierarchy=pathHierarchyGraph))
-})
+  })
