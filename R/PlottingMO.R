@@ -868,7 +868,7 @@ plotModuleReport <- function(modulesObj, MOcolors=NULL, priority_to=NULL,
   checkmate::assertClass(modulesObj, "MultiOmicsModules")
   
   summary <- formatModuleReport(modulesObj)
-  rownames(summary) <- paste0(rownames(summary), "o module")
+  rownames(summary) <- paste0(rownames(summary), "\u00B0 module")
   
   annCol <- guessOmics(colnames(summary))
   omics <- annCol[2:length(annCol)]
