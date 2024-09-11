@@ -91,9 +91,9 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
     formula <- paste0(survFormula, paste(add_covs, collapse="+"))
 
   if (robust) {
-    scox <- suppressWarnings(survivalcoxr(coxObj, formula))
+    scox <- survivalcoxr(coxObj, formula)
   } else {
-    scox <- suppressWarnings(survivalcox(coxObj, formula))
+    scox <- survivalcox(coxObj, formula)
   }
 
   new("MultiOmicsPathway", 

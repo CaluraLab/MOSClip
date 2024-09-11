@@ -133,8 +133,7 @@ multiOmicsTwoClassPathwayTest <- function(omicsObj, graph, classAnnot,
     fullModelFormula <- paste0(baseFormula,
                              paste(colnames(covariates), collapse ="+"))
 
-  res <- suppressWarnings(
-    glmTest(dataTest, fullModelFormula, nullModelFormula))
+  res <- glmTest(dataTest, fullModelFormula, nullModelFormula)
 
   new("MultiOmicsPathway", 
       pvalue=res$pvalue, 

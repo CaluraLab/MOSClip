@@ -60,7 +60,7 @@ test_that("Two Class Pathway Test works", {
                                              dummy_annot,
                                              baseFormula = "classes ~",
                                              nullModel = "classes ~ 1",
-                                             useThisGenes = 
+                                             useTheseGenes = 
                                                c("test1", "test2")),
                "There is no nodes on the graph")
   
@@ -81,11 +81,11 @@ test_that("Two Class Module Test works", {
   dummy_Omics <- fake_mo(genes=genes, type="two-classes")
   dummy_annot <- dummy_colData(type="two-classes") 
   
-  twoCModuleObj <- multiOmicsTwoClassModuleTest(dummy_Omics,
+  twoCModuleObj <- suppressWarnings(multiOmicsTwoClassModuleTest(dummy_Omics,
                                                 dummy_react[[1]],
                                                 dummy_annot,
                                                 baseFormula = "classes ~",
-                                                nullModel = "classes ~ 1")
+                                                nullModel = "classes ~ 1"))
   
   expect_s4_class(twoCModuleObj, "MultiOmicsModules")
   expect_true(!is.null(twoCModuleObj@alphas) & is.numeric(twoCModuleObj@alphas))
@@ -126,10 +126,10 @@ test_that("Two Class Module Test works", {
   test_annot <- dummy_annot
   test_order <- sample(row.names(test_annot), 200, replace=FALSE)
   test_annot <- test_annot[test_order,, drop=FALSE]
-  expect_error(multiOmicsTwoClassModuleTest(dummy_Omics, dummy_react[[1]],
-                                            test_annot,
-                                            baseFormula = "classes ~",
-                                            nullModel = "classes ~ 1"), NA)
+  expect_error(suppressWarnings(
+    multiOmicsTwoClassModuleTest(dummy_Omics, dummy_react[[1]], test_annot,
+                                 baseFormula = "classes ~",
+                                 nullModel = "classes ~ 1")), NA)
   
   test_annot <- dummy_annot[-1, , drop=FALSE]
   expect_error(multiOmicsTwoClassModuleTest(dummy_Omics, dummy_react[[1]],
@@ -154,7 +154,7 @@ test_that("Two Class Module Test works", {
                                             dummy_annot,
                                             baseFormula = "classes ~",
                                             nullModel = "classes ~ 1",
-                                            useThisGenes = 
+                                            useTheseGenes = 
                                               c("test1", "test2")), 
                paste0("There is no intersection between expression feature ",
                       "names and the node names in the graph."))

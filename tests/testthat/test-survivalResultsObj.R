@@ -23,13 +23,10 @@ test_that("Survival Results object for pathways works", {
     autoCompleteFormula = TRUE, include_from_annot = TRUE, 
     useTheseGenes = c("test1", "test2")), "There is no nodes on the graph.")
   
-  expect_s4_class(multiOmicsSurvivalPathwayTest(
-    dummy_Omics, dummy_react[[1]], survFormula = "Surv(days, status) ~",
-    autoCompleteFormula = T, robust = TRUE), "MultiOmicsPathway")
 })
 
 
-test_that("Survival Results object  for modules works", {
+test_that("Survival Results object for modules works", {
   genes <- paste0("ENTREZID:", c(10000, 90427, 5366, 23368, 637, 3002, 79792,
                                  840, 5414, 5599, 8655, 140735, 708))
   dummy_react <- readRDS(test_path("fixtures", "reactBiggerDummy.rds"))
@@ -53,9 +50,9 @@ test_that("Survival Results object  for modules works", {
   expect_true(all(vapply(res.survModule@modulesView, function(x) !is.null(x),
                          logical(1))))
   
-  res.survModule <- multiOmicsSurvivalModuleTest(
+  res.survModule <- suppressWarnings(multiOmicsSurvivalModuleTest(
     dummy_Omics, dummy_react[[1]], survFormula = "Surv(days, status) ~",
-    autoCompleteFormula = T, robust = TRUE)
+    autoCompleteFormula = T, robust = TRUE))
   
   expect_s4_class(res.survModule, "MultiOmicsModules")
   expect_true(

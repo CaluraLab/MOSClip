@@ -34,9 +34,9 @@ MOMSurvTest <- function(genes, omicsObj,
     scox <- list()
   } else {
     if (robust) {
-      scox <- suppressWarnings(survivalcoxr(coxObj, formula))
+      scox <- survivalcoxr(coxObj, formula)
     } else {
-      scox <- suppressWarnings(survivalcox(coxObj, formula))
+      scox <- survivalcox(coxObj, formula)
     }}
 
   scox$moView <- moView
