@@ -4,12 +4,12 @@
 \alias{convertPathway}
 \title{A generic function to convert pathway}
 \usage{
-convertPathway(graph, useThisGenes)
+convertPathway(graph, useTheseGenes)
 }
 \arguments{
 \item{graph}{a graphNEL object}
 
-\item{useThisGenes}{list of genes to be used}
+\item{useTheseGenes}{list of genes to be used}
 }
 \value{
 NULL. No value is returned

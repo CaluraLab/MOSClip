@@ -51,18 +51,11 @@ is TRUE.}
 \item{additional_discrete}{names of the additional discrete variables to
 include}
 
-<<<<<<< HEAD
-\item{additional_continuous}{names of the additional continous variables to
-=======
-\item{...}{additional arguments passed to \code{guessInvolvementPathway} and
-\code{get} function (internal use)}
-
 \item{additional_continuous}{names of the additional continuous variables to
->>>>>>> origin/annat_new
 include}
 
 \item{...}{additional arguments passed to \code{guessInvolvementPathway} and
-\code{get} function}
+\code{get} function (internal use)}
 }
 \value{
 a ggsurvplot class object
