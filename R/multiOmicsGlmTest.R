@@ -42,7 +42,7 @@
 multiOmicsTwoClassPathwayTest <- function(omicsObj, graph, classAnnot,
                                           baseFormula = "classes ~ ",
                                           autoCompleteFormula = TRUE,
-                                          useThisGenes = NULL,
+                                          useTheseGenes = NULL,
                                           nullModel = "classes ~ 1",
                                           pathName = NULL) {
 
@@ -177,7 +177,7 @@ multiOmicsTwoClassPathwayTest <- function(omicsObj, graph, classAnnot,
 multiOmicsTwoClassModuleTest <- function(omicsObj, graph, classAnnot,
                                          baseFormula = "classes ~",
                                          autoCompleteFormula=TRUE,
-                                         useThisGenes=NULL,
+                                         useTheseGenes=NULL,
                                          nullModel = "classes ~ 1",
                                          pathName=NULL) {
 

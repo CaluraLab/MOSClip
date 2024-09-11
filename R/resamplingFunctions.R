@@ -190,7 +190,7 @@ resamplingModulesTwoClass <- function(fullMultiOmics, classAnnot,
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
       fcl <- multiOmicsTwoClassModuleTest(multiOmics, g, classAnnot = classes,
-                                          useThisGenes = genesToConsider)
+                                          useTheseGenes = genesToConsider)
       fcl
     })
     
@@ -262,7 +262,7 @@ resamplingPathwayTwoClass <- function(fullMultiOmics, classAnnot, pathdb,
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
       fcl <- multiOmicsTwoClassPathwayTest(multiOmics, g, classes, 
-                                           useThisGenes = genesToConsider)
+                                           useTheseGenes = genesToConsider)
       fcl
     })
     multiPathwayReport(multiOmicsReactome)
