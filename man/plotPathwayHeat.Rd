@@ -21,28 +21,57 @@ plotPathwayHeat(
 \arguments{
 \item{pathway}{\code{MultiOmicsPathway} class object}
 
-\item{sortBy}{a covariate to sort by}
+\item{sortBy}{one or more covariates to sort the samples}
 
-\item{paletteNames}{three palettes}
+\item{paletteNames}{name of the colors for each omic}
 
-\item{additionalAnnotations}{optional additional sample annotations}
+\item{additionalAnnotations}{optional additional sample annotations
+(e.g. survival annotation)}
 
-\item{additionalPaletteNames}{optional additional colors for annotations}
+\item{additionalPaletteNames}{colors for additional annotations. The colors
+available are the ones in \code{\link{showMOSpalette}}}
 
-\item{discr_prop_pca}{the minimal proportion to compute the pca classes}
+\item{discr_prop_pca}{the minimal proportion to compute the PCA classes}
 
 \item{discr_prop_events}{the minimal proportion to compute the event classes}
 
-\item{withSampleNames}{create also the samples names}
+\item{withSampleNames}{show the sample names in the plot}
 
 \item{nrowsHeatmaps}{magnification respect to annotation of sample
 (annotations take 1 row)}
 
 \item{orgDbi}{a Dbi organism to be used. Default is \code{org.Hs.eg.db}}
 
-\item{...}{additional arguments passed to \code{guessInvolvementPathway} function}
+\item{...}{additional arguments passed to \code{guessInvolvementPathway} function
+(internal use)}
+}
+\value{
+An object of class \code{ggplot} plotted with ComplexHeatMap package.
 }
 \description{
 Given the pathway, it creates the heatmaps of the mostly involved genes for
 each omic.
+}
+\examples{
+data(multiOmics)
+data(reactSmall)
+
+genesToUse <- row.names(multiOmics[[1]])
+
+survAnnot <- data.frame(status = multiOmics$status,
+                         days = multiOmics$days,
+                         row.names = colnames(multiOmics[[1]]))
+
+# Creating the MultiOmicsPathway object
+MOP_survival <- multiOmicsSurvivalPathwayTest(multiOmics, reactSmall[[1]],
+  survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+  useTheseGenes = genesToUse)
+
+# Plotting
+plotPathwayHeat(MOP_survival, sortBy = c("expPC2", "mut", "status", "days"),
+ paletteNames = c(exp = "red", met = "green", mut = "blue", cnv = "yellow"),
+ additionalAnnotations = survAnnot,
+ additionalPaletteNames = list(status = "teal", days = "violet"),
+ nrowsHeatmaps = 2, withSampleNames = F)
+
 }

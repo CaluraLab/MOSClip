@@ -4,19 +4,26 @@ Version: 0.98.0
 Depends: R (>= 4.4.0)
 Authors@R: c(
    person(given = "Paolo", family = "Martini", role = c("aut", "cre"),
-          email = "first.last@example.com"),
+          email = "paolo.martini@unibs.it",
+          comment = c(ORCID = "0000-0002-0146-1031")),
    person(given = "Anna", family = "Bortolato", role = c("aut"),
-           email = "anna.bortolato@unipd.it"),
+           email = "anna.bortolato@unipd.it",
+           comment = c(ORCID = "0009-0009-9327-6084")),
    person(given = "Anna", family = "Tanada", role = c("aut"),
-           email = "annacarolinaemi.delimatanada@phd.unipd.it"),
-   person(given = "Federico", family = "Agostinis", role = c("aut"),
-          email = "federico.agostinis@outlook.com"),
+           email = "annacarolinaemi.delimatanada@phd.unipd.it",
+           comment = c(ORCID = "0000-0003-3224-0538")),
+   person(given = "Enrica", family = "Calura", role = c("aut"),
+          email = "enrica.calura@unipd.it",
+          comment = c(ORCID = "0000-0001-8463-2432")),
    person(given = "Stefania", family = "Pirrotta", role = c("aut"),
           email = "first.last@example.com",
-          comment = c(ORCID = "YOUR-ORCID-ID")))
+          comment = c(ORCID = "0009-0004-0030-217X")),
+   person(given = "Federico", family = "Agostinis", role = c("aut"),
+          email = "federico.agostinis@outlook.com")
+   )
 Description: Allows to combine multiple omics dimension to perform pathway survival analysis. There are two main mode: multiOmicsSurvivalPathwayTest and muoltiOmicsSurvivalModuleTest. The latter method allows the user to dig inside the pathways itself.
 License: AGPL-3
-Imports: MultiAssayExperiment,methods, survminer, graph,
+Imports: MultiAssayExperiment, methods, survminer, graph,
   graphite, AnnotationDbi, checkmate, ggplot2, gridExtra, igraph,
   pheatmap, survival, RColorBrewer, SuperExactTest,
   reshape, NbClust, S4Vectors, grDevices, graphics, stats, utils, 
@@ -24,7 +31,7 @@ Imports: MultiAssayExperiment,methods, survminer, graph,
   elasticnet, gRbase, ggplotify, qpgraph, org.Hs.eg.db, Matrix
 Suggests: RUnit, BiocGenerics, MASS, BiocStyle, knitr, EDASeq, rmarkdown, testthat (>= 3.0.0)
 Encoding: UTF-8
-LazyData: false
+LazyData: true
 biocViews: Software, StatisticalMethod, GraphAndNetwork, Survival, Regression, DimensionReduction, Pathways
 BugReports: https://github.com/cavei/MOSClip/
 URL: https://github.com/cavei/MOSClip

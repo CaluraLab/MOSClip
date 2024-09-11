@@ -10,7 +10,7 @@ multiOmicsTwoClassModuleTest(
   classAnnot,
   baseFormula = "classes ~",
   autoCompleteFormula = TRUE,
-  useThisGenes = NULL,
+  useTheseGenes = NULL,
   nullModel = "classes ~ 1",
   pathName = NULL
 )
@@ -32,7 +32,7 @@ labels}
 formula used to fit generalized lienar models function  using all the
 available covariates (omics)}
 
-\item{useThisGenes}{(optional) vector of specific genes to be used}
+\item{useTheseGenes}{(optional) vector of specific genes to be used}
 
 \item{nullModel}{the null model formula. It should be written the same as
 the baseFormula, followed by " 1". (e.g. "classes ~ 1")}
@@ -46,4 +46,19 @@ used as title}
 \description{
 Performs topological two-class analysis using an \code{Omics} object. It
 decomposes graphs (pathways) into modules.
+}
+\examples{
+data("multiOmicsTwoClass")
+data("reactSmall")
+
+genesToUse <- row.names(multiOmicsTwoClass[[1]])
+
+classAnnot <- data.frame("treatment" = c(rep("A", 25), rep("B", 25)),
+                         row.names = colnames(multiOmicsTwoClass[[1]]))
+                         
+MOM_twoclasses <- multiOmicsTwoClassesModuleTest(
+  multiOmicsTwoClass, reactSmall[[1]], classAnnot,
+  baseFormula = "treatment ~ ", nullModel = "treatment ~ 1",
+  useTheseGenes = genesToUse)
+  
 }

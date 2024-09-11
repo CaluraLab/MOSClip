@@ -7,7 +7,7 @@
 #' @param survFormula a character with the formula to compute survival
 #' @param autoCompleteFormula logical. If TRUE autocomplete the `survFormula` 
 #' using all the available covariates
-#' @param useThisGenes vector of genes used to filter pathways
+#' @param useTheseGenes vector of genes used to filter pathways
 #' @param pathName title of the pathway. If NULL and graph is `Pathway`, 
 #' `graph@title` is used as title
 #' @param robust logical, whether the robust mode should be used 
@@ -16,6 +16,16 @@
 #' using additional covariates from `colData`
 #'
 #' @return `MultiOmicsPathway` object
+#' 
+#' @examples
+#' data(multiOmics)
+#' data(reactSmall)
+#' 
+#' genesToUse <- row.names(multiOmics[[1]])
+#' 
+#' MOP_survival <- multiOmicsSurvivalPathwayTest(multiOmics, reactSmall[[1]],
+#'   survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+#'   useTheseGenes = genesToUse)
 #'
 #' @importFrom graph nodes
 #' @importFrom methods new is
@@ -25,7 +35,7 @@
 multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
                                           survFormula="Surv(days, status) ~",
                                           autoCompleteFormula=TRUE,
-                                          useThisGenes=NULL,
+                                          useTheseGenes=NULL,
                                           pathName=NULL, robust=FALSE,
                                           include_from_annot=FALSE) {
 
@@ -33,7 +43,7 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
     pathName <- graph@title
   }
 
-  graph <- convertPathway(graph, useThisGenes)
+  graph <- convertPathway(graph, useTheseGenes)
   genesToUse <- graph::nodes(graph)
   if (length(genesToUse) == 0)
     stop("There is no nodes on the graph.")
@@ -104,6 +114,16 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
 #'
 #' @return `MultiOmicsModules` object
 #'
+#' @examples
+#' data(multiOmics)
+#' data(reactSmall)
+#' 
+#' genesToUse <- row.names(multiOmics[[1]])
+#' 
+#' MOM_survival <- multiOmicsSurvivalModuleTest(multiOmics, reactSmall[[1]],
+#'   survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+#'   useTheseGenes = genesToUse)
+#'
 #' @importFrom graph nodes
 #' @importFrom methods new is
 #' @importFrom survival Surv
@@ -113,7 +133,7 @@ multiOmicsSurvivalPathwayTest <- function(omicsObj, graph,
 multiOmicsSurvivalModuleTest <- function(omicsObj, graph,
                                          survFormula="Surv(days, status) ~",
                                          autoCompleteFormula=TRUE,
-                                         useThisGenes=NULL,
+                                         useTheseGenes=NULL,
                                          pathName=NULL, robust=FALSE,
                                          include_from_annot=FALSE) {
 
@@ -123,7 +143,7 @@ multiOmicsSurvivalModuleTest <- function(omicsObj, graph,
   if (is.null(pathName) & is(graph, "Pathway"))
     pathName <- graph@title
 
-  graph <- convertPathway(graph, useThisGenes)
+  graph <- convertPathway(graph, useTheseGenes)
 
   genes <- graph::nodes(graph)
   if (length(genes) == 0)

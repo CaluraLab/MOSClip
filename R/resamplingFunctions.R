@@ -151,7 +151,7 @@ resamplingModulesSurvival <- function(fullMultiOmics, pathdb, nperm=100,
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
       fcl <- multiOmicsSurvivalModuleTest(multiOmics, g, 
-                                          useThisGenes = genesToConsider)
+                                          useTheseGenes = genesToConsider)
       fcl
     })
     
@@ -226,7 +226,7 @@ resamplingPathwaySurvival <- function(fullMultiOmics, pathdb, nperm=100,
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
       fcl <- multiOmicsSurvivalPathwayTest(multiOmics, g,
-                                           useThisGenes = genesToConsider)
+                                           useTheseGenes = genesToConsider)
       fcl
     })
     multiPathwayReport(multiOmicsReactome)

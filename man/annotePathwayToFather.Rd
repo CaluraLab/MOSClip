@@ -9,15 +9,18 @@ annotePathwayToFather(pathways, graphiteDB, hierarchy)
 \arguments{
 \item{pathways}{vector of pathway names}
 
-\item{graphiteDB}{graphite DB object}
+\item{graphiteDB}{graphite DB object (e.g. an object containing all reactome
+pathways)}
 
 \item{hierarchy}{a graph object with the pathway hierarchy}
 }
 \value{
-a vector of the fathers' names
+a vector of the pahtway fathers' names
 }
 \description{
 Given the hierarchy of the pathways, this formula finds the fathers of the
 respective pathway (e.g. pathway: "PI3K Cascade"; father:
-"Signaling Pathways")
+"Signaling Pathways"). This function is necessary for calculating the
+contribution of different omics to survival prediction in different
+biological processes, grouping the pathways by hierarchy.
 }

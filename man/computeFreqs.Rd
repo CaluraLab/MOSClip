@@ -17,3 +17,10 @@ Compute frequencies in a named list. This function is necessary for
 \code{\link{plotFrequencies}}, in which it will calculate the frequency of
 each pathway father for every omics intersection.
 }
+\examples{
+omicsIntersection <- list("exp;met" = c("PathwayA", "PathwayB", "PathwayC"),
+                          "exp;mut" = c("PathwayA", "PathwayC"),
+                          "cnv;mut" = c("PathwayB"))
+freqDf <- computeFreqs(omicsIntersection)
+
+}

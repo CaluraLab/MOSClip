@@ -221,7 +221,7 @@ createDataModule <- function(omic, multiOmicObj){
          "the name arguments given in specificArgs")
   }
   assay <- assay(multiOmicObj, omic$omicName)
-  dataModule <- assay[genes, , drop = FALSE]
+  dataModule <- assay[rownames(assay) %in% genes, , drop = FALSE]
   return(dataModule)
 }
 

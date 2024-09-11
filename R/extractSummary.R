@@ -126,7 +126,7 @@ createDiscreteClasses <- function(coxObj, covs, analysis,
   }
   
   check <- vapply(coxObj[, covs, drop=FALSE], check_minimal_proportion,
-                  c(min_prop=minprop))
+                  c(min_prop=minprop), logical(1))
   if (any(!check)){
     stop("minprop ", minprop, " is too high. Try a smaller one")
   }

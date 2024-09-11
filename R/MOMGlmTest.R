@@ -88,7 +88,8 @@ MOMglmTest <- function(genes, omicsObj, classAnnot,
     fullModelFormula <- paste0(baseFormula, paste(
       colnames(additionalCovariates), collapse="+"))
 
-  res <- suppressWarnings(glmTest(dataTest, fullModelFormula, nullModelFormula))
+  res <- suppressWarnings(glmTest(
+    dataTest, fullModelFormula, nullModelFormula))
 
   res$moView <- moView
   res

@@ -6,7 +6,7 @@
 #' @param pathwayNames in not NULL, a subset of pathway to extract
 #'
 #' @return a data frame, id and pathway name
-#'     
+#' 
 #' @importFrom checkmate assertClass
 #'
 mapPathwaysIDfromGraphite <- function(pathways, pathwayNames=NULL) {

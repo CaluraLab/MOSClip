@@ -4,19 +4,44 @@
 #' each omic.
 #'
 #' @param pathway `MultiOmicsPathway` class object
-#' @param sortBy a covariate to sort by
-#' @param paletteNames three palettes
+#' @param sortBy one or more covariates to sort the samples
+#' @param paletteNames name of the colors for each omic
 #' @param additionalAnnotations optional additional sample annotations
-#' @param additionalPaletteNames optional additional colors for annotations
-#' @param discr_prop_pca the minimal proportion to compute the pca classes
+#' (e.g. survival annotation)
+#' @param additionalPaletteNames colors for additional annotations. The colors
+#' available are the ones in \code{\link{showMOSpalette}}
+#' @param discr_prop_pca the minimal proportion to compute the PCA classes
 #' @param discr_prop_events the minimal proportion to compute the event classes
-#' @param withSampleNames create also the samples names
+#' @param withSampleNames show the sample names in the plot
 #' @param nrowsHeatmaps magnification respect to annotation of sample
 #' (annotations take 1 row)
 #' @param orgDbi a Dbi organism to be used. Default is `org.Hs.eg.db`
 #' @param ... additional arguments passed to `guessInvolvementPathway` function
+#' (internal use)
 #'
-#' @return NULL
+#' @return An object of class `ggplot` plotted with ComplexHeatMap package.
+#' 
+#' @examples
+#' data(multiOmics)
+#' data(reactSmall)
+#' 
+#' genesToUse <- row.names(multiOmics[[1]])
+#' 
+#' survAnnot <- data.frame(status = multiOmics$status,
+#'                          days = multiOmics$days,
+#'                          row.names = colnames(multiOmics[[1]]))
+#' 
+#' # Creating the MultiOmicsPathway object
+#' MOP_survival <- multiOmicsSurvivalPathwayTest(multiOmics, reactSmall[[1]],
+#'   survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+#'   useTheseGenes = genesToUse)
+#' 
+#' # Plotting
+#' plotPathwayHeat(MOP_survival, sortBy = c("expPC2", "mut", "status", "days"),
+#'  paletteNames = c(exp = "red", met = "green", mut = "blue", cnv = "yellow"),
+#'  additionalAnnotations = survAnnot,
+#'  additionalPaletteNames = list(status = "teal", days = "violet"),
+#'  nrowsHeatmaps = 2, withSampleNames = F)
 #'
 #' @importFrom checkmate assertClass
 #' @importFrom grid gpar grid.newpage grid.draw rectGrob
@@ -26,6 +51,7 @@
 #' @importFrom org.Hs.eg.db org.Hs.eg.db 
 #' 
 #' @export
+
 plotPathwayHeat <- function(pathway, sortBy = NULL,
                             paletteNames = NULL,
                             additionalAnnotations = NULL,
@@ -146,31 +172,47 @@ plotPathwayHeat <- function(pathway, sortBy = NULL,
   invisible(gb)
 }
 
-#' Plot KM of the pathway by omics
+#' Plot Kaplan-Meier survival curves of a specific pathway
 #'
-#' Given the pathway, it creates the Kaplan-meier curves following the formula.
+#' Given a `MultiOmicsPathway` class object, it plots Kaplan-Meier curves,
+#' in which the strata corresponds to the chosen omics
 #'
-#' @param pathway `MultiOmicsModule` class object
+#' @param pathway `MultiOmicsPathway` class object
 #' @param formula a formula to compute the plot
 #' @param fileName optional filenames to save the plot
-#' @param paletteNames three palettes
+#' @param paletteNames a palette containing three colors
 #' @param h the height of the plot
 #' @param w the width of the plot
-#' @param risk.table logical to show risk.table
-#' @param pval logical to show pvalue
+#' @param risk.table logical value. If TRUE, shows the `risk.table`. Default
+#' is TRUE.
+#' @param pval logical value. Shows p-value of the curves
 #' @param size line width of the KM curves
-#' @param inYears set time in years
-#' @param discr_prop_pca the minimal proportion to compute the pca classes
+#' @param inYears logical value. If TRUE, converts days to years
+#' @param discr_prop_pca the minimal proportion to compute the PCA classes
 #' @param discr_prop_events the minimal proportion to compute the event classes
 #' @param additional_discrete names of the additional discrete variables to
 #' include
-#' @param additional_continuous names of the additional continous variables to
+#' @param additional_continuous names of the additional continuous variables to
 #' include
-#' @param ... additional arguments passed to `guessInvolvementPathway` and 
-#' `get` function
+#' @param ... additional arguments passed to `guessInvolvementPathway` and
+#' `get` function (internal use)
 #'
-#' @return NULL
-#'
+#' @return a ggsurvplot class object
+#' 
+#' @examples
+#'  data(multiOmics)
+#'  data(reactSmall)
+#'  
+#'  genesToUse <- row.names(multiOmics[[1]])
+#' 
+#'  # Creating the MultiOmicsPathway object
+#'   MOP_survival <- multiOmicsSurvivalPathwayTest(multiOmics, reactSmall[[1]],
+#'    survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+#'    useTheseGenes = genesToUse)
+#'   
+#'   plotPathwayKM(MOP_survival, formula = "Surv(days, status) ~ mut + expPC2",
+#'   paletteNames = "Paired", inYears = TRUE)
+#' 
 #' @importFrom checkmate assertClass
 #' @importFrom pheatmap pheatmap
 #' @importFrom gridExtra arrangeGrob
@@ -178,6 +220,7 @@ plotPathwayHeat <- function(pathway, sortBy = NULL,
 #' @importFrom ggplot2 ggsave
 #'
 #' @export
+
 plotPathwayKM <- function(pathway,
                           formula = "Surv(days, status) ~ PC1",
                           fileName=NULL, paletteNames = NULL, h = 9, w=7,
@@ -223,7 +266,6 @@ plotPathwayKM <- function(pathway,
   } else {
     p
   }
-  # invisible(list(plot = p, fit = fit, coxObj = coxObj))
 }
 
 #' Plot a Heatmap of a Module by Omics
@@ -247,7 +289,28 @@ plotPathwayKM <- function(pathway,
 #' @param discr_prop_events the minimal proportion to compute the event classes
 #' @param ... additional arguments passed to `guessInvolvement` function
 #'
+#' @examples
+#'  data(multiOmics)
+#'  data(reactSmall)
+#'  
+#'  survAnnot <- data.frame(status = multiOmics$status,
+#'                          days = multiOmics$days,
+#'                          row.names = colnames(multiOmics[[1]]))
+#'                          
+#'  genesToUse <- row.names(multiOmics[[1]])
+#' 
+#'  MOM_survival <- multiOmicsSurvivalModuleTest(multiOmics, reactSmall[[1]],
+#'    survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+#'    useTheseGenes = genesToUse)
+#'  
+#'  plotModuleHeat(MOM_survival, 1,
+#'  sortBy = c("mut", "expPC1", "status", "days"),
+#'  additionalAnnotations = survAnnot,
+#'  additionalPaletteNames = list(status = "teal", days = "violet"),
+#'  withSampleNames = F)
+#' 
 #' @return A heatmap of a pathway module (results of the module test)
+#' 
 #' @importFrom checkmate assertClass
 #' @importFrom ComplexHeatmap Heatmap HeatmapAnnotation '%v%'
 #' @importFrom gridExtra arrangeGrob
@@ -257,6 +320,7 @@ plotPathwayKM <- function(pathway,
 #' @importFrom ggplotify as.ggplot
 #'
 #' @export
+
 plotModuleHeat <- function(moduleobj, moduleNumber, sortBy = NULL,
                            paletteNames = NULL, additionalAnnotations = NULL,
                            additionalPaletteNames = NULL,
@@ -396,11 +460,13 @@ plotModuleHeat <- function(moduleobj, moduleNumber, sortBy = NULL,
 #' @param paletteNames a palette name to be used
 #' @param h the height of the plot
 #' @param w the width of the plot
-#' @param risk.table logical value. If true, shows the risk.table
-#' @param pval logical value. If true, shows the pvalue
+#' @param risk.table logical value. If TRUE, shows the `risk.table`. Default
+#' is TRUE.
+#' @param pval logical value. If TRUE, shows the p-value of the curves. Default
+#' is TRUE.
 #' @param size line width of the KM curves
 #' @param inYears set time in years
-#' @param discr_prop_pca the minimal proportion to compute the pca classes
+#' @param discr_prop_pca the minimal proportion to compute the PCA classes
 #' @param discr_prop_events the minimal proportion to compute the event classes
 #' @param additional_discrete names of the additional discrete variables to
 #' include
@@ -410,6 +476,20 @@ plotModuleHeat <- function(moduleobj, moduleNumber, sortBy = NULL,
 #' function
 #'
 #' @return a ggsurvplot class object
+#' 
+#' @examples
+#' data(multiOmics)
+#' data(reactSmall)
+#' 
+#' genesToUse <- row.names(multiOmics[[1]])
+#' 
+#' MOM_survival <- multiOmicsSurvivalModuleTest(multiOmics, reactSmall[[1]],
+#'    survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+#'    useTheseGenes = genesToUse)
+#' 
+#' plotModuleKM(MOM_survival, 1, formula = "Surv(days, status) ~ mut + expPC2",
+#'   paletteNames = "Paired", inYears = TRUE)
+#' 
 #' @importFrom checkmate assertClass
 #' @importFrom pheatmap pheatmap
 #' @importFrom gridExtra arrangeGrob
@@ -417,6 +497,7 @@ plotModuleHeat <- function(moduleobj, moduleNumber, sortBy = NULL,
 #' @importFrom ggplot2 ggsave
 #'
 #' @export
+
 plotModuleKM <- function(MOM, moduleNumber,
                          formula = "Surv(days, status) ~ PC1",
                          fileName = NULL, paletteNames = NULL, h = 9, w = 7,
@@ -537,10 +618,24 @@ plotModuleKM <- function(MOM, moduleNumber,
 #'
 #' @return a MOSClip plot in form of a list class object
 #' 
+#' @examples
+#'  data(multiOmics)
+#'  data(reactSmall)
+#'  
+#'  genesToUse <- row.names(multiOmics[[1]])
+#'  
+#'  MOM_survival <- multiOmicsSurvivalModuleTest(multiOmics, reactSmall[[1]],
+#'   survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+#'   useTheseGenes = genesToUse)
+#'  
+#'  plotModuleInGraph(MOM_survival, reactSmall, moduleNumber = 1,
+#'   paletteNames = c(exp = "red", met = "green", mut = "blue", cnv = "yellow")
+#'  )
+#' 
 #' @importFrom checkmate assertClass
 #' @importFrom igraph V V<- simplify graph_from_graphnel
 #' @importFrom AnnotationDbi select
-#' @importFrom graphics plot legend
+#' @importFrom graphics plot legend par
 #' @importFrom grDevices dev.off pdf rainbow
 #'
 #' @export
@@ -594,7 +689,7 @@ plotModuleInGraph <- function(modulesobj,  reactObj, moduleNumber,
 
     err <- setdiff(paletteNames, row.names(MOSpaletteSchema))
     if (length(err)!=0)
-      stop(err, " paletteNames value is not allowed.")
+      stop("paletteNames value not allowed.")
 
     mark.col <- MOSpaletteSchema[paletteNames, ]$transparent
   }
@@ -608,6 +703,8 @@ plotModuleInGraph <- function(modulesobj,  reactObj, moduleNumber,
   }
 
   labels <- conversionToSymbols(names(V(net)), orgDbi)
+  
+  par(mar = c(1.5, 1, 1, 0.5)) 
 
   if (!is.null(fileName)) {
     pdf(fileName)
@@ -622,24 +719,47 @@ plotModuleInGraph <- function(modulesobj,  reactObj, moduleNumber,
          col="#777777", pt.bg=mark.col, pt.cex=2, cex=.8, bty="n", ncol=1)
 }
 
-#' Summarize and plot pathways' info from a list of MultiOmicsPathway (MOP)
+#' Summarize and plot pathways' info from a list of `MultiOmicsPathway` (MOP)
 #'
-#' Given the list of MOPs, it plots the table.
+#' Given the list of MOPs, it plots a table of its results.
 #'
-#' @param multiPathwayList MultiOmicsPathway list pathway object
-#' @param top use top number of pathways
+#' @param multiPathwayList a `list` of `MultiOmicsPathway` class objects 
+#' @param top numeric value. Plot only the top number of pathways
 #' @param MOcolors character vector with the omic colors.
-#' The colors should be among the colors in \code{showMOSpalette()}
-#' @param priority_to a vector with the covariates (omic name) that should go
+#' The colors should be among the colors in \code{\link{showMOSpalette}}
+#' @param priority_to a vector with the covariates (omic names) that should go
 #' first
-#' @param fontsize the font size to be used
+#' @param fontsize the font size to be used. Default is 12.
 #' @param \dots additional argument to be passed to pheatmap
 #'
-#' @return NULL
+#' @return a Heatmap list object from ComplexHeatmap package of the results 
+#' contained in the `MultiOmicsPathway` object provided
+#'
+#' @examples
+#' data(multiOmics)
+#' data(reactSmall)
+#' 
+#' genesToUse <- row.names(multiOmics[[1]])
+#' 
+#' MOP_list <- lapply(reactSmall, function(g) {
+#'    print(g@title)  #  to see which pathways are being calculated
+#'    set.seed(1234)
+#'    fcl = multiOmicsSurvivalPathwayTest(multiOmics, g,
+#'                                        survFormula="Surv(days, status) ~",
+#'                                        autoCompleteFormula = TRUE,
+#'                                        useTheseGenes = genesToUse)
+#'    fcl
+#' })
+#' 
+#' plotMultiPathwayReport(MOP_list,
+#'                        MOcolors = c(exp = "red", met = "green", mut = "blue",
+#'                                     cnv="yellow"),
+#'                        fontsize = 12)
 #'
 #' @importFrom pheatmap pheatmap
 #'
 #' @export
+
 plotMultiPathwayReport <- function(multiPathwayList, top=25, MOcolors=NULL,
                                    priority_to=NULL, fontsize=6, ...){
 
@@ -680,8 +800,8 @@ plotMultiPathwayReport <- function(multiPathwayList, top=25, MOcolors=NULL,
   ta <- HeatmapAnnotation(Omics = omics, col = list(Omics = colors))
 
   ht1 <- Heatmap(matrix = summary$pvalue[seq_len(top)],
-                 col = 
-                   pvalueShades[seq_len(round((summary$pvalue[top]*100)+1))],
+                 col = pvalueShades[
+                   seq_len(round((summary$pvalue[top]*100)+1))],
                  cluster_rows = FALSE, show_heatmap_legend = FALSE,
                  name = "Pvalue",
                  column_names_gp = gpar(fontsize = fontsize),
@@ -701,16 +821,32 @@ plotMultiPathwayReport <- function(multiPathwayList, top=25, MOcolors=NULL,
   ht1 + ht2
 }
 
-#' Plot a table of a MultiOmicsModule (MOM) object
+#' Plot a table of a `MultiOmicsModules` (MOM) object
 #' 
-#' Given a MOM object, it plots a summary of its results in a tabular fashion
+#' Given a `MultiOmicsModules` object, it plots its results in a
+#' tabular fashion
 #'
 #' @inheritParams plotMultiPathwayReport
-#' @param modulesObj MultiOmicsModules class object
+#' @param modulesObj `MultiOmicsModules` class object
 #' @param fontsize Size of the font to be used in the plot
 #'
-#' @return a Heatmap list object from ComplexHeatmap package
+#' @return a Heatmap list object from ComplexHeatmap package of the results 
+#' contained in the `MultiOmicsModules` object provided
 #' 
+#' @examples
+#' data(multiOmics)
+#' data(reactSmall)
+#' 
+#' genesToUse <- row.names(multiOmics[[1]])
+#' 
+#' MOM_survival <- multiOmicsSurvivalModuleTest(multiOmics, reactSmall[[1]],
+#'   survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+#'   useTheseGenes = genesToUse)
+#' 
+#'  plotModuleReport(MOM_survival,
+#'                   MOcolors = c(exp = "red", met = "green", mut = "blue",
+#'                                cnv="yellow"))
+#'                                
 #' @importFrom checkmate assertClass
 #' @importFrom pheatmap pheatmap
 #' @importFrom ComplexHeatmap Heatmap HeatmapAnnotation rowAnnotation

@@ -2,7 +2,7 @@
 % Please edit documentation in R/PlottingMO.R
 \name{plotMultiPathwayReport}
 \alias{plotMultiPathwayReport}
-\title{Summarize and plot pathways' info from a list of MultiOmicsPathway (MOP)}
+\title{Summarize and plot pathways' info from a list of \code{MultiOmicsPathway} (MOP)}
 \usage{
 plotMultiPathwayReport(
   multiPathwayList,
@@ -14,20 +14,46 @@ plotMultiPathwayReport(
 )
 }
 \arguments{
-\item{multiPathwayList}{MultiOmicsPathway list pathway object}
+\item{multiPathwayList}{a \code{list} of \code{MultiOmicsPathway} class objects}
 
-\item{top}{use top number of pathways}
+\item{top}{numeric value. Plot only the top number of pathways}
 
 \item{MOcolors}{character vector with the omic colors.
-The colors should be among the colors in \code{showMOSpalette()}}
+The colors should be among the colors in \code{\link{showMOSpalette}}}
 
-\item{priority_to}{a vector with the covariates (omic name) that should go
+\item{priority_to}{a vector with the covariates (omic names) that should go
 first}
 
-\item{fontsize}{the font size to be used}
+\item{fontsize}{the font size to be used. Default is 12.}
 
 \item{\dots}{additional argument to be passed to pheatmap}
 }
+\value{
+a Heatmap list object from ComplexHeatmap package of the results
+contained in the \code{MultiOmicsPathway} object provided
+}
 \description{
-Given the list of MOPs, it plots the table.
+Given the list of MOPs, it plots a table of its results.
+}
+\examples{
+data(multiOmics)
+data(reactSmall)
+
+genesToUse <- row.names(multiOmics[[1]])
+
+MOP_list <- lapply(reactSmall, function(g) {
+   print(g@title)  #  to see which pathways are being calculated
+   set.seed(1234)
+   fcl = multiOmicsSurvivalPathwayTest(multiOmics, g,
+                                       survFormula="Surv(days, status) ~",
+                                       autoCompleteFormula = TRUE,
+                                       useTheseGenes = genesToUse)
+   fcl
+})
+
+plotMultiPathwayReport(MOP_list,
+                       MOcolors = c(exp = "red", met = "green", mut = "blue",
+                                    cnv="yellow"),
+                       fontsize = 12)
+
 }

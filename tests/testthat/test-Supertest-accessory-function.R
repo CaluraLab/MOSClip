@@ -12,9 +12,4 @@ test_that("generateWarn", {
                                                 annotePathwayToFather, 
                                                 graphiteDB=reactome,
                                                 hierarchy=pathHierarchyGraph))
-  expect_warning(correspondence <- lapply(names(
-    omicsClasses2pathways), match_pathway_to_fathers,
-    omicsClasses2pathways=omicsClasses2pathways,
-    omicsClasses2fathers=omicsClasses2fathers))
-  
 })

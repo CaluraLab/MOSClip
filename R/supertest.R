@@ -42,11 +42,22 @@
 #' Efficient Test and Visualization of Multi-Set Intersections.
 #' Scientific Reports 5: 16923.
 #'
+#' @examples
+#' df <- data.frame(pvalue = c(0.06, 0.04, 0.04, 0.03, 0.02),
+#'                  cnv = c(0.07, 0.03, 0.02, 0.04, 0.01),
+#'                  mut = c(0.08, 0.02, 0.01, 0.04, 0.04),
+#'                  row.names = c("PathwayA", "PathwayB", "PathwayC",
+#'                                "PathwayD", "PathwayE")
+#'                  )
+#' 
+#' runSupertest(df, pvalueThr = 0.05, zscoreThr = 0.05)
+#' 
 #' @importFrom SuperExactTest supertest
 #' @importFrom grDevices colorRampPalette
 #' @importFrom RColorBrewer brewer.pal
 #'
 #' @export
+
 runSupertest <- function(multiPathwayReportData, pvalueThr=0.05,
                          zscoreThr=0.05,
                          resampligThr = NULL,
@@ -102,13 +113,16 @@ runSupertest <- function(multiPathwayReportData, pvalueThr=0.05,
 #' 
 #' Given the hierarchy of the pathways, this formula finds the fathers of the
 #' respective pathway (e.g. pathway: "PI3K Cascade"; father:
-#' "Signaling Pathways")
+#' "Signaling Pathways"). This function is necessary for calculating the 
+#' contribution of different omics to survival prediction in different
+#' biological processes, grouping the pathways by hierarchy.
 #'
 #' @param pathways vector of pathway names
-#' @param graphiteDB graphite DB object
+#' @param graphiteDB graphite DB object (e.g. an object containing all reactome
+#' pathways)
 #' @param hierarchy a graph object with the pathway hierarchy
 #'
-#' @return a vector of the fathers' names
+#' @return a vector of the pahtway fathers' names
 #'
 #' @importFrom igraph V
 #
@@ -121,7 +135,7 @@ annotePathwayToFather <- function(pathways, graphiteDB, hierarchy) {
   names(pathwayDict) <- pathway2id$id
 
   ids <- mapPathwaysIDfromGraphite(graphiteDB, pathways)$id
-  path2fathers <- lapply(ids, getPathFathers, hierarchy,
+  path2fathers <- lapply(ids, annotePathwayToFather, hierarchy,
                          ord=ord)
   names(path2fathers) <- ids
   ids2father <- id2name(path2fathers, pathwayDict)
@@ -136,7 +150,17 @@ annotePathwayToFather <- function(pathways, graphiteDB, hierarchy) {
 #'
 #' @return a list of pathway modules present for every intersection of omics
 #' present
-#'
+#' 
+#' @examples
+#' df <- data.frame(pvalue = c(0.06, 0.04, 0.04, 0.03, 0.02),
+#'                  cnv = c(0.07, 0.03, 0.02, 0.04, 0.01),
+#'                  mut = c(0.08, 0.02, 0.01, 0.04, 0.04),
+#'                  row.names = c("PathwayA", "PathwayB", "PathwayC",
+#'                                "PathwayD", "PathwayE")
+#'                  
+#'  omicsClasses2pathways <- computeOmicsIntersections(df,
+#'      pvalueThr = 0.05, zscoreThr = 0.05)
+#'      
 #' @importFrom reshape melt
 #' @export
 
@@ -194,52 +218,19 @@ computeOmicsIntersections <- function(multiPathwayReportData, pvalueThr=0.05,
 #' @inheritParams annotePathwayToFather
 #'
 #' @return list of pathway names without the module number
-#'
+#' 
+#' @examples
+#' pathwaysModules <- list("Intrinsic Pathway for Apoptosis.1",
+#'                         "Intrinsic Pathway for Apoptosis.2",
+#'                         "Opioid Signalling.1", "Opioid Signalling.2")
+#'                         
+#' resPathwayNames <- stripModulesFromPathways(pathwaysModules)
+#' 
 #' @export
 
 stripModulesFromPathways <- function(pathways) {
   sub("\\.[0-9]+", "",pathways, perl = TRUE)
 }
-
-#' Remove pathways with no id in graphite
-#'
-#' This function id risky to use. It performs pairing without
-#' checking proper pairs.
-#'
-#' @param omicClass the name of an omic class (or omic combination)
-#' @param omicsClasses2pathways vector of pathway names
-#' @param omicsClasses2fathers vector of pathway names
-#'
-#' @return data frame
-#'
-#' @export
-#'
-match_pathway_to_fathers <- function(omicClass, omicsClasses2pathways,
-                                     omicsClasses2fathers) {
-  if (!(omicClass %in% names(omicsClasses2pathways)))
-    stop("Omic not found in class2pathways")
-  if (!(omicClass %in% names(omicsClasses2fathers)))
-    stop("Omic not found in class2pathways")
-
-  if (is.null(omicsClasses2fathers[[omicClass]])){
-    valid_set <- character()
-  } else {
-    valid_set <- intersect(omicsClasses2pathways[[omicClass]],
-                           omicsClasses2fathers[[omicClass]])
-  }
-  leave_out <- setdiff(omicsClasses2pathways[[omicClass]], valid_set)
-  if (length(leave_out)>0)
-    warning(paste0(
-      "The following pathways were excluded because no id was found; ",
-      paste(leave_out, collapse = ", ")))
-
-  select_path <- omicsClasses2pathways[[omicClass]] %in% valid_set
-  select_father <- omicsClasses2fathers[[omicClass]] %in% valid_set
-  data.frame(path=omicsClasses2pathways[[omicClass]][select_path],
-             father=omicsClasses2fathers[[omicClass]][select_father],
-             stringsAsFactors = FALSE)
-}
-
 
 #' Compute pvalue Summary
 #'
@@ -249,8 +240,7 @@ match_pathway_to_fathers <- function(omicClass, omicsClasses2pathways,
 #' @return a list
 #'
 #' @importFrom stats na.omit
-#' @export
-#'
+
 pvalueSummary <- function(multiPathwayReportData, excludeColumns = NULL,
                           as.list = FALSE){
   checkReportFormat(multiPathwayReportData)

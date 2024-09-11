@@ -9,9 +9,7 @@
 #'
 #' @examples
 #'   summarizeOmicsResByMinPvalue(2:3, mat=matrix(c(1,2,4,1,2,5), nrow=2))
-#'
-#' @export
-#'
+
 summarizeOmicsResByMinPvalue <- function(col, mat) {
   apply(as.matrix(mat[, col, drop = FALSE]), 1, minOrNA)
 }
@@ -29,8 +27,6 @@ summarizeOmicsResByMinPvalue <- function(col, mat) {
 #'   minOrNA(c(1,5,0.1,NA))
 #'   minOrNA(c(NA,NA,NA))
 #'
-#' @export
-#'
 minOrNA <- function(x) {
   if (all(is.na(x)))
     return(NA)
@@ -47,6 +43,12 @@ minOrNA <- function(x) {
 #' @param elementsIntersections a named list
 #'
 #' @return a data.frame of the frequencies
+#' 
+#' @examples
+#' omicsIntersection <- list("exp;met" = c("PathwayA", "PathwayB", "PathwayC"),
+#'                           "exp;mut" = c("PathwayA", "PathwayC"),
+#'                           "cnv;mut" = c("PathwayB"))
+#' freqDf <- computeFreqs(omicsIntersection)
 #'
 #' @export
 

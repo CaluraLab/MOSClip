@@ -2,7 +2,7 @@
 % Please edit documentation in R/PlottingMO.R
 \name{plotPathwayKM}
 \alias{plotPathwayKM}
-\title{Plot KM of the pathway by omics}
+\title{Plot Kaplan-Meier survival curves of a specific pathway}
 \usage{
 plotPathwayKM(
   pathway,
@@ -23,39 +23,66 @@ plotPathwayKM(
 )
 }
 \arguments{
-\item{pathway}{\code{MultiOmicsModule} class object}
+\item{pathway}{\code{MultiOmicsPathway} class object}
 
 \item{formula}{a formula to compute the plot}
 
 \item{fileName}{optional filenames to save the plot}
 
-\item{paletteNames}{three palettes}
+\item{paletteNames}{a palette containing three colors}
 
 \item{h}{the height of the plot}
 
 \item{w}{the width of the plot}
 
-\item{risk.table}{logical to show risk.table}
+\item{risk.table}{logical value. If TRUE, shows the \code{risk.table}. Default
+is TRUE.}
 
-\item{pval}{logical to show pvalue}
+\item{pval}{logical value. Shows p-value of the curves}
 
 \item{size}{line width of the KM curves}
 
-\item{inYears}{set time in years}
+\item{inYears}{logical value. If TRUE, converts days to years}
 
-\item{discr_prop_pca}{the minimal proportion to compute the pca classes}
+\item{discr_prop_pca}{the minimal proportion to compute the PCA classes}
 
 \item{discr_prop_events}{the minimal proportion to compute the event classes}
 
 \item{additional_discrete}{names of the additional discrete variables to
 include}
 
+<<<<<<< HEAD
 \item{additional_continuous}{names of the additional continous variables to
+=======
+\item{...}{additional arguments passed to \code{guessInvolvementPathway} and
+\code{get} function (internal use)}
+
+\item{additional_continuous}{names of the additional continuous variables to
+>>>>>>> origin/annat_new
 include}
 
 \item{...}{additional arguments passed to \code{guessInvolvementPathway} and
 \code{get} function}
 }
+\value{
+a ggsurvplot class object
+}
 \description{
-Given the pathway, it creates the Kaplan-meier curves following the formula.
+Given a \code{MultiOmicsPathway} class object, it plots Kaplan-Meier curves,
+in which the strata corresponds to the chosen omics
+}
+\examples{
+ data(multiOmics)
+ data(reactSmall)
+ 
+ genesToUse <- row.names(multiOmics[[1]])
+
+ # Creating the MultiOmicsPathway object
+  MOP_survival <- multiOmicsSurvivalPathwayTest(multiOmics, reactSmall[[1]],
+   survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+   useTheseGenes = genesToUse)
+  
+  plotPathwayKM(MOP_survival, formula = "Surv(days, status) ~ mut + expPC2",
+  paletteNames = "Paired", inYears = TRUE)
+
 }

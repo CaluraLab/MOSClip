@@ -13,12 +13,25 @@
 #' @param autoCompleteFormula a logical value. If TRUE. It autocompletes the
 #' formula used to fit generalized lienar models function  using all the
 #' available covariates (omics)
-#' @param useThisGenes (optional) vector of specific genes to be used
+#' @param useTheseGenes (optional) vector of specific genes to be used
 #' @param nullModel the null model formula. It should be written the same as 
 #' the baseFormula, followed by " 1". (e.g. "classes ~ 1")
 #' @param pathName (optional) title of the pathway. If NULL, `graph@title` is
 #' used as title
-#'
+#' @examples 
+#' data("multiOmicsTwoClass")
+#' data("reactSmall")
+#' 
+#' genesToUse <- row.names(multiOmicsTwoClass[[1]])
+#' 
+#' classAnnot <- data.frame("treatment" = c(rep("A", 25), rep("B", 25)),
+#'                          row.names = colnames(multiOmicsTwoClass[[1]]))
+#' 
+#' MOP_twoClasses <- multiOmicsTwoClassesPathwayTest(
+#'   multiOmicsTwoClass, reactSmall[[1]], classAnnot,
+#'   baseFormula = "treatment ~ ", nullModel = "treatment ~ 1",
+#'   useTheseGenes = genesToUse)
+#'   
 #' @return `MultiOmicsPathway` object
 #'
 #' @importFrom graph nodes
@@ -54,7 +67,7 @@ multiOmicsTwoClassPathwayTest <- function(omicsObj, graph, classAnnot,
   if (is.null(pathName) && is(graph, "Pathway"))
     pathName <- graph@title
 
-  graph <- convertPathway(graph, useThisGenes)
+  graph <- convertPathway(graph, useTheseGenes)
   genesToUse <- graph::nodes(graph)
   if (length(genesToUse) == 0)
     stop("There is no nodes on the graph.")
@@ -131,7 +144,7 @@ multiOmicsTwoClassPathwayTest <- function(omicsObj, graph, classAnnot,
       multiOmicObj=deparse(substitute(omicsObj)),
       title=pathName)
 }
-# no graphNEL slot, add it?
+
 ###****************************fine Pathway***************************
 
 
@@ -144,6 +157,20 @@ multiOmicsTwoClassPathwayTest <- function(omicsObj, graph, classAnnot,
 #'
 #' @return `MultiOmicsModule` object
 #'
+#' @examples
+#' data("multiOmicsTwoClass")
+#' data("reactSmall")
+#' 
+#' genesToUse <- row.names(multiOmicsTwoClass[[1]])
+#' 
+#' classAnnot <- data.frame("treatment" = c(rep("A", 25), rep("B", 25)),
+#'                          row.names = colnames(multiOmicsTwoClass[[1]]))
+#'                          
+#' MOM_twoclasses <- multiOmicsTwoClassesModuleTest(
+#'   multiOmicsTwoClass, reactSmall[[1]], classAnnot,
+#'   baseFormula = "treatment ~ ", nullModel = "treatment ~ 1",
+#'   useTheseGenes = genesToUse)
+#'   
 #' @importFrom graph nodes
 #' @importFrom methods new is
 #' @export
@@ -179,7 +206,7 @@ multiOmicsTwoClassModuleTest <- function(omicsObj, graph, classAnnot,
   if (is.null(pathName) & is(graph, "Pathway"))
     pathName <- graph@title
 
-  graph <- convertPathway(graph, useThisGenes)
+  graph <- convertPathway(graph, useTheseGenes)
   genes <- graph::nodes(graph)
   if (length(genes) == 0)
     stop("There is no intersection between expression feature names and ",

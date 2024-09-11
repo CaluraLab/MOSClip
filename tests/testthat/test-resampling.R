@@ -72,7 +72,7 @@ test_that("selectStablePathwaysModules works", {
   mo <- fake_mo(genes=genes, type="survival")
   modules <- lapply(gSubset, function(g) {
     multiOmicsSurvivalModuleTest(
-      mo, g, useThisGenes = row.names(mo@ExperimentList$exp))})
+      mo, g, useTheseGenes = row.names(mo@ExperimentList$exp))})
   summ <- multiPathwayModuleReport(modules)
   res <- resamplingModulesSurvival(mo, pathdb = graphs,
                                    pathwaySubset = names(gSubset), nperm=5)

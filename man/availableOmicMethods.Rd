@@ -12,3 +12,7 @@ character vector with the implemented methods.
 \description{
 Gives a vector of the available methods to summarize omics.
 }
+\examples{
+availableOmicMethods()
+
+}

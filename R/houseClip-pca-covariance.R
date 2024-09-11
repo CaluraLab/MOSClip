@@ -8,7 +8,6 @@
 #' @return a covariance matrix
 #' @importFrom stats cov
 #' @importFrom corpcor cov.shrink
-#' @export
 #'
 estimateExprCov <- function(expr, shrink) {
   if (shrink)
@@ -31,8 +30,7 @@ estimateExprCov <- function(expr, shrink) {
 #'   \item{m3}{the matrix m3 positive and definite}
 #'   \item{correction}{the magneturde of the correction}
 #'   \item{value}{the value}
-#'
-#' @export
+
 makePositiveDefinite<-function(m1, m2=NULL, m3=NULL, threshold=0.1){
   
   if(is.null(m2) & is.null(m3)) {

@@ -50,6 +50,24 @@ multiPathwayReport <- function(multiPathwayList, priority_to=NULL){
 #'
 #' @return a data.frame class object. Rows correspond to the modules, and the
 #' columns to the overall and covariates pvalues of the test.
+#'
+#' @examples
+#' data(multiOmics)
+#' data(reactSmall)
+#' 
+#' genesToUse <- row.names(multiOmics[[1]])
+#' 
+#'  MOM_list <- lapply(reactSmall[1:2], function(g) {
+#'    print(g@title)  #  to see which pathways are being calculated
+#'    set.seed(1234)
+#'    fcl = multiOmicsSurvivalModuleTest(multiOmics, g,
+#'                                        survFormula="Surv(days, status) ~",
+#'                                        autoCompleteFormula = TRUE,
+#'                                        useTheseGenes = genesToUse)
+#'    fcl
+#' })
+#' 
+#'  moduleSummary <- multiPathwayModuleReport(MOM_list)
 #' 
 #' @export
 
