@@ -137,7 +137,7 @@ setMethod("showOmics",  signature(object = "Omics"),
             if (is.null(nm))
               nm <- seq_len(length(nm))
             for (i in seq_along(nm)) {
-              cat(paste0("Data \"", nm[i], "\" to be process with \"",
+              cat(paste0("Data \"", nm[i], "\" to be processed with \"",
                          object@modelInfo[[i]],"\". "))
               if (is.null(object@specificArgs[[i]])) {
                 cat("Default parameters\n")
@@ -230,10 +230,10 @@ setMethod("showPathway",
 
 #' A generic function to convert pathway
 #' @param graph a graphNEL object
-#' @param useThisGenes list of genes to be used
+#' @param useTheseGenes list of genes to be used
 #' 
 #' @return NULL. No value is returned
-setGeneric("convertPathway", function(graph, useThisGenes)
+setGeneric("convertPathway", function(graph, useTheseGenes)
    standardGeneric("convertPathway"))
 
 #' @importFrom graph subGraph
@@ -241,10 +241,10 @@ setGeneric("convertPathway", function(graph, useThisGenes)
 #' @importClassesFrom graphite Pathway
 setMethod("convertPathway",
           signature("Pathway", "characterOrNULL"),
-          function(graph, useThisGenes) {
+          function(graph, useTheseGenes) {
              graph <- graphite::pathwayGraph(graph)
-             if (!is.null(useThisGenes)) {
-                usableGenes <- intersect(useThisGenes, graph::nodes(graph))
+             if (!is.null(useTheseGenes)) {
+                usableGenes <- intersect(useTheseGenes, graph::nodes(graph))
                 graph <- graph::subGraph(usableGenes, graph)
              }
              graph
@@ -254,9 +254,9 @@ setMethod("convertPathway",
 #' @importClassesFrom graph graphNEL
 setMethod("convertPathway",
           signature("graphNEL", "characterOrNULL"),
-          function(graph, useThisGenes) {
-             if (!is.null(useThisGenes)) {
-                usableGenes <- intersect(useThisGenes, graph::nodes(graph))
+          function(graph, useTheseGenes) {
+             if (!is.null(useTheseGenes)) {
+                usableGenes <- intersect(useTheseGenes, graph::nodes(graph))
                 graph <- graph::subGraph(usableGenes, graph)
              }
              graph
@@ -265,10 +265,10 @@ setMethod("convertPathway",
 #' @importFrom graph subGraph
 setMethod("convertPathway",
           signature("character", "characterOrNULL"),
-          function(graph, useThisGenes) {
+          function(graph, useTheseGenes) {
              graph <- new("graphNEL", nodes = graph, edgeL = list())
-             if (!is.null(useThisGenes)) {
-                usableGenes <- intersect(useThisGenes, graph::nodes(graph))
+             if (!is.null(useTheseGenes)) {
+                usableGenes <- intersect(useTheseGenes, graph::nodes(graph))
                 graph <- graph::subGraph(usableGenes, graph)
              }
              graph
