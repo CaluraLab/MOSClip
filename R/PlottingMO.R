@@ -604,8 +604,8 @@ plotModuleKM <- function(MOM, moduleNumber,
 #' in the pathway. The omics are also represented in the graph.
 #'
 #' @param modulesobj a `MultiOmicsModule` class object
-#' @param reactObj a `PathwayList` from `graphite` package that contains the
-#' reactome patways to be used
+#' @param pathList a `PathwayList` from `graphite` package that contains the
+#' pathways to be used
 #' @param moduleNumber a module number
 #' @param orgDbi if needed, indicates an organism Dbi to translate the vectors
 #' @param legendLabels set up your favourite names for the omics
@@ -614,6 +614,7 @@ plotModuleKM <- function(MOM, moduleNumber,
 #' @param fileName optional filenames to save the plot
 #' @param discr_prop_pca the minimal proportion to compute the PCA classes
 #' @param discr_prop_events the minimal proportion to compute the event classes
+#' @param pathTitle title of the graph, to be searched in `pathList`
 #' @param ... additional arguments passed to `guessInvolvement` function
 #'
 #' @return a MOSClip plot in form of a list class object
@@ -639,16 +640,21 @@ plotModuleKM <- function(MOM, moduleNumber,
 #' @importFrom grDevices dev.off pdf rainbow
 #'
 #' @export
-plotModuleInGraph <- function(modulesobj,  reactObj, moduleNumber,
+plotModuleInGraph <- function(modulesobj, pathList, moduleNumber,
                               orgDbi = "org.Hs.eg.db",
                               paletteNames = NULL, legendLabels = NULL,
                               fileName = NULL, discr_prop_pca = 0.15,
-                              discr_prop_events = 0.05, ...) {
+                              discr_prop_events = 0.05, pathTitle = NULL, ...) {
   
   checkmate::assertClass(modulesobj, "MultiOmicsModules")
 
-  net <- igraph::graph_from_graphnel(
-    convertPathway(reactObj[[modulesobj@title]], NULL))
+  if (!is(pathList[[1]], "graphNEL")){
+    net <- igraph::graph_from_graphnel(
+      convertPathway(pathList[[modulesobj@title]], NULL))
+  } else {
+    net <- igraph::graph_from_graphnel(pathList[[pathTitle]])
+    }
+  
   moduleGenes <- modulesobj@modules[[moduleNumber]]
   net <- igraph::simplify(net, remove.multiple = TRUE, remove.loops = TRUE)
   color <- rep("grey", length(V(net)))
