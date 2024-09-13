@@ -5,3 +5,4 @@
 biocmosclip.Rproj
 /MOSresults/
 .DS_Store
+inst/doc
