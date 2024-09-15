@@ -272,10 +272,7 @@ resamplingPathwayTwoClass <- function(fullMultiOmics, classAnnot, pathdb,
 
 #' Select stable pathway modules
 #' 
-#' @param perms a list of perm objects
-#' @param moduleSummary summary of the modules
-#' @param success number of success
-#' @param col the name of the column
+#' @param success number of success to consider the pathway or module stable
 #' 
 #' @return the subset of stable modules
 #' 
@@ -315,12 +312,25 @@ selectStablePathwaysModules <- function(perms, moduleSummary, success=90,
 
 #' Count the resampling success
 #'
-#' @param thr the threshold for significance
-#' @param moduleSummary summary of the modules
-#' @param col the name of the column 
+#' @param perms a list. Result of resampling function
+#' @param moduleSummary summary of modules or pathways obtained from 
+#' `multiPathwayModuleReport` or `multiPathwayReport`
+#' @param col the name of the column in the summary to be used to evaluate 
+#' resampling success
 #' @param thr the threshold for significance
 #' 
-#' @return the counts of success
+#' @return the counts of success for each pathway or module
+#' 
+#' @examples
+#' data("multiOmics")
+#' data("reactSmall")
+#' 
+#' perms <- resamplingPathwaySurvival(multiOmics, reactSmall, nperm=5)
+#' res <- lapply(reactSmall, function(g) 
+#'   multiOmicsSurvivalPathwayTest(multiOmics, g, 
+#'                                 useTheseGenes=row.names(multiOmics[[1]])))
+#' pathSummary <- multiPathwayReport(res)
+#' getPathwaysModulesSuccess(perms, pathSummary)
 #' 
 #' @rdname evaluateResampling
 #' @export
@@ -360,10 +370,10 @@ getPathwaysModulesSuccess <- function(perms, moduleSummary, col="pvalue",
 
 #' Add resampling counts to module summary
 #' 
-#' @param moduleSummary summary of the modules
-#' @param resamplingCounts the counts of success
+#' @param resamplingCounts the counts of success obtained with 
+#' `getPathwaysModulesSuccess`
 #' 
-#' @return a module summary with reampling counts
+#' @return a module or pathway summary with resampling counts column appended
 #' 
 #' @rdname evaluateResampling
 #' @export
