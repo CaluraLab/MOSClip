@@ -9,16 +9,18 @@
 
 A PathwayList with Reactome pathways for hsapiens
 \describe{
-\item{entries}{Three reactome pathways with their nodes}
+\item{entries}{Three Reactome pathways with their nodes}
 }
 }
 }
 \usage{
-reactSmall
+data("reactSmall")
 }
 \description{
 A PathwayList with three pathways necessary for the analysis:
-"Intrinsic Pathway for Apoptosis", "Opioid Signalling", and
-"Mitochondrial protein import"
+"Activation of Matrix Metalloproteinases", "FGFR1 mutant receptor
+activation", and "VEGFA-VEGFR2 Pathway". Pathways were downloaded using
+\code{graphite} package and the names of the nodes were converted into
+Entrez IDs.
 }
 \keyword{datasets}

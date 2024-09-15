@@ -56,7 +56,7 @@ genesToUse <- row.names(multiOmicsTwoClass[[1]])
 classAnnot <- data.frame("treatment" = c(rep("A", 25), rep("B", 25)),
                          row.names = colnames(multiOmicsTwoClass[[1]]))
                          
-MOM_twoclasses <- multiOmicsTwoClassesModuleTest(
+MOM_twoclasses <- multiOmicsTwoClassModuleTest(
   multiOmicsTwoClass, reactSmall[[1]], classAnnot,
   baseFormula = "treatment ~ ", nullModel = "treatment ~ 1",
   useTheseGenes = genesToUse)
