@@ -331,7 +331,7 @@ checkPvalueThresholdFormat <- function(thr, name="thr") {
 #' @return a summarized version of the matrix.
 #'
 #' @examples
-#'   summarizeOmicsResByMinPvalue(2:3, mat=matrix(c(1,2,4,1,2,5), nrow=2))
+#' # summarizeOmicsResByMinPvalue(2:3, mat=matrix(c(1,2,4,1,2,5), nrow=2))
 
 summarizeOmicsResByMinPvalue <- function(col, mat) {
   apply(as.matrix(mat[, col, drop = FALSE]), 1, minOrNA)
@@ -347,8 +347,8 @@ summarizeOmicsResByMinPvalue <- function(col, mat) {
 #' @return a numeric. The minimum or NA
 #'
 #' @examples
-#'   minOrNA(c(1,5,0.1,NA))
-#'   minOrNA(c(NA,NA,NA))
+#'   # minOrNA(c(1,5,0.1,NA))
+#'   # minOrNA(c(NA,NA,NA))
 #'
 minOrNA <- function(x) {
   if (all(is.na(x)))

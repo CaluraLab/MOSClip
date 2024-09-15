@@ -15,10 +15,8 @@
 #' @importFrom utils read.table data
 #'
 #' @examples
-#' \donttest{
-#' url = "https://reactome.org/download/current/ReactomePathwaysRelation.txt"
-#' downloadPathwayRelationFromReactome(url, speciesAbbr = "HSA")
-#' }
+#' downloadPathwayRelationFromReactome()
+#' 
 #' @export
 downloadPathwayRelationFromReactome <- function(url=NULL, speciesAbbr = "HSA") {
   if (is.null(url)) {
