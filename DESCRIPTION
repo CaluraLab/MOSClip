@@ -29,7 +29,7 @@ Imports: MultiAssayExperiment, methods, survminer, graph,
   reshape, NbClust, S4Vectors, grDevices, graphics, stats, utils, 
   ComplexHeatmap, FactoMineR, circlize, corpcor, coxrobust,
   elasticnet, gRbase, ggplotify, qpgraph, org.Hs.eg.db, Matrix
-Suggests: RUnit, BiocGenerics, MASS, BiocStyle, knitr, EDASeq, rmarkdown, testthat (>= 3.0.0)
+Suggests: RUnit, BiocGenerics, MASS, BiocStyle, knitr, EDASeq, rmarkdown, kableExtra, testthat (>= 3.0.0)
 Encoding: UTF-8
 LazyData: false
 biocViews: Software, StatisticalMethod, GraphAndNetwork, Survival, Regression, DimensionReduction, Pathways, Reactome
