@@ -1,0 +1,327 @@
+---
+title: "MOSClip vignette"
+date: "`r BiocStyle::doc_date()`"
+output:   
+  BiocStyle::html_document:
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{MOSClip}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+Package: MOSClip
+---
+
+# Abstract {.unnumbered}
+In the last years we have witnessed a dramatic change in the clinical treatment 
+of patients thanks to molecular and personalized medicine. Many medical 
+institutes are starting to adopt routine genome-wide screenings to complement 
+and help diagnosis and treatment choices. As the number of datasets grows, we 
+need to adapt and improve the methods to cope with the complexity, amount and 
+multi-level structure of available information. Integrating these type of data 
+remains challenging due to their dimensionality and diverse features. 
+Moreover, focusing on dysregulated biological processes rather than individual 
+genes can offer deeper insights into complex diseases like cancer. 
+`MOSClip` is a multi-omic statistical approach based on pathway topology that 
+can deal with this complexity. It integrates multiple omics - such as 
+expression, methylation, mutation, or copy number variation - using various 
+dimensionality reduction strategies. The analysis can be performed at the level 
+of entire pathways or pathway modules, allowing for a more detailed examination 
+of the dysregulated mechanisms within large biological processes. 
+`MOSClip` pathway analysis serves two primary purposes: testing the survival 
+association of pathways or modules using the Cox proportional hazard model, 
+and conducting a two-class analysis with a generalized linear model. 
+Additionally, the package offers valuable graphical tools to visualize and 
+interpret the results.
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+# Introduction
+In recent years many efforts have been dedicated on multi-omic data integration,
+with several tools available for pathway analysis in a multi-omic framework;
+however, their purpose is mainly limited to two-class comparison. 
+`MOSClip` (Multi-Omic Survival Clip) was originally developed for survival 
+pathway analysis, combining both multi-omic data integration and graphical 
+model theory to keep track of gene interactions among a pathway<sup>1</sup>. 
+With this purpose, `MOSClip` allows to test survival association of pathways or 
+their connected components, that we called modules, in a multi-omic 
+framework.
+A second test has been implemented to perform also two-class comparison, to 
+investigate pathways or modules association with a specific condition. 
+Multi-omics gene measurements are tested as covariates of a Cox proportional 
+hazard model or a generalized linear model, after dimensionality reduction of 
+data. 
+`MOSClip` is highly flexible thanks to its modular structure, allowing the use 
+of one or multiple different omics, as well as different data reduction 
+strategies and tests.
+In brief, `MOSClip` comprises four main components: pathway topology, 
+multi-omic data and survival or two-class analysis. The final goal is to find 
+biological processes impacting patient's survival or patient's association with 
+a specific condition.
+Furthermore, several graphical tools have been implemented in `MOSClip` to 
+browse, manage and provide help in the interpretation of the results.
+
+In this vignette, we will show an example of survival analysis on four omics: 
+transcriptome, methylome, genomic mutations and genomic copy number variations, 
+testing if these omics can be synergically involved in pathways with survival 
+or two-class prognostication power. 
+
+# Installation
+```{r, eval = FALSE}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("MOSClip")
+```
+
+# How to use MOSClip for survival analysis 
+We start by loading example data provided by `MOSClip` package to run our 
+analysis. 
+`reactSmall` object is a list of three interesting Reactome pathways in 
+`graphite::Pathway` format that we will use in our analysis. More information
+can be found on the object documentation (`?reactSmall`).
+`multiOmics` object is a multi-omic dataset containing matrices, 
+genes per patients, of methylation status, somatic mutations, CNVs, and 
+transcripts expression levels, for 50 ovarian cancer patients from TCGA. 
+Genes and patients were manually selected to generate this small dataset 
+intended to illustrate the functionality of the package, allowing users to 
+explore its methods and tools in a simplified context. 
+Information on how the dataset was generated can be found in package 
+documentation with `?multiOmics`. Moreover, additional information on how to 
+pre-process datasets for a `MOSClip` analysis are available in this [GitHub 
+tutorial](https://cavei.github.io/MOSClipTutorials/
+How-to-format-TCGA-datasets.html) 
+or in the Materials and Methods section of the paper<sup>1</sup>.
+
+
+```{r message=FALSE}
+library(biocmosclip)
+library(MultiAssayExperiment)
+library(kableExtra)
+
+data("reactSmall")
+data("multiOmics")
+```
+
+`multiOmics` is an `Omics` class object. This `MOSClip` specific object derives 
+from a `MultiAssayExperiment` object. It contains standard slots 
+`ExperimentList`, `sampleMap`, `colData`, and specific slots for `MOSClip` 
+analysis: `modelInfo`, where the user should specify the dimensionality 
+reduction method to process each omic dataset, and `specificArgs`, where 
+additional parameters can be set for each method, as described in the help of 
+each reduction function. 
+An `Omics` class object can be generated with the function `makeOmics` starting 
+from data matrices and additional annotations.
+
+Available methods for dimensionality reduction can be conveniently visualized 
+with `availableOmicMethods` function.
+
+```{r}
+availableOmicMethods()
+```
+
+In this vignette, we chose to use PCA for expression data, cluster analysis 
+for methylation data, vote counting for mutations and CNVs (for detail see 
+`MOSClip` paper<sup>1</sup>). This data transformations are easily applied 
+calling `MOSClip` functions, thus here we need only to provide the name of the 
+needed function. 
+Given the nature of the methylation data, we expect to have more than a CpG 
+cluster associated to a gene. For this reason, `MOSClip` provides the 
+possibility to include a dictionary to associate the methylation level of 
+multiple CpG clusters to a single gene. Thus, in the methylation specific 
+arguments you need to provide the dictionary to convert cluster names into 
+genes.
+
+## Module analysis 
+We are now ready to perform the survival analysis on modules using the 
+function `multiOmicsSurvivalModuleTest`. Required inputs are a multi-omic 
+dataset and a pathway in `Pathway` or `graphNEL` format. Alternatively, it is 
+possible to run the analysis also on gene-sets; in this case the topological 
+information is lost, thus, only the function for pathway test must be used. 
+In this example, we choose to test only genes that have at least expression 
+data, as specified with `useTheseGenes`. This a priori filter, however, is not 
+mandatory. 
+Moreover, it could be useful to set a seed in order to have reproducible 
+results.
+
+```{r, warning = FALSE}
+genesToConsider <- row.names(experiments(multiOmics)$exp)
+
+moduleSurv <- lapply(reactSmall, function(g) {
+  set.seed(1234)
+  fcl = multiOmicsSurvivalModuleTest(multiOmics, g, 
+                                     useTheseGenes = genesToConsider)
+  fcl
+ })
+```
+
+Once the analysis is complete, we can plot the tabular summary of the top 10 
+modules selected by p-value of the Cox proportional hazard model using the 
+function `multiPathwayModuleReport`.
+
+```{r}
+moduleSummary <- multiPathwayModuleReport(moduleSurv)
+```
+
+```{r, echo=FALSE}
+kable(moduleSummary[1:10,-1]) %>%
+  kable_styling() %>%
+  scroll_box(width = "80%", height = "400px")
+```
+
+
+### Graphical exploration of MOSClip module results
+`MOSClip` has plenty of functions to visually explore the results. 
+In the following paragraphs we will show some examples.
+
+We can visualize the table of module test results for a specific pathway, e.g.,
+_Activation of Matrix Metalloproteinases_.
+
+```{r fig.height=6, fig.weight=6}
+plotModuleReport(moduleSurv[["Activation of Matrix Metalloproteinases"]], 
+                 MOcolors = c(exp = "red", met = "green", 
+                              cnv = "yellow", mut = "blue"))
+```
+
+As you can see, among others, the module number 4 of this pathway is 
+significant, and, in particular, covariates expPC2, met2k2 and cnvPOS are 
+driving this significance.
+
+We can have a look at the pathway graph and the module position in the pathway 
+using `plotModuleInGraph`.
+
+```{r, message=FALSE}
+plotModuleInGraph(moduleSurv[["Activation of Matrix Metalloproteinases"]], 
+                  pathList = reactSmall, 
+                  moduleNumber = 4)
+```
+
+Then, we can check at the differences in survival using Kaplan-Meier curves 
+dividing patients in groups with different omics patterns. Here we consider 
+only covariates expPC2 and met2k.
+
+```{r, fig.height=6, fig.width=7}
+plotModuleKM(moduleSurv[["Activation of Matrix Metalloproteinases"]], 
+             moduleNumber = 4, 
+             formula = "Surv(days, status) ~ expPC2 + met2k", 
+             paletteNames = "Paired", risk.table = TRUE, inYears = TRUE)
+```
+
+We can explore the most important genes of the pathway and their original 
+profiles across the omics using an heatmap plot of the original values. 
+The most important genes are selected as described in 
+Martini et al.<sup>1</sup>. 
+
+```{r, message=FALSE, results='hide', fig.keep='all', fig.height=7, fig.width=7}
+additionalA <- colData(multiOmics)
+additionalA$status[additionalA$status == 1] <- "event"
+additionalA$status[additionalA$status == 0] <- "no_event"
+additionalA$PFS <- as.factor(additionalA$status)
+additionalA$status <- NULL
+additionalA$years <- round(additionalA$days/365.24, 0)
+additionalA$days <- NULL
+
+plotModuleHeat(moduleSurv[["Activation of Matrix Metalloproteinases"]], 
+               moduleNumber = 4, 
+               paletteNames = c(exp = "red", met = "green", 
+                                cnv = "yellow", mut = "blue"),
+               additionalAnnotations = additionalA, 
+               additionalPaletteNames = list(PFS = "violet", years = "teal"), 
+               sortBy = c("expPC2", "met2k", "PFS", "years"), 
+               withSampleNames = FALSE)
+```
+
+In second instance, we can ask if two or more omics are significant in the same 
+module simultaneously and if this omic interaction is more frequent than those 
+expected by chance. To perform this test we use the `runSupertest` function.
+A circle plot is returned with the frequency of all significant omic 
+combinations and their significance levels.
+
+```{r, fig.height=9, fig.width=10}
+runSupertest(moduleSummary, pvalueThr = 0.05, zscoreThr = 0.05, 
+             excludeColumns = c("pathway", "module"))
+```
+
+
+## Pathway analysis
+In pathway test the pathway topology (the in and out connections of the pathway 
+genes) can be exploited to guide the data reduction step. To do that, we 
+suggest to use the topological PCA instead of the sparse PCA changing the 
+settings in the omics object.
+
+Then, we are ready to run the analysis using the function 
+`multiOmicsSurvivalPathwayTest`.
+
+```{r warning=FALSE}
+multiOmics@specificArgs$pcaArgs$method = "topological"
+multiOmics@specificArgs$pcaArgs$shrink = TRUE
+
+pathwaySurv <- lapply(reactSmall, function(g) {
+  set.seed(1234)
+  fcl = multiOmicsSurvivalPathwayTest(multiOmics, g, 
+                                      useTheseGenes = genesToConsider)
+  })
+```
+
+### Graphical exploration of MOSClip pathway results
+We can plot a report of the first 10 pathways, sorted by pvalue of the Cox 
+proportional hazard model.
+
+```{r fig.width=6, fig.height=4}
+plotMultiPathwayReport(pathwaySurv, 
+                       MOcolors = c(exp = "red", mut = "blue", 
+                                    cnv = "yellow", met = "green"))
+```
+
+Finally, we can look at the predictive genes using a heatmap with patient 
+additional annotations. 
+
+```{r, message=FALSE, results='hide', fig.keep='all', fig.height=7, fig.width=7}
+plotPathwayHeat(pathwaySurv[["Activation of Matrix Metalloproteinases"]], 
+                sortBy = c("expPC1", "cnvPOS", "PFS"), 
+                paletteNames = c(exp = "red", met = "green",
+                                 mut = "blue", cnv = "yellow"), 
+                additionalAnnotations = additionalA, 
+                additionalPaletteNames = list(PFS = "violet", years = "teal"), 
+                withSampleNames = FALSE)
+```
+
+Then, we can also check for differences in survival using Kaplan-Meier curves 
+dividing patients in groups with different omics patterns (e.g. patients with 
+different methylation pattern and high and low levels of PC2 in expression).
+
+```{r, fig.height=9, fig.width=10}
+plotPathwayKM(pathwaySurv[["Activation of Matrix Metalloproteinases"]], 
+              formula = "Surv(days, status) ~ expPC1 + cnvPOS", 
+              paletteNames = "Paired")
+```
+
+# Additional functionalities {.unnumbered}
+The analysis can be performed also on gene-sets rather than pathways. A tutorial
+can be found [here](https://cavei.github.io/MOSClipTutorials/
+workflowGitHub_TCGA_MOSClipAnalysisTutorial_geneList.html).
+`MOSClip` gives the possibility to prioritize most important and stable pathway 
+or module results, running a resampling procedure that can be found on the 
+extended tutorial on GitHub. 
+More tutorials are also available on how to perform two-class analysis with 
+`MOSClip`, as well as examples of more plots that were not shown in this 
+vignette.
+
+# Session Information {.unnumbered}
+```{r}
+sessionInfo()
+```
+
+# References
+1. Martini,P., Chiogna,M., Calura,E. and Romualdi,C. (2019) MOSClip: multi-omic 
+and survival pathway analysis for the identification of survival associated 
+gene and modules. Nucleic Acids Research, 47, e80.
+
+
