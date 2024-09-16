@@ -157,16 +157,16 @@ multiOmicsTwoClassPathwayTest <- function(omicsObj, graph, classAnnot,
 #' @return `MultiOmicsModule` object
 #'
 #' @examples
-#' data("multiOmicsTwoClass")
+#' data("multiOmics")
 #' data("reactSmall")
 #' 
-#' genesToUse <- row.names(multiOmicsTwoClass[[1]])
+#' genesToUse <- row.names(multiOmics[[1]])
 #' 
 #' classAnnot <- data.frame("treatment" = c(rep("A", 25), rep("B", 25)),
-#'                          row.names = colnames(multiOmicsTwoClass[[1]]))
+#'                          row.names = colnames(multiOmics[[1]]))
 #'                          
 #' MOM_twoclasses <- multiOmicsTwoClassModuleTest(
-#'   multiOmicsTwoClass, reactSmall[[1]], classAnnot,
+#'   multiOmics, reactSmall[[1]], classAnnot,
 #'   baseFormula = "treatment ~ ", nullModel = "treatment ~ 1",
 #'   useTheseGenes = genesToUse)
 #'   

@@ -2,12 +2,8 @@
 % Please edit documentation in R/resamplingFunctions.R
 \name{resamplingModulesTwoClass}
 \alias{resamplingModulesTwoClass}
-<<<<<<< HEAD:man/resamplingModulesTwoClass.Rd
-\title{Resampling function for two-class analysis on modules}
-=======
 \alias{resamplingPathwayTwoClass}
-\title{Resampling function for two-classes analysis on modules}
->>>>>>> origin/annat_new:man/resampling-TwoClass.Rd
+\title{Resampling function for two-class analysis on modules}
 \usage{
 resamplingModulesTwoClass(
   fullMultiOmics,
@@ -51,25 +47,21 @@ list of the resampling tables of results
 list of the resampling tables of results
 }
 \description{
-<<<<<<< HEAD:man/resamplingModulesTwoClass.Rd
 Resampling function for two-class analysis on modules
-=======
-Resampling function for two-classes analysis on modules
 
-Resampling function for pathways (two-classes analysis)
+Resampling function for pathways (two-class analysis)
 }
 \examples{
-data(multiOmicsTwoClass)
+data(multiOmics)
 data(reactSmall)
 
-classAnnot <- data.frame(treatment = multiOmicsTwoClass$treatment,
-                         row.names = colnames(multiOmicsTwoClass[[1]]))
+classAnnot <- data.frame("treatment" = c(rep("A", 25), rep("B", 25)),
+                         row.names = colnames(multiOmics[[1]]))
 
-perms <- resamplingModulesTwoClass(fullMultiOmics = multiOmicsTwoClass,
+perms <- resamplingModulesTwoClass(fullMultiOmics = multiOmics,
                                    classAnnot, reactSmall,
                                    nperm = 10,
                                    pathwaySubset =
-                                     "Intrinsic Pathway for Apoptosis") 
+                                     "FGFR1 mutant receptor activation") 
 
->>>>>>> origin/annat_new:man/resampling-TwoClass.Rd
 }

@@ -208,6 +208,7 @@ setMethod("showOmics",  signature(object = "Omics"),
 setGeneric("showModule", function(object)
    standardGeneric("showModule"))
 
+#' @export
 #' @describeIn MultiOmicsModules shows module info
 #' @param object an object of class `MultiOmicsModules`
 

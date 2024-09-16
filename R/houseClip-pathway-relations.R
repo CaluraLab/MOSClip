@@ -48,7 +48,6 @@ downloadPathwayRelationFromReactome <- function(url=NULL, speciesAbbr = "HSA") {
 #'
 #' @importFrom checkmate assertClass
 #' @importFrom igraph V V<- as_ids make_ego_graph ego distances
-#' @export
 #'
 getPathFathers <- function(pathway, hierarchyGraph, ord=3, plot=FALSE) {
   checkmate::assertClass(hierarchyGraph, "igraph")

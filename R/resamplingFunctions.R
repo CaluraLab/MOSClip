@@ -137,7 +137,7 @@ preparePerms <- function(fullMultiOmics, nperm=100, nPatients=3) {
 #' perms <- resamplingModulesSurvival(fullMultiOmics = multiOmics, reactSmall,
 #'                                    nperm = 10,
 #'                                    pathwaySubset =
-#'                                        "Intrinsic Pathway for Apoptosis")
+#'                                        "FGFR1 mutant receptor activation")
 #'   
 #' @export
 #' 
@@ -181,17 +181,17 @@ resamplingModulesSurvival <- function(fullMultiOmics, pathdb, nperm=100,
 #' @rdname resampling-TwoClass
 #' 
 #' @examples
-#' data(multiOmicsTwoClass)
+#' data(multiOmics)
 #' data(reactSmall)
 #' 
-#' classAnnot <- data.frame(treatment = multiOmicsTwoClass$treatment,
-#'                          row.names = colnames(multiOmicsTwoClass[[1]]))
+#' classAnnot <- data.frame("treatment" = c(rep("A", 25), rep("B", 25)),
+#'                          row.names = colnames(multiOmics[[1]]))
 #' 
-#' perms <- resamplingModulesTwoClass(fullMultiOmics = multiOmicsTwoClass,
+#' perms <- resamplingModulesTwoClass(fullMultiOmics = multiOmics,
 #'                                    classAnnot, reactSmall,
 #'                                    nperm = 10,
 #'                                    pathwaySubset =
-#'                                      "Intrinsic Pathway for Apoptosis") 
+#'                                      "FGFR1 mutant receptor activation") 
 #' 
 #' @export
 #' 

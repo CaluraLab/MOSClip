@@ -15,11 +15,8 @@ a numeric. The minimum or NA
 \description{
 For internal use only. Get back minimum or NA.
 }
-<<<<<<< HEAD
 \examples{
   # minOrNA(c(1,5,0.1,NA))
   # minOrNA(c(NA,NA,NA))
 
 }
-=======
->>>>>>> origin/annat_new

@@ -17,9 +17,6 @@ a summarized version of the matrix.
 \description{
 For internal use only. for each line extrac 'col' and get the minimum.
 }
-<<<<<<< HEAD
 \examples{
 # summarizeOmicsResByMinPvalue(2:3, mat=matrix(c(1,2,4,1,2,5), nrow=2))
 }
-=======
->>>>>>> origin/annat_new
