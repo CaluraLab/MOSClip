@@ -44,8 +44,15 @@ df <- data.frame(pvalue = c(0.06, 0.04, 0.04, 0.03, 0.02),
                  mut = c(0.08, 0.02, 0.01, 0.04, 0.04),
                  row.names = c("PathwayA", "PathwayB", "PathwayC",
                                "PathwayD", "PathwayE"))
+<<<<<<< HEAD
                  
 omicsClasses2pathways <- computeOmicsIntersections(df,
      pvalueThr = 0.05, zscoreThr = 0.05)
+=======
+                               
+                               
+omicsClasses2Pathways <- computeOmicsIntersections(df, pvalueThr = 0.1,
+                                                   zscoreThr = 0.1)
+>>>>>>> origin/annat_new
      
 }

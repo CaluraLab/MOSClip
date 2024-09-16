@@ -89,7 +89,7 @@ omicsRegexp <- "(PC[0-9]+|[1-9]k[1-9]?|TRUE|FALSE|POS|NEG|POSTRUE|NEGTRUE)$"
 #' dataset for demostration purposes.
 #'
 #' @format ## `multiOmics`
-#' An ExperimentList with 4 omics:
+#' An Omics with 4 omics:
 #' \describe{
 #'   \item{exp}{Matrix with 151 rows and 50 columns of RNA expression values}
 #'   \item{met}{A matrix with 178 rows and 50 columns of methylation data with
@@ -112,7 +112,7 @@ omicsRegexp <- "(PC[0-9]+|[1-9]k[1-9]?|TRUE|FALSE|POS|NEG|POSTRUE|NEGTRUE)$"
 #' specific arguments to perform the dimensionality reduction and colData.
 #'
 #' @format ## `multiOmicsTwoClass`
-#' An ExperimentList with 4 omics:
+#' An Omics object with 4 omics:
 #' \describe{
 #'   \item{exp}{Matrix with 101 rows and 50 columns of RNA expression values}
 #'   \item{met}{A matrix with 97 rows and 50 columnsof methylation data with
@@ -142,3 +142,25 @@ omicsRegexp <- "(PC[0-9]+|[1-9]k[1-9]?|TRUE|FALSE|POS|NEG|POSTRUE|NEGTRUE)$"
 #' @usage data("reactSmall")
 
 "reactSmall"
+
+#' ExperimentList class object with TCGA ovarian data
+#'
+#' An ExperimentList class object containing data from TCGA ovarian cancer.
+#' The TCGA data was manually selected and preprocessed. It contains 4 omics:
+#' expression, methylation, mutation, and copy number variation. 
+#'
+#' @format ## `ExperimentList`
+#' An ExperimentList with 4 omics:
+#' \describe{
+#'   \item{exp}{Matrix with 101 rows and 50 columns of RNA expression values}
+#'   \item{met}{A matrix with 97 rows and 50 columnsof methylation data with
+#'   probes clustered}
+#'   \item{mut}{A matrix with 55 rows and 50 columns of mutation counts}
+#'   \item{cnv}{A matrix with matrix with 101 rows and 50 columns of copy
+#'   number}
+#'   ...
+#' }
+#' 
+#' @usage data("ovarianDataset")
+
+"ovarianDataset"

@@ -7,7 +7,7 @@
 \format{
 \subsection{\code{multiOmics}}{
 
-An ExperimentList with 4 omics:
+An Omics with 4 omics:
 \describe{
 \item{exp}{Matrix with 151 rows and 50 columns of RNA expression values}
 \item{met}{A matrix with 178 rows and 50 columns of methylation data with

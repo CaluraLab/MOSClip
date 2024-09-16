@@ -37,8 +37,7 @@ resolveAndOrder <- function(li) {
 #' @return a matrix 
 #' 
 #' @rdname resampling
-#' 
-#' @export
+
 mergeCol <- function(li, col="PC1", resolve=FALSE) {
   if (resolve) {
     li <- resolveAndOrder(li)
@@ -129,11 +128,23 @@ preparePerms <- function(fullMultiOmics, nperm=100, nPatients=3) {
 #' 
 #' @return list of the resampling tables of results
 #' 
+#' @rdname resampling-Survival
+#' 
+#' @examples
+#' data(multiOmics)
+#' data(reactSmall)
+#' 
+#' perms <- resamplingModulesSurvival(fullMultiOmics = multiOmics, reactSmall,
+#'                                    nperm = 10,
+#'                                    pathwaySubset =
+#'                                        "Intrinsic Pathway for Apoptosis")
+#'   
 #' @export
 #' 
 resamplingModulesSurvival <- function(fullMultiOmics, pathdb, nperm=100, 
                                       pathwaySubset=NULL, nPatients=3, 
                                       genesToConsider=NULL) {
+  
   patientsPerms <- preparePerms(fullMultiOmics, nperm, nPatients)
   
   if (is.null(genesToConsider)) {
@@ -167,6 +178,21 @@ resamplingModulesSurvival <- function(fullMultiOmics, pathdb, nperm=100,
 #' 
 #' @return list of the resampling tables of results
 #' 
+#' @rdname resampling-TwoClass
+#' 
+#' @examples
+#' data(multiOmicsTwoClass)
+#' data(reactSmall)
+#' 
+#' classAnnot <- data.frame(treatment = multiOmicsTwoClass$treatment,
+#'                          row.names = colnames(multiOmicsTwoClass[[1]]))
+#' 
+#' perms <- resamplingModulesTwoClass(fullMultiOmics = multiOmicsTwoClass,
+#'                                    classAnnot, reactSmall,
+#'                                    nperm = 10,
+#'                                    pathwaySubset =
+#'                                      "Intrinsic Pathway for Apoptosis") 
+#' 
 #' @export
 #' 
 resamplingModulesTwoClass <- function(fullMultiOmics, classAnnot, 
@@ -190,7 +216,12 @@ resamplingModulesTwoClass <- function(fullMultiOmics, classAnnot,
     
     multiOmicsReactome <- lapply(rePathSmall, function(g) {
       fcl <- multiOmicsTwoClassModuleTest(multiOmics, g, classAnnot = classes,
-                                          useTheseGenes = genesToConsider)
+                                            useTheseGenes = genesToConsider,
+                                            baseFormula = paste0(
+                                              colnames(classes)[1], " ~"),
+                                            autoCompleteFormula=TRUE,
+                                            nullModel = paste0(
+                                              colnames(classes)[1], " ~ 1"))
       fcl
     })
     
@@ -204,6 +235,8 @@ resamplingModulesTwoClass <- function(fullMultiOmics, classAnnot,
 #' @inheritParams resamplingModulesSurvival
 #' 
 #' @return list of the resampling tables of results
+#' 
+#' @rdname resampling-Survival
 #' 
 #' @export
 #' 
@@ -239,6 +272,8 @@ resamplingPathwaySurvival <- function(fullMultiOmics, pathdb, nperm=100,
 #' @inheritParams resamplingModulesTwoClass
 #' 
 #' @return list of the resampling tables of results
+#' 
+#' @rdname resampling-TwoClass
 #' 
 #' @export
 #' 
@@ -333,8 +368,9 @@ selectStablePathwaysModules <- function(perms, moduleSummary, success=90,
 #' getPathwaysModulesSuccess(perms, pathSummary)
 #' 
 #' @rdname evaluateResampling
+#' 
 #' @export
-#'
+
 getPathwaysModulesSuccess <- function(perms, moduleSummary, col="pvalue",
                                       thr=0.05) {
   sortedPerms <- lapply(perms, function(x) {
@@ -343,8 +379,9 @@ getPathwaysModulesSuccess <- function(perms, moduleSummary, col="pvalue",
   
   ref <- row.names(sortedPerms[[1]])
   lapply(sortedPerms, function(x) {
-    if (!(identical(ref, row.names(x))))
+    if (!(identical(ref, row.names(x)))) {
       stop("Perms row.names are different")
+  }
   })
   
   pathwayModuleName <- moduleSummary[order(row.names(moduleSummary)),]
