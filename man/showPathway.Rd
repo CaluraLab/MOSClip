@@ -15,3 +15,16 @@ NULL. No value is returned
 \description{
 A generic function showing pathway info
 }
+\examples{
+data(multiOmics)
+data(reactSmall)
+
+genesToUse <- row.names(multiOmics[[1]])
+
+MOP_survival <- multiOmicsSurvivalPathwayTest(multiOmics, reactSmall[[1]],
+  survFormula='Surv(days, status) ~', autoCompleteFormula = TRUE,
+  useTheseGenes = genesToUse)
+  
+showPathway(MOP_survival)
+
+}

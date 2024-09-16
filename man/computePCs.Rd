@@ -2,8 +2,6 @@
 % Please edit documentation in R/houseClip-pca-functions.R
 \name{computePCs}
 \alias{computePCs}
-\alias{sparseCompPCs}
-\alias{compPCs}
 \title{compute PCs.}
 \usage{
 computePCs(
@@ -13,10 +11,6 @@ computePCs(
   cliques = NULL,
   maxPCs = 3
 )
-
-sparseCompPCs(exp, shrink, k)
-
-compPCs(exp, shrink, k)
 }
 \arguments{
 \item{exp}{a matrix}
@@ -28,20 +22,8 @@ compPCs(exp, shrink, k)
 \item{cliques}{the pathway topology summarized in a list of cliques}
 
 \item{maxPCs}{the maximum number of PCs to consider}
-
-\item{k}{the number of components to use}
 }
 \value{
-a list with the following elements:
-\item{x}{the computed PCs}
-\item{sdev}{the standard deviation captured by the PCs}
-\item{loadings}{the loadings}
-
-a list with the following elements:
-\item{x}{the computed PCs}
-\item{sdev}{the standard deviation captured by the PCs}
-\item{loadings}{the loadings}
-
 a list with the following elements:
 \item{x}{the computed PCs}
 \item{sdev}{the standard deviation captured by the PCs}

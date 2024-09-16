@@ -15,25 +15,28 @@
 #' @importFrom utils read.table data
 #'
 #' @examples
-#' \donttest{
-#' url = "https://reactome.org/download/current/ReactomePathwaysRelation.txt"
-#' downloadPathwayRelationFromReactome(url, speciesAbbr = "HSA")
-#' }
+#' downloadPathwayRelationFromReactome()
+#' 
 #' @export
-downloadPathwayRelationFromReactome <- function(url=NULL, speciesAbbr = "HSA") {
-  if (is.null(url)) {
-    url <- system.file("extdata", "ReactomePathwaysRelation.txt", 
-                       package = "biocmosclip", mustWork = TRUE)
-  }
-  df <- read.table(url, sep="\t", header=FALSE, quote="\"", 
-                   stringsAsFactors=FALSE, check.names = FALSE)
-  colnames(df) <- c("parent", "child")
-  df <- df[grepl(speciesAbbr, df$parent) & grepl(speciesAbbr, df$child), ,
-           drop=FALSE]
-  row.names(df) <- NULL
-  df
+downloadPathwayRelationFromReactome <- function(
+    url = NULL, speciesAbbr = "HSA") {
+    if (is.null(url)) {
+        url <- system.file(
+            "extdata", "ReactomePathwaysRelation.txt", package = "biocmosclip",
+            mustWork = TRUE
+        )
+    }
+    df <- read.table(
+        url, sep = "\t", header = FALSE, quote = "\"", stringsAsFactors = FALSE,
+        check.names = FALSE
+    )
+    colnames(df) <- c("parent", "child")
+    df <- df[grepl(speciesAbbr, df$parent) &
+        grepl(speciesAbbr, df$child),
+        , drop = FALSE]
+    row.names(df) <- NULL
+    df
 }
-
 
 #' Retrieves pathways relatives
 #'
@@ -50,30 +53,30 @@ downloadPathwayRelationFromReactome <- function(url=NULL, speciesAbbr = "HSA") {
 #'
 #' @importFrom checkmate assertClass
 #' @importFrom igraph V V<- as_ids make_ego_graph ego distances
-#' @export
 #'
-getPathFathers <- function(pathway, hierarchyGraph, ord=3, plot=FALSE) {
-  checkmate::assertClass(hierarchyGraph, "igraph")
+getPathFathers <- function(pathway, hierarchyGraph, ord = 3, plot = FALSE) {
+    checkmate::assertClass(hierarchyGraph, "igraph")
 
-  if (!(pathway %in% names(V(hierarchyGraph)))){
-    warning("Id ", pathway, " is not in the hierarchy.")
-    return(pathway)
-  }
+    if (!(pathway %in% names(V(hierarchyGraph)))) {
+        warning("Id ", pathway, " is not in the hierarchy.")
+        return(pathway)
+    }
 
-  mm <- make_ego_graph(hierarchyGraph, ord, nodes = pathway, mode="in")
-  mmlist <- ego(hierarchyGraph, ord, nodes = pathway, mode="in")
+    mm <- make_ego_graph(hierarchyGraph, ord, nodes = pathway, mode = "in")
+    mmlist <- ego(hierarchyGraph, ord, nodes = pathway, mode = "in")
 
-  if (plot)
-    plot(mm[[1]])
+    if (plot)
+        plot(mm[[1]])
 
-  chain <- as_ids(mmlist[[1]])
-  parents <- chain[-1]
-  if (length(parents)==0)
-    return(chain)
+    chain <- as_ids(mmlist[[1]])
+    parents <- chain[-1]
+    if (length(parents) ==
+        0)
+        return(chain)
 
-  dis <- distances(mm[[1]])
-  idx <- which.max(dis[pathway, ])
-  return(colnames(dis)[idx])
+    dis <- distances(mm[[1]])
+    idx <- which.max(dis[pathway, ])
+    return(colnames(dis)[idx])
 }
 
 #' Convert id to pathway name
@@ -88,8 +91,10 @@ getPathFathers <- function(pathway, hierarchyGraph, ord=3, plot=FALSE) {
 #' @return a character vector with the names
 #'
 id2name <- function(idList, namedVect) {
-  stopifnot(!is.null(names(namedVect)))
-  lapply(idList, function(x) {
-    unlist(unname(namedVect[x]))
-  })
+    stopifnot(!is.null(names(namedVect)))
+    lapply(
+        idList, function(x) {
+            unlist(unname(namedVect[x]))
+        }
+    )
 }

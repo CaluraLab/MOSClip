@@ -25,7 +25,7 @@ characteristics for all biological units}
 \item{sampleMap}{A \code{DataFrame} or \code{data.frame} of assay names,
 sample identifiers, and colname samples}
 
-\item{metadata}{An optional argument of "ANY" class (usually list) for
+\item{metadata}{An optional argument of 'ANY' class (usually list) for
 content describing the experiments}
 
 \item{drops}{A \code{list} of unmatched information
@@ -45,4 +45,27 @@ makeOmics creates the \code{Omics} object necessary to perform most of the
 analyses of this package. It contains all the omics data in the format of a
 \code{ExperimentList}, the clinical data, and all the information necessary for
 the dimensionality reduction step.
+}
+\examples{
+data(ovarianDataset)
+
+myColData <- data.frame(status = sample(c(0,1), 50, replace = TRUE),
+                        days = sample(c(0, 500), 50, replace = TRUE),
+                        row.names = colnames(ovarianDataset$exp))
+
+myOmicsObj <- makeOmics(experiments = ovarianDataset,
+                        colData = myColData,
+                        modelInfo = c(
+                          'summarizeWithPca',
+                          'summarizeInCluster',
+                          'summarizeToNumberOfEvents',
+                          'summarizeToNumberOfDirectionalEvents'),
+                        specificArgs = list(
+                          pcaArgs = list(name = 'exp', shrink = 'FALSE',
+                                         method = 'sparse', maxPCs = 3),
+                          clusterArgs = list(name = 'met',
+                                             max_cluster_number = 3),
+                          countEvent = list(name = 'mut', min_prop = 0.05),
+                          cnvAgv = list(name = 'cnv', min_prop = 0.05)))
+
 }

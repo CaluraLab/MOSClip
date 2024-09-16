@@ -18,14 +18,13 @@ setClassUnion("characterOrNULL", c("character", "NULL"))
 #' @name MultiOmicsModules-class
 #' @rdname MultiOmicsModules-class
 #'
-setClass(Class ="MultiOmicsModules",
-         slots = c(alphas = "numeric",
-                   zlists = "list",
-                   modulesView = "list",
-                   modules = "list",
-                   analysis = "characterOrNULL",
-                   multiOmicObj = "characterOrNULL",
-                   title = "characterOrNULL"))
+setClass(
+    Class = "MultiOmicsModules", slots = c(
+        alphas = "numeric", zlists = "list", modulesView = "list",
+        modules = "list", analysis = "characterOrNULL",
+        multiOmicObj = "characterOrNULL", title = "characterOrNULL"
+    )
+)
 
 #' Multi Omics Pathway.
 #'
@@ -42,13 +41,13 @@ setClass(Class ="MultiOmicsModules",
 #' @name MultiOmicsPathway-class
 #' @rdname MultiOmicsPathway-class
 #'
-setClass(Class ="MultiOmicsPathway",
-         slots = c(pvalue = "numeric",
-                   zlist = "numeric",
-                   pathView = "list",
-                   analysis = "characterOrNULL",
-                   multiOmicObj = "characterOrNULL",
-                   title = "characterOrNULL"))
+setClass(
+    Class = "MultiOmicsPathway", slots = c(
+        pvalue = "numeric", zlist = "numeric", pathView = "list",
+        analysis = "characterOrNULL", multiOmicObj = "characterOrNULL",
+        title = "characterOrNULL"
+    )
+)
 
 
 #' Omics.
@@ -64,11 +63,9 @@ setClass(Class ="MultiOmicsPathway",
 #' @name Omics-class
 #' @rdname Omics-class
 #'
-#' @export
 #' @import MultiAssayExperiment
-Omics <- setClass(Class = "Omics", package = "biocmosclip",
-
-                  slots = c(modelInfo = "character",
-                            specificArgs = "list"),
-                  contains = "MultiAssayExperiment"
+Omics <- setClass(
+    Class = "Omics", package = "biocmosclip",
+    slots = c(modelInfo = "character", specificArgs = "list"),
+    contains = "MultiAssayExperiment"
 )

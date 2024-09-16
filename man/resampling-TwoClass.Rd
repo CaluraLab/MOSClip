@@ -2,9 +2,20 @@
 % Please edit documentation in R/resamplingFunctions.R
 \name{resamplingModulesTwoClass}
 \alias{resamplingModulesTwoClass}
+\alias{resamplingPathwayTwoClass}
 \title{Resampling function for two-class analysis on modules}
 \usage{
 resamplingModulesTwoClass(
+  fullMultiOmics,
+  classAnnot,
+  pathdb,
+  nperm = 100,
+  pathwaySubset = NULL,
+  nPatients = 3,
+  genesToConsider = NULL
+)
+
+resamplingPathwayTwoClass(
   fullMultiOmics,
   classAnnot,
   pathdb,
@@ -32,7 +43,25 @@ genes found in the first experiment of the multiOmic object are used}
 }
 \value{
 list of the resampling tables of results
+
+list of the resampling tables of results
 }
 \description{
 Resampling function for two-class analysis on modules
+
+Resampling function for pathways (two-class analysis)
+}
+\examples{
+data(multiOmics)
+data(reactSmall)
+
+classAnnot <- data.frame('treatment' = c(rep('A', 25), rep('B', 25)),
+                         row.names = colnames(multiOmics[[1]]))
+
+perms <- resamplingModulesTwoClass(fullMultiOmics = multiOmics,
+                                   classAnnot, reactSmall,
+                                   nperm = 10,
+                                   pathwaySubset =
+                                     'FGFR1 mutant receptor activation') 
+
 }

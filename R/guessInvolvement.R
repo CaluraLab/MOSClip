@@ -19,28 +19,36 @@
 #' summary for an omic summarized using the setted method: pvalues are present 
 #' only for cluster method.
 #'
-guessInvolvement <- function(pathway, moduleNumber, loadThr=0.6, n=3, atleast=1,
-                             min_prop_pca=0.1, min_prop_events=0.1, ...) {
-  multiOmicObj <- get(pathway@multiOmicObj, ...)
-  omics <- pathway@modulesView[[moduleNumber]]
-  moduleCox <- createCoxObj(multiOmicObj@colData, moView=omics)
-  analysis <- pathway@analysis
+guessInvolvement <- function(
+    pathway, moduleNumber, loadThr = 0.6, n = 3, atleast = 1,
+    min_prop_pca = 0.1, min_prop_events = 0.1, ...
+) {
+    multiOmicObj <- get(pathway@multiOmicObj, ...)
+    omics <- pathway@modulesView[[moduleNumber]]
+    moduleCox <- createCoxObj(multiOmicObj@colData, moView = omics)
+    analysis <- pathway@analysis
 
-  lapply(omics, function(omic) {
-    if(omic$method=="pca") {
-      extractSummaryFromPCA(omic, multiOmicObj, moduleCox, analysis, loadThr,
-                            atleast, minprop=min_prop_pca)
-    } else if (omic$method=="cluster") {
-      extractSummaryFromCluster(omic, multiOmicObj, n)
-    } else if (omic$method %in% c("binary", "directedBinary")) {
-      extractSummaryFromBinary(omic, multiOmicObj, n)
-    } else if (omic$method %in% c("count", "directedCount")) {
-      extractSummaryFromNumberOfEvents(omic, multiOmicObj, moduleCox, analysis,
-                                       n=3, minprop=min_prop_events)
-    } else {
-      stop("Unsupported method.")
-    }
-  })
+    lapply(
+        omics, function(omic) {
+            if (omic$method == "pca") {
+                extractSummaryFromPCA(
+                  omic, multiOmicObj, moduleCox, analysis, loadThr,
+                  atleast, minprop = min_prop_pca
+              )
+            } else if (omic$method == "cluster") {
+                extractSummaryFromCluster(omic, multiOmicObj, n)
+            } else if (omic$method %in% c("binary", "directedBinary")) {
+                extractSummaryFromBinary(omic, multiOmicObj, n)
+            } else if (omic$method %in% c("count", "directedCount")) {
+                extractSummaryFromNumberOfEvents(
+                  omic, multiOmicObj, moduleCox, analysis, n = 3,
+                  minprop = min_prop_events
+              )
+            } else {
+                stop("Unsupported method.")
+            }
+        }
+    )
 }
 
 #' Guess the most influent features from MultiOmics Survival or Two-class 
@@ -54,30 +62,36 @@ guessInvolvement <- function(pathway, moduleNumber, loadThr=0.6, n=3, atleast=1,
 #'
 #' @inherit guessInvolvement return
 #'
-guessInvolvementPathway <- function(pathway, loadThr=0.6, n=3, atleast=1,
-                                    min_prop_pca=0.1,
-                                    min_prop_events=0.1, ...) {
+guessInvolvementPathway <- function(
+    pathway, loadThr = 0.6, n = 3, atleast = 1, min_prop_pca = 0.1,
+    min_prop_events = 0.1, ...
+) {
 
-  multiOmicObj <- get(pathway@multiOmicObj, ...)
-  omics <- pathway@pathView
-  moduleCox <- createCoxObj(multiOmicObj@colData, moView=omics)
-  analysis <- pathway@analysis
+    multiOmicObj <- get(pathway@multiOmicObj, ...)
+    omics <- pathway@pathView
+    moduleCox <- createCoxObj(multiOmicObj@colData, moView = omics)
+    analysis <- pathway@analysis
 
-  lapply(omics, function(omic) {
-    if(omic$method=="pca") {
-      extractSummaryFromPCA(omic, multiOmicObj, moduleCox, analysis, loadThr,
-                            atleast, minprop=min_prop_pca)
+    lapply(
+        omics, function(omic) {
+            if (omic$method == "pca") {
+                extractSummaryFromPCA(
+                  omic, multiOmicObj, moduleCox, analysis, loadThr,
+                  atleast, minprop = min_prop_pca
+              )
 
-    } else if (omic$method=="cluster") {
-      extractSummaryFromCluster(omic, multiOmicObj, n)
-    } else if (omic$method %in% c("binary", "directedBinary")) {
-      extractSummaryFromBinary(omic, multiOmicObj, n)
-    } else if (omic$method %in% c("count", "directedCount")) {
-      extractSummaryFromNumberOfEvents(omic, multiOmicObj, moduleCox, analysis,
-                                       n=3, minprop=min_prop_events)
-    } else {
-      stop("Unsupported method.")
-    }
-  })
+            } else if (omic$method == "cluster") {
+                extractSummaryFromCluster(omic, multiOmicObj, n)
+            } else if (omic$method %in% c("binary", "directedBinary")) {
+                extractSummaryFromBinary(omic, multiOmicObj, n)
+            } else if (omic$method %in% c("count", "directedCount")) {
+                extractSummaryFromNumberOfEvents(
+                  omic, multiOmicObj, moduleCox, analysis, n = 3,
+                  minprop = min_prop_events
+              )
+            } else {
+                stop("Unsupported method.")
+            }
+        }
+    )
 }
-

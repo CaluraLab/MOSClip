@@ -12,28 +12,30 @@
 #' @importFrom checkmate assertClass
 #' @importFrom Matrix diag
 #' @rdname graph-processing
-extractCliquesFromDag <- function(dag, root=NULL) {
-  checkmate::assertClass(dag, "graphNEL")
-  idag <- igraph::graph_from_graphnel(dag)
-  if (sum(Matrix::diag(igraph::as_adjacency_matrix(idag)))!=0){
-    dag <- removeSelfLoops(dag)
+extractCliquesFromDag <- function(dag, root = NULL) {
+    checkmate::assertClass(dag, "graphNEL")
     idag <- igraph::graph_from_graphnel(dag)
-  }
+    if (sum(Matrix::diag(igraph::as_adjacency_matrix(idag))) !=
+        0) {
+        dag <- removeSelfLoops(dag)
+        idag <- igraph::graph_from_graphnel(dag)
+    }
 
-  if (gRbase::is.DAG(idag)) {
-    moral <- gRbase::moralize(idag)
-  } else {
-    moral <- mmmoralize(idag)
-  }
+    if (gRbase::is.DAG(idag)) {
+        moral <- gRbase::moralize(idag)
+    } else {
+        moral <- mmmoralize(idag)
+    }
 
-  tg <- gRbase::triangulate(moral)
-  ripped <- gRbase::rip(tg, root=root)
-  if (length(ripped)==0){
-    warning("This graph ", dag@title, "have 0 cliques")
-    return(NULL)
-  }
-  
-  ripped$cliques
+    tg <- gRbase::triangulate(moral)
+    ripped <- gRbase::rip(tg, root = root)
+    if (length(ripped) ==
+        0) {
+        warning("This graph ", dag@title, "have 0 cliques")
+        return(NULL)
+    }
+
+    ripped$cliques
 }
 
 #' Remove self loops from a graphNEL
@@ -49,16 +51,16 @@ extractCliquesFromDag <- function(dag, root=NULL) {
 #' @importClassesFrom graph graphNEL
 #' @importFrom checkmate assertClass
 #'
-removeSelfLoops <- function(graph){
-  checkmate::assertClass(graph, "graphNEL")
-  edgeL <- graph@edgeL
-  for (i in seq_along(edgeL)) {
-    pos <- match(i,edgeL[[i]]$edges)
-    if (!(is.na(pos)))
-      edgeL[[i]]$edges <- edgeL[[i]]$edges[-pos]
-  }
-  graph@edgeL <- edgeL
-  return(graph)
+removeSelfLoops <- function(graph) {
+    checkmate::assertClass(graph, "graphNEL")
+    edgeL <- graph@edgeL
+    for (i in seq_along(edgeL)) {
+        pos <- match(i, edgeL[[i]]$edges)
+        if (!(is.na(pos)))
+            edgeL[[i]]$edges <- edgeL[[i]]$edges[-pos]
+    }
+    graph@edgeL <- edgeL
+    return(graph)
 }
 
 #' Moralize
@@ -72,9 +74,8 @@ removeSelfLoops <- function(graph){
 #' @rdname graph-processing
 #'
 mmmoralize <- function(graph) {
-  m <- igraph::as_adjacency_matrix(graph, sparse=FALSE)
-  m <- gRbase::moralizeMAT(m)
-  g <- igraph::graph_from_adjacency_matrix(m, mode="directed")
-  g
+    m <- igraph::as_adjacency_matrix(graph, sparse = FALSE)
+    m <- gRbase::moralizeMAT(m)
+    g <- igraph::graph_from_adjacency_matrix(m, mode = "directed")
+    g
 }
-

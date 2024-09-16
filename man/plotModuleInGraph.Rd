@@ -6,7 +6,7 @@
 \usage{
 plotModuleInGraph(
   modulesobj,
-  reactObj,
+  pathList,
   moduleNumber,
   orgDbi = "org.Hs.eg.db",
   paletteNames = NULL,
@@ -14,14 +14,15 @@ plotModuleInGraph(
   fileName = NULL,
   discr_prop_pca = 0.15,
   discr_prop_events = 0.05,
+  pathTitle = NULL,
   ...
 )
 }
 \arguments{
 \item{modulesobj}{a \code{MultiOmicsModule} class object}
 
-\item{reactObj}{a \code{PathwayList} from \code{graphite} package that contains the
-reactome patways to be used}
+\item{pathList}{a \code{PathwayList} from \code{graphite} package that contains the
+pathways to be used}
 
 \item{moduleNumber}{a module number}
 
@@ -38,6 +39,8 @@ arguments}
 
 \item{discr_prop_events}{the minimal proportion to compute the event classes}
 
+\item{pathTitle}{title of the graph, to be searched in \code{pathList}}
+
 \item{...}{additional arguments passed to \code{guessInvolvement} function}
 }
 \value{
@@ -46,4 +49,19 @@ a MOSClip plot in form of a list class object
 \description{
 From a \code{MultiOmicsModules} object, it plots the position of a given module
 in the pathway. The omics are also represented in the graph.
+}
+\examples{
+ data(multiOmics)
+ data(reactSmall)
+ 
+ genesToUse <- row.names(multiOmics[[1]])
+ 
+ MOM_survival <- multiOmicsSurvivalModuleTest(multiOmics, reactSmall[[1]],
+  survFormula='Surv(days, status) ~', autoCompleteFormula = TRUE,
+  useTheseGenes = genesToUse)
+ 
+ plotModuleInGraph(MOM_survival, reactSmall, moduleNumber = 1,
+  paletteNames = c(exp = 'red', met = 'green', mut = 'blue', cnv = 'yellow')
+ )
+
 }

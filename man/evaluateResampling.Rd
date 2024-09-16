@@ -13,24 +13,27 @@ getPathwaysModulesSuccess(perms, moduleSummary, col = "pvalue", thr = 0.05)
 addResamplingCounts(moduleSummary, resamplingCounts)
 }
 \arguments{
-\item{perms}{a list of perm objects}
+\item{perms}{a list. Result of resampling function}
 
-\item{moduleSummary}{summary of the modules}
+\item{moduleSummary}{summary of modules or pathways obtained from
+\code{multiPathwayModuleReport} or \code{multiPathwayReport}}
 
-\item{success}{number of success}
+\item{success}{number of success to consider the pathway or module stable}
 
-\item{col}{the name of the column}
+\item{col}{the name of the column in the summary to be used to evaluate
+resampling success}
 
 \item{thr}{the threshold for significance}
 
-\item{resamplingCounts}{the counts of success}
+\item{resamplingCounts}{the counts of success obtained with
+\code{getPathwaysModulesSuccess}}
 }
 \value{
 the subset of stable modules
 
-the counts of success
+the counts of success for each pathway or module
 
-a module summary with reampling counts
+a module or pathway summary with resampling counts column appended
 }
 \description{
 Select stable pathway modules
@@ -38,4 +41,16 @@ Select stable pathway modules
 Count the resampling success
 
 Add resampling counts to module summary
+}
+\examples{
+data('multiOmics')
+data('reactSmall')
+
+perms <- resamplingPathwaySurvival(multiOmics, reactSmall, nperm=5)
+res <- lapply(reactSmall, function(g) 
+  multiOmicsSurvivalPathwayTest(multiOmics, g, 
+                                useTheseGenes=row.names(multiOmics[[1]])))
+pathSummary <- multiPathwayReport(res)
+getPathwaysModulesSuccess(perms, pathSummary)
+
 }

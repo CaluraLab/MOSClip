@@ -20,3 +20,23 @@ followed by covariates pvalues, in columns.
 \description{
 Given the list of MOPs, it creates the table.
 }
+\examples{
+data(multiOmics)
+data(reactSmall)
+
+genesToUse <- row.names(multiOmics[[1]])
+
+MOP_list <- lapply(reactSmall, function(g) {
+   print(g@title)  #  to see which pathways are being calculated
+   set.seed(1234)
+   fcl = multiOmicsSurvivalPathwayTest(multiOmics, g,
+                                       survFormula='Surv(days, status) ~',
+                                       autoCompleteFormula = TRUE,
+                                       useTheseGenes = genesToUse)
+   fcl
+})
+
+pathwaysSummary <- multiPathwayReport(MOP_list)
+
+
+}
