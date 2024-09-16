@@ -31,18 +31,18 @@ this threshold.}
 
 \item{plot}{character indicating the layout for plotting. It is one of
 \code{circular}, \code{landscape} or \code{noplot}. By default,
-plot="circular", if plot="noplot" no plot will be provided.}
+plot='circular', if plot='noplot' no plot will be provided.}
 
 \item{sort.by}{character indicating how to sort the
-intersections in the plot. It is one of "set" (by omics), "size"
-(by intersection size), "degree" (by number of intersected omics),
-and "p-value".}
+intersections in the plot. It is one of 'set' (by omics), 'size'
+(by intersection size), 'degree' (by number of intersected omics),
+and 'p-value'.}
 
 \item{excludeColumns}{a vector of characters listing the columns of
 \code{multiPathwayReportData} object to be excluded by the analysis.
 In the case \code{multiPathwayReportData} derives from
 \code{\link{multiPathwayModuleReport}}
-you should set \code{excludeColumns = c("pathway","module")}.}
+you should set \code{excludeColumns = c('pathway','module')}.}
 
 \item{color.on}{color that represent the active omics in the sector}
 
@@ -69,8 +69,8 @@ exact test of this function was described in Wang et al 2015.
 df <- data.frame(pvalue = c(0.06, 0.04, 0.04, 0.03, 0.02),
                  cnv = c(0.07, 0.03, 0.02, 0.04, 0.01),
                  mut = c(0.08, 0.02, 0.01, 0.04, 0.04),
-                 row.names = c("PathwayA", "PathwayB", "PathwayC",
-                               "PathwayD", "PathwayE")
+                 row.names = c('PathwayA', 'PathwayB', 'PathwayC',
+                               'PathwayD', 'PathwayE')
                  )
 
 runSupertest(df, pvalueThr = 0.05, zscoreThr = 0.05)

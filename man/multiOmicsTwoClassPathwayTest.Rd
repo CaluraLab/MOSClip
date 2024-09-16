@@ -25,7 +25,7 @@ at least a column with the classes labels, and the row.names as the samples
 labels}
 
 \item{baseFormula}{model formula to be used for the test. It should be
-written as "classes ~ ", while "classes" being the column name for the class
+written as 'classes ~ ', while 'classes' being the column name for the class
 labels}
 
 \item{autoCompleteFormula}{a logical value. If TRUE. It autocompletes the
@@ -35,7 +35,7 @@ available covariates (omics)}
 \item{useTheseGenes}{(optional) vector of specific genes to be used}
 
 \item{nullModel}{the null model formula. It should be written the same as
-the baseFormula, followed by " 1". (e.g. "classes ~ 1")}
+the baseFormula, followed by ' 1'. (e.g. 'classes ~ 1')}
 
 \item{pathName}{(optional) title of the pathway. If NULL, \code{graph@title} is
 used as title}
@@ -47,17 +47,17 @@ used as title}
 Performs topological two-class analysis using an \code{Omics} object.
 }
 \examples{
-data("multiOmics")
-data("reactSmall")
+data('multiOmics')
+data('reactSmall')
 
 genesToUse <- row.names(multiOmics[[1]])
 
-classAnnot <- data.frame("treatment" = c(rep("A", 25), rep("B", 25)),
+classAnnot <- data.frame('treatment' = c(rep('A', 25), rep('B', 25)),
                          row.names = colnames(multiOmics[[1]]))
 
 MOP_twoClasses <- multiOmicsTwoClassPathwayTest(
   multiOmics, reactSmall[[1]], classAnnot,
-  baseFormula = "treatment ~ ", nullModel = "treatment ~ 1",
+  baseFormula = 'treatment ~ ', nullModel = 'treatment ~ 1',
   useTheseGenes = genesToUse)
   
 }

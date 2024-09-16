@@ -14,12 +14,12 @@ A PathwayList with Reactome pathways for hsapiens
 }
 }
 \usage{
-data("reactSmall")
+data('reactSmall')
 }
 \description{
 A PathwayList with three pathways necessary for the analysis:
-"Activation of Matrix Metalloproteinases", "FGFR1 mutant receptor
-activation", and "VEGFA-VEGFR2 Pathway". Pathways were downloaded using
+'Activation of Matrix Metalloproteinases', 'FGFR1 mutant receptor
+activation', and 'VEGFA-VEGFR2 Pathway'. Pathways were downloaded using
 \code{graphite} package and the names of the nodes were converted into
 Entrez IDs.
 }

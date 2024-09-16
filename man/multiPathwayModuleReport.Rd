@@ -31,7 +31,7 @@ genesToUse <- row.names(multiOmics[[1]])
    print(g@title)  #  to see which pathways are being calculated
    set.seed(1234)
    fcl = multiOmicsSurvivalModuleTest(multiOmics, g,
-                                       survFormula="Surv(days, status) ~",
+                                       survFormula='Surv(days, status) ~',
                                        autoCompleteFormula = TRUE,
                                        useTheseGenes = genesToUse)
    fcl

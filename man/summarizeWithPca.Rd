@@ -24,7 +24,7 @@ summarizeWithPca(
 
 \item{shrink}{shirnk or not the covariance matrix.}
 
-\item{method}{either "regular", "sparse" or "topological"}
+\item{method}{either 'regular', 'sparse' or 'topological'}
 
 \item{cliques}{the features organized in cliques. Only use for topology.}
 

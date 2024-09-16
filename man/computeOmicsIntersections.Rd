@@ -29,7 +29,7 @@ this threshold.}
 \code{multiPathwayReportData} object to be excluded by the analysis.
 In the case \code{multiPathwayReportData} derives from
 \code{\link{multiPathwayModuleReport}}
-you should set \code{excludeColumns = c("pathway","module")}.}
+you should set \code{excludeColumns = c('pathway','module')}.}
 }
 \value{
 a list of pathway modules present for every intersection of omics
@@ -42,8 +42,8 @@ Finds the modules that have any intersection among the available omics
 df <- data.frame(pvalue = c(0.06, 0.04, 0.04, 0.03, 0.02),
                  cnv = c(0.07, 0.03, 0.02, 0.04, 0.01),
                  mut = c(0.08, 0.02, 0.01, 0.04, 0.04),
-                 row.names = c("PathwayA", "PathwayB", "PathwayC",
-                               "PathwayD", "PathwayE"))
+                 row.names = c('PathwayA', 'PathwayB', 'PathwayC',
+                               'PathwayD', 'PathwayE'))
                                
 omicsClasses2Pathways <- computeOmicsIntersections(df, pvalueThr = 0.1,
                                                    zscoreThr = 0.1)

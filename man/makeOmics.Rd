@@ -25,7 +25,7 @@ characteristics for all biological units}
 \item{sampleMap}{A \code{DataFrame} or \code{data.frame} of assay names,
 sample identifiers, and colname samples}
 
-\item{metadata}{An optional argument of "ANY" class (usually list) for
+\item{metadata}{An optional argument of 'ANY' class (usually list) for
 content describing the experiments}
 
 \item{drops}{A \code{list} of unmatched information
@@ -56,16 +56,16 @@ myColData <- data.frame(status = sample(c(0,1), 50, replace = TRUE),
 myOmicsObj <- makeOmics(experiments = ovarianDataset,
                         colData = myColData,
                         modelInfo = c(
-                          "summarizeWithPca",
-                          "summarizeInCluster",
-                          "summarizeToNumberOfEvents",
-                          "summarizeToNumberOfDirectionalEvents"),
+                          'summarizeWithPca',
+                          'summarizeInCluster',
+                          'summarizeToNumberOfEvents',
+                          'summarizeToNumberOfDirectionalEvents'),
                         specificArgs = list(
-                          pcaArgs = list(name = "exp", shrink = "FALSE",
-                                         method = "sparse", maxPCs = 3),
-                          clusterArgs = list(name = "met",
+                          pcaArgs = list(name = 'exp', shrink = 'FALSE',
+                                         method = 'sparse', maxPCs = 3),
+                          clusterArgs = list(name = 'met',
                                              max_cluster_number = 3),
-                          countEvent = list(name = "mut", min_prop = 0.05),
-                          cnvAgv = list(name = "cnv", min_prop = 0.05)))
+                          countEvent = list(name = 'mut', min_prop = 0.05),
+                          cnvAgv = list(name = 'cnv', min_prop = 0.05)))
 
 }

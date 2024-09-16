@@ -30,7 +30,7 @@ MOP_list <- lapply(reactSmall, function(g) {
    print(g@title)  #  to see which pathways are being calculated
    set.seed(1234)
    fcl = multiOmicsSurvivalPathwayTest(multiOmics, g,
-                                       survFormula="Surv(days, status) ~",
+                                       survFormula='Surv(days, status) ~',
                                        autoCompleteFormula = TRUE,
                                        useTheseGenes = genesToUse)
    fcl

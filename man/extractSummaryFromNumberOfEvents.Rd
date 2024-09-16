@@ -39,6 +39,6 @@ counting of events.
 \item{covsConsidered}{the name of the considered omic}
 }
 \description{
-Given an omic summarized by "summarizeToNumberOfEvents" extract the most
+Given an omic summarized by 'summarizeToNumberOfEvents' extract the most
 important features.
 }

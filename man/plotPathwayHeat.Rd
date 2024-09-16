@@ -64,14 +64,14 @@ survAnnot <- data.frame(status = multiOmics$status,
 
 # Creating the MultiOmicsPathway object
 MOP_survival <- multiOmicsSurvivalPathwayTest(multiOmics, reactSmall[[1]],
-  survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+  survFormula='Surv(days, status) ~', autoCompleteFormula = TRUE,
   useTheseGenes = genesToUse)
 
 # Plotting
-plotPathwayHeat(MOP_survival, sortBy = c("expPC2", "mut", "status", "days"),
- paletteNames = c(exp = "red", met = "green", mut = "blue", cnv = "yellow"),
+plotPathwayHeat(MOP_survival, sortBy = c('expPC2', 'mut', 'status', 'days'),
+ paletteNames = c(exp = 'red', met = 'green', mut = 'blue', cnv = 'yellow'),
  additionalAnnotations = survAnnot,
- additionalPaletteNames = list(status = "teal", days = "violet"),
+ additionalPaletteNames = list(status = 'teal', days = 'violet'),
  nrowsHeatmaps = 2, withSampleNames = F)
 
 }

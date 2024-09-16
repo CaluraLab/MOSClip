@@ -72,10 +72,10 @@ in which the strata corresponds to the chosen omics
 
  # Creating the MultiOmicsPathway object
   MOP_survival <- multiOmicsSurvivalPathwayTest(multiOmics, reactSmall[[1]],
-   survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+   survFormula='Surv(days, status) ~', autoCompleteFormula = TRUE,
    useTheseGenes = genesToUse)
   
-  plotPathwayKM(MOP_survival, formula = "Surv(days, status) ~ mut + expPC2",
-  paletteNames = "Paired", inYears = TRUE)
+  plotPathwayKM(MOP_survival, formula = 'Surv(days, status) ~ mut + expPC2',
+  paletteNames = 'Paired', inYears = TRUE)
 
 }

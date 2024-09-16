@@ -43,8 +43,8 @@ Count the resampling success
 Add resampling counts to module summary
 }
 \examples{
-data("multiOmics")
-data("reactSmall")
+data('multiOmics')
+data('reactSmall')
 
 perms <- resamplingPathwaySurvival(multiOmics, reactSmall, nperm=5)
 res <- lapply(reactSmall, function(g) 

@@ -20,7 +20,7 @@ number}
 }
 }
 \usage{
-data("multiOmics")
+data('multiOmics')
 }
 \description{
 A Omics class object containing data from TCGA ovarian cancer. The TCGA data

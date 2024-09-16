@@ -45,15 +45,15 @@ MOP_list <- lapply(reactSmall, function(g) {
    print(g@title)  #  to see which pathways are being calculated
    set.seed(1234)
    fcl = multiOmicsSurvivalPathwayTest(multiOmics, g,
-                                       survFormula="Surv(days, status) ~",
+                                       survFormula='Surv(days, status) ~',
                                        autoCompleteFormula = TRUE,
                                        useTheseGenes = genesToUse)
    fcl
 })
 
 plotMultiPathwayReport(MOP_list,
-                       MOcolors = c(exp = "red", met = "green", mut = "blue",
-                                    cnv="yellow"),
+                       MOcolors = c(exp = 'red', met = 'green', mut = 'blue',
+                                    cnv='yellow'),
                        fontsize = 12)
 
 }

@@ -15,7 +15,7 @@ functions.}
 \code{multiPathwayReportData} object to be excluded by the analysis.
 In the case \code{multiPathwayReportData} derives from
 \code{\link{multiPathwayModuleReport}}
-you should set \code{excludeColumns = c("pathway","module")}.}
+you should set \code{excludeColumns = c('pathway','module')}.}
 
 \item{as.list}{return a list rather than a data.frame}
 }

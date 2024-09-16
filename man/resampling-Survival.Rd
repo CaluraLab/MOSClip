@@ -54,6 +54,6 @@ data(reactSmall)
 perms <- resamplingModulesSurvival(fullMultiOmics = multiOmics, reactSmall,
                                    nperm = 10,
                                    pathwaySubset =
-                                       "FGFR1 mutant receptor activation")
+                                       'FGFR1 mutant receptor activation')
   
 }

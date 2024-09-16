@@ -39,6 +39,6 @@ summary for omic summarized using pca
 \item{covsConsidered}{the name of the considered omic}
 }
 \description{
-Given an omic summarized by "summarizeWithPca" extract the most important
+Given an omic summarized by 'summarizeWithPca' extract the most important
 features.
 }

@@ -2,7 +2,7 @@
 #' Reactome Pathways Relation data
 #' 
 #' This is a copy of the file
-#' "https://reactome.org/download/current/ReactomePathwaysRelation.txt"
+#' 'https://reactome.org/download/current/ReactomePathwaysRelation.txt'
 #' downloaded September 2024. A brand new file can be downloaded using:
 #' \link{`downloadPathwayRelationFromReactome`}
 #' 

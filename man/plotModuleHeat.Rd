@@ -69,13 +69,13 @@ module from a \code{MultiOmicsModule} object.
  genesToUse <- row.names(multiOmics[[1]])
 
  MOM_survival <- multiOmicsSurvivalModuleTest(multiOmics, reactSmall[[1]],
-   survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+   survFormula='Surv(days, status) ~', autoCompleteFormula = TRUE,
    useTheseGenes = genesToUse)
  
  plotModuleHeat(MOM_survival, 1,
- sortBy = c("mut", "expPC1", "status", "days"),
+ sortBy = c('mut', 'expPC1', 'status', 'days'),
  additionalAnnotations = survAnnot,
- additionalPaletteNames = list(status = "teal", days = "violet"),
+ additionalPaletteNames = list(status = 'teal', days = 'violet'),
  withSampleNames = F)
 
 }

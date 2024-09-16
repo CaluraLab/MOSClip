@@ -15,16 +15,16 @@
 #' this threshold.
 #' @param plot character indicating the layout for plotting. It is one of 
 #' \code{circular}, \code{landscape} or \code{noplot}. By default,
-#' plot="circular", if plot="noplot" no plot will be provided.
+#' plot='circular', if plot='noplot' no plot will be provided.
 #' @param sort.by character indicating how to sort the
-#' intersections in the plot. It is one of "set" (by omics), "size"
-#' (by intersection size), "degree" (by number of intersected omics),
-#' and "p-value".
+#' intersections in the plot. It is one of 'set' (by omics), 'size'
+#' (by intersection size), 'degree' (by number of intersected omics),
+#' and 'p-value'.
 #' @param excludeColumns a vector of characters listing the columns of
 #' \code{multiPathwayReportData} object to be excluded by the analysis.
 #' In the case \code{multiPathwayReportData} derives from
 #' \code{\link{multiPathwayModuleReport}}
-#' you should set \code{excludeColumns = c("pathway","module")}.
+#' you should set \code{excludeColumns = c('pathway','module')}.
 #' @param color.on color that represent the active omics in the sector
 #' @param color.off color that represent the omics mnot considered in the
 #' sector
@@ -46,8 +46,8 @@
 #' df <- data.frame(pvalue = c(0.06, 0.04, 0.04, 0.03, 0.02),
 #'                  cnv = c(0.07, 0.03, 0.02, 0.04, 0.01),
 #'                  mut = c(0.08, 0.02, 0.01, 0.04, 0.04),
-#'                  row.names = c("PathwayA", "PathwayB", "PathwayC",
-#'                                "PathwayD", "PathwayE")
+#'                  row.names = c('PathwayA', 'PathwayB', 'PathwayC',
+#'                                'PathwayD', 'PathwayE')
 #'                  )
 #' 
 #' runSupertest(df, pvalueThr = 0.05, zscoreThr = 0.05)
@@ -58,62 +58,66 @@
 #'
 #' @export
 
-runSupertest <- function(multiPathwayReportData, pvalueThr=0.05,
-                         zscoreThr=0.05,
-                         resampligThr = NULL,
-                         plot=c('circular','landscape','noplot'),
-                         sort.by=c('set','size','degree','p-value'),
-                         excludeColumns=NULL,
-                         color.on = "#f6bb42", color.off = "#D3D3D3"){
+runSupertest <- function(
+    multiPathwayReportData, pvalueThr = 0.05, zscoreThr = 0.05,
+    resampligThr = NULL, plot = c("circular", "landscape", "noplot"),
+    sort.by = c("set", "size", "degree", "p-value"),
+    excludeColumns = NULL, color.on = "#f6bb42", color.off = "#D3D3D3"
+) {
 
-  checkReportFormat(multiPathwayReportData)
-  checkColumnsExclusion(multiPathwayReportData, excludeColumns)
+    checkReportFormat(multiPathwayReportData)
+    checkColumnsExclusion(multiPathwayReportData, excludeColumns)
 
-  checkPvalueThresholdFormat(pvalueThr, "pvalueThr")
-  checkPvalueThresholdFormat(zscoreThr, "zscoreThr")
+    checkPvalueThresholdFormat(pvalueThr, "pvalueThr")
+    checkPvalueThresholdFormat(zscoreThr, "zscoreThr")
 
-  plot <- plot[1]
-  if(!(plot %in% c('circular','landscape','noplot')))
-    stop("Plot argument should be either circular, landscape or noplot." )
+    plot <- plot[1]
+    if (!(plot %in% c("circular", "landscape", "noplot")))
+        stop("Plot argument should be either circular, landscape or noplot.")
 
-  sort.by <- sort.by[1]
-  if(plot != "noplot" & (!(sort.by %in% c('set','size','degree','p-value'))))
-    stop("sort.by argument should be either set, size, degree or p-value.")
+    sort.by <- sort.by[1]
+    if (plot != "noplot" &
+        (!(sort.by %in% c("set", "size", "degree", "p-value"))))
+        stop("sort.by argument should be either set, size, degree or p-value.")
 
-  universeSize <- NROW(multiPathwayReportData)
-  multiPathwayReportDataSig <- multiPathwayReportData[
-    multiPathwayReportData[,"pvalue"] <= pvalueThr,]
+    universeSize <- NROW(multiPathwayReportData)
+    multiPathwayReportDataSig <- multiPathwayReportData[multiPathwayReportData[,
+        "pvalue"] <= pvalueThr, ]
 
-  if (!is.null(resampligThr)) {
-    if (is.null(multiPathwayReportDataSig$resamplingCount))
-      stop("resamplingCount column not found. Try addResamplingCounts")
-    multiPathwayReportDataSig <- multiPathwayReportDataSig[
-      multiPathwayReportDataSig[,"resamplingCount"] >= resampligThr,]
-  }
+    if (!is.null(resampligThr)) {
+        if (is.null(multiPathwayReportDataSig$resamplingCount))
+            stop("resamplingCount column not found. Try addResamplingCounts")
+        multiPathwayReportDataSig <- multiPathwayReportDataSig[
+          multiPathwayReportDataSig[, "resamplingCount"] >= resampligThr, ]
+    }
 
-  MOlistPval <- pvalueSummary(multiPathwayReportDataSig,
-                              excludeColumns = excludeColumns, as.list=TRUE)
+    MOlistPval <- pvalueSummary(multiPathwayReportDataSig,
+                                excludeColumns = excludeColumns, as.list = TRUE)
 
-  MOlistPathSig <- lapply(MOlistPval, function(pp) {
-    names(which(pp <= zscoreThr))})
+    MOlistPathSig <- lapply(
+        MOlistPval, function(pp) {
+            names(which(pp <= zscoreThr))
+        }
+    )
 
-  msetSupertest <- SuperExactTest::supertest(MOlistPathSig, n=universeSize)
+    msetSupertest <- SuperExactTest::supertest(MOlistPathSig, n = universeSize)
 
-  if(plot != "noplot"){
-    plot(msetSupertest,
-         color.on = color.on, color.off = color.off,
-         heatmapColor = rev(pvalueShades),
-         sort.by = sort.by, Layout = plot)
-  }
+    if (plot != "noplot") {
+        plot(
+            msetSupertest, color.on = color.on, color.off = color.off,
+            heatmapColor = rev(pvalueShades),
+            sort.by = sort.by, Layout = plot
+        )
+    }
 
-  invisible(summary(msetSupertest)$Table)
+    invisible(summary(msetSupertest)$Table)
 }
 
 #' Find Pathway Fathers
 #' 
 #' Given the hierarchy of the pathways, this formula finds the fathers of the
-#' respective pathway (e.g. pathway: "PI3K Cascade"; father:
-#' "Signaling Pathways"). This function is necessary for calculating the 
+#' respective pathway (e.g. pathway: 'PI3K Cascade'; father:
+#' 'Signaling Pathways'). This function is necessary for calculating the 
 #' contribution of different omics to survival prediction in different
 #' biological processes, grouping the pathways by hierarchy.
 #'
@@ -134,7 +138,7 @@ runSupertest <- function(multiPathwayReportData, pvalueThr=0.05,
 #'    print(g@title ) #  to see which pathways are being calculated
 #'    set.seed(1234)
 #'    fcl = multiOmicsSurvivalModuleTest(multiOmics, g,
-#'                                        survFormula="Surv(days, status) ~",
+#'                                        survFormula='Surv(days, status) ~',
 #'                                        autoCompleteFormula = TRUE,
 #'                                        useTheseGenes = genesToUse)
 #'    fcl
@@ -148,15 +152,15 @@ runSupertest <- function(multiPathwayReportData, pvalueThr=0.05,
 #'
 #' omicsClasses2pathways <- computeOmicsIntersections(
 #'   moduleSummary, pvalueThr = 1, zscoreThr = 1,
-#'   excludeColumns = c("pathway", "module"))
+#'   excludeColumns = c('pathway', 'module'))
 #'
 #' omicsClasses2pathways <- lapply(omicsClasses2pathways,
 #'                                 stripModulesFromPathways)
 #'
 #' # This step requires to download the whole reactome graph, which usually 
 #' # takes a lot of time.
-#' # reactome <- graphite::pathways("hsapiens", "reactome")
-#' # reactome <- graphite::convertIdentifiers(reactome, "entrez")
+#' # reactome <- graphite::pathways('hsapiens', 'reactome')
+#' # reactome <- graphite::convertIdentifiers(reactome, 'entrez')
 #' #omicsClasses2fathers <- lapply(omicsClasses2pathways, annotePathwayToFather,
 #' #                              graphiteDB = reactome, 
 #' #                              hierarchy = pathHierarchyGraph)
@@ -166,17 +170,17 @@ runSupertest <- function(multiPathwayReportData, pvalueThr=0.05,
 #' @export
 
 annotePathwayToFather <- function(pathways, graphiteDB, hierarchy) {
-  ord <- length(igraph::V(hierarchy))*2
-  pathway2id <- mapPathwaysIDfromGraphite(graphiteDB) # codici
-  pathwayDict <- pathway2id$pname
-  names(pathwayDict) <- pathway2id$id
+    ord <- length(igraph::V(hierarchy)) *
+        2
+    pathway2id <- mapPathwaysIDfromGraphite(graphiteDB)  # codici
+    pathwayDict <- pathway2id$pname
+    names(pathwayDict) <- pathway2id$id
 
-  ids <- mapPathwaysIDfromGraphite(graphiteDB, pathways)$id
-  path2fathers <- lapply(ids, getPathFathers, hierarchy,
-                         ord=ord)
-  names(path2fathers) <- ids
-  ids2father <- id2name(path2fathers, pathwayDict)
-  unlist(ids2father)
+    ids <- mapPathwaysIDfromGraphite(graphiteDB, pathways)$id
+    path2fathers <- lapply(ids, getPathFathers, hierarchy, ord = ord)
+    names(path2fathers) <- ids
+    ids2father <- id2name(path2fathers, pathwayDict)
+    unlist(ids2father)
 }
 
 #' Compute Omics Intersections
@@ -192,8 +196,8 @@ annotePathwayToFather <- function(pathways, graphiteDB, hierarchy) {
 #' df <- data.frame(pvalue = c(0.06, 0.04, 0.04, 0.03, 0.02),
 #'                  cnv = c(0.07, 0.03, 0.02, 0.04, 0.01),
 #'                  mut = c(0.08, 0.02, 0.01, 0.04, 0.04),
-#'                  row.names = c("PathwayA", "PathwayB", "PathwayC",
-#'                                "PathwayD", "PathwayE"))
+#'                  row.names = c('PathwayA', 'PathwayB', 'PathwayC',
+#'                                'PathwayD', 'PathwayE'))
 #'                                
 #' omicsClasses2Pathways <- computeOmicsIntersections(df, pvalueThr = 0.1,
 #'                                                    zscoreThr = 0.1)
@@ -201,49 +205,62 @@ annotePathwayToFather <- function(pathways, graphiteDB, hierarchy) {
 #' @importFrom reshape melt
 #' @export
 
-computeOmicsIntersections <- function(multiPathwayReportData, pvalueThr=0.05,
-                                      zscoreThr=0.05, resampligThr = NULL,
-                                      excludeColumns=NULL){
+computeOmicsIntersections <- function(
+    multiPathwayReportData, pvalueThr = 0.05, zscoreThr = 0.05,
+    resampligThr = NULL, excludeColumns = NULL
+) {
 
-  checkReportFormat(multiPathwayReportData)
-  checkColumnsExclusion(multiPathwayReportData, excludeColumns)
+    checkReportFormat(multiPathwayReportData)
+    checkColumnsExclusion(multiPathwayReportData, excludeColumns)
 
-  checkPvalueThresholdFormat(pvalueThr, "pvalueThr")
-  checkPvalueThresholdFormat(zscoreThr, "zscoreThr")
+    checkPvalueThresholdFormat(pvalueThr, "pvalueThr")
+    checkPvalueThresholdFormat(zscoreThr, "zscoreThr")
 
-  universeSize <- NROW(multiPathwayReportData)
-  multiPathwayReportDataSig <- multiPathwayReportData[
-    multiPathwayReportData[,"pvalue"] <= pvalueThr,]
-  
-  if (nrow(multiPathwayReportDataSig) == 0) {
-    stop("There is no significant modules. Try changing the pvalue threshold")
-  }
+    universeSize <- NROW(multiPathwayReportData)
+    multiPathwayReportDataSig <- multiPathwayReportData[multiPathwayReportData[,
+        "pvalue"] <= pvalueThr, ]
 
-  if (!is.null(resampligThr)) {
-    if (is.null(multiPathwayReportDataSig$resamplingCount))
-      stop("resamplingCount column not found. Try addResamplingCounts")
-    multiPathwayReportDataSig <- multiPathwayReportDataSig[
-      multiPathwayReportDataSig[,"resamplingCount"] >= resampligThr,]
-  }
+    if (nrow(multiPathwayReportDataSig) == 0) {
+        stop(
+          "There is no significant modules. Try changing the pvalue threshold")
+    }
 
-  MOlistPval <- pvalueSummary(multiPathwayReportDataSig,
-                              excludeColumns = excludeColumns, as.list=TRUE)
+    if (!is.null(resampligThr)) {
+        if (is.null(multiPathwayReportDataSig$resamplingCount))
+            stop("resamplingCount column not found. Try addResamplingCounts")
+        multiPathwayReportDataSig <- multiPathwayReportDataSig[
+          multiPathwayReportDataSig[, "resamplingCount"] >= resampligThr, ]
+    }
 
-  MOlistPathSig <- lapply(MOlistPval, function(pp) {
-    names(which(pp <= zscoreThr))})
-  
-  if (0 %in% lengths(MOlistPathSig)){
-    stop("One or more omics do not have a significant z score for any of ",
-         "their modules. Try increasing the z score threshold.")
-  }
+    MOlistPval <- pvalueSummary(multiPathwayReportDataSig,
+                                excludeColumns = excludeColumns, as.list = TRUE)
 
-  df <- reshape::melt(MOlistPathSig)
-  p2o <- tapply(seq_len(NROW(df)), df[,1], function(idx) {
-    paste(df[idx,2], collapse = ";")
-  })
-  tapply(seq_along(p2o), p2o, function(idx) {
-    names(p2o[idx])
-  })
+    MOlistPathSig <- lapply(
+        MOlistPval, function(pp) {
+            names(which(pp <= zscoreThr))
+        }
+    )
+
+    if (0 %in% lengths(MOlistPathSig)) {
+        stop(
+            "One or more omics do not have a significant z score for any of ",
+            "their modules. Try increasing the z score threshold."
+        )
+    }
+
+    df <- reshape::melt(MOlistPathSig)
+    p2o <- tapply(
+        seq_len(NROW(df)),
+        df[, 1], function(idx) {
+            paste(df[idx, 2], collapse = ";")
+        }
+    )
+    tapply(
+        seq_along(p2o),
+        p2o, function(idx) {
+            names(p2o[idx])
+        }
+    )
 }
 
 #' Remove Module Number From Pathway Name
@@ -257,16 +274,16 @@ computeOmicsIntersections <- function(multiPathwayReportData, pvalueThr=0.05,
 #' @return list of pathway names without the module number
 #' 
 #' @examples
-#' pathwaysModules <- list("Intrinsic Pathway for Apoptosis.1",
-#'                         "Intrinsic Pathway for Apoptosis.2",
-#'                         "Opioid Signalling.1", "Opioid Signalling.2")
+#' pathwaysModules <- list('Intrinsic Pathway for Apoptosis.1',
+#'                         'Intrinsic Pathway for Apoptosis.2',
+#'                         'Opioid Signalling.1', 'Opioid Signalling.2')
 #'                         
 #' resPathwayNames <- stripModulesFromPathways(pathwaysModules)
 #' 
 #' @export
 
 stripModulesFromPathways <- function(pathways) {
-  sub("\\.[0-9]+", "",pathways, perl = TRUE)
+    sub("\\.[0-9]+", "", pathways, perl = TRUE)
 }
 
 #' Compute pvalue Summary
@@ -279,84 +296,95 @@ stripModulesFromPathways <- function(pathways) {
 #' @importFrom stats na.omit
 
 pvalueSummary <- function(multiPathwayReportData, excludeColumns = NULL,
-                          as.list = FALSE){
-  checkReportFormat(multiPathwayReportData)
-  checkColumnsExclusion(multiPathwayReportData, excludeColumns)
+                          as.list = FALSE) {
+    checkReportFormat(multiPathwayReportData)
+    checkColumnsExclusion(multiPathwayReportData, excludeColumns)
 
-  columnsNotExcluded <- colnames(multiPathwayReportData)[
-    !(colnames(multiPathwayReportData) %in% excludeColumns)]
-  multiPathwayReportData <- multiPathwayReportData[,columnsNotExcluded,
-                                                   drop=FALSE]
+    columnsNotExcluded <- colnames(multiPathwayReportData)[!(
+      colnames(multiPathwayReportData) %in% excludeColumns)]
+    multiPathwayReportData <- multiPathwayReportData[,
+                                                     columnsNotExcluded,
+                                                     drop = FALSE]
 
 
-  colClasses <- vapply(multiPathwayReportData, class, character(1))
-  if(any(unique(colClasses) != "numeric")){
-    notNumericColumns <- colnames(multiPathwayReportData)[
-      colClasses != "numeric"]
-    stop(paste0("Data malformed. ",
-                "The following columns are not numeric.
+    colClasses <- vapply(multiPathwayReportData, class, character(1))
+    if (any(unique(colClasses) != "numeric")) {
+        notNumericColumns <- colnames(multiPathwayReportData)[
+          colClasses != "numeric"]
+        stop(
+            paste0(
+                "Data malformed. ", "The following columns are not numeric.
                 Consider using excludeColumns argument: ",
-                paste(notNumericColumns, collapse = ", ")))
-  }
+                paste(notNumericColumns, collapse = ", ")
+            )
+        )
+    }
 
-  covarColumns <- colnames(multiPathwayReportData) != "pvalue"
-  multiPathwayReportDataSig <- multiPathwayReportData[,covarColumns,
-                                                      drop=FALSE]
+    covarColumns <- colnames(multiPathwayReportData) != "pvalue"
+    multiPathwayReportDataSig <- multiPathwayReportData[, covarColumns,
+                                                        drop = FALSE]
 
-  malformedColumns <- apply(multiPathwayReportDataSig, 2,
-                            function(col) 
-                              any(na.omit(col) > 1 | na.omit(col) < 0))
+    malformedColumns <- apply(
+        multiPathwayReportDataSig, 2, function(col) any(
+            na.omit(col) >
+                1 | na.omit(col) <
+                0
+        )
+    )
 
-  if (any(malformedColumns)) {
-    stop(paste0("Data malformed. The following columns are not pvalues
+    if (any(malformedColumns)) {
+        stop(
+            paste0(
+                "Data malformed. The following columns are not pvalues
                 (values greater than 1 or lower than 0).
                 Consider using excludeColumns argument: ",
-                paste(colnames(multiPathwayReportDataSig)[malformedColumns],
-                      collapse = ", ")
-    ))
-  }
+                paste(
+                  colnames(multiPathwayReportDataSig)[malformedColumns],
+                  collapse = ", "
+              )
+            )
+        )
+    }
 
-  covars <- colnames(multiPathwayReportDataSig)
-  covars2omics <- guessOmics(covars)
+    covars <- colnames(multiPathwayReportDataSig)
+    covars2omics <- guessOmics(covars)
 
-  MOlistPval <- tapply(colnames(multiPathwayReportDataSig),
-                       covars2omics,
-                       summarizeOmicsResByMinPvalue,
-                       mat=multiPathwayReportDataSig,
-                       simplify = FALSE)
-  if (as.list)
-    return(MOlistPval)
-  do.call(cbind, MOlistPval)
+    MOlistPval <- tapply(
+        colnames(multiPathwayReportDataSig),
+        covars2omics, summarizeOmicsResByMinPvalue,
+        mat = multiPathwayReportDataSig, simplify = FALSE
+    )
+    if (as.list)
+        return(MOlistPval)
+    do.call(cbind, MOlistPval)
 }
 
 
-checkReportFormat <-function(multiPathwayReportData) {
-  if(!(any("pvalue" %in% colnames(multiPathwayReportData))))
-    stop("Data malformed. There is not a overall pvalue column.")
+checkReportFormat <- function(multiPathwayReportData) {
+    if (!(any("pvalue" %in% colnames(multiPathwayReportData))))
+        stop("Data malformed. There is not a overall pvalue column.")
 
-  if(is.null(grep(omicsRegexp, colnames(multiPathwayReportData))))
-    stop("Data malformed. Covariates names not in colnames")
+    if (is.null(grep(omicsRegexp, colnames(multiPathwayReportData))))
+        stop("Data malformed. Covariates names not in colnames")
 }
 
 checkColumnsExclusion <- function(multiPathwayReportData, excludeColumns) {
-  if (is.null(excludeColumns))
-    return()
+    if (is.null(excludeColumns))
+        return()
 
-  if (any(!(excludeColumns %in% colnames(multiPathwayReportData))))
-    stop("Data malformed. excludeColumns not present in data")
+    if (any(!(excludeColumns %in% colnames(multiPathwayReportData))))
+        stop("Data malformed. excludeColumns not present in data")
 
-  if("pvalue" %in% excludeColumns)
-    stop("You cannot exclude the overall pvalue column.")
+    if ("pvalue" %in% excludeColumns)
+        stop("You cannot exclude the overall pvalue column.")
 }
 
-checkPvalueThresholdFormat <- function(thr, name="thr") {
-  if(!is.numeric(thr))
-    stop("pValue threshold should be numeric")
-  else if((thr > 1) | (thr < 0))
-    stop("pValue threshold should be a number between 0 and 1")
+checkPvalueThresholdFormat <- function(thr, name = "thr") {
+    if (!is.numeric(thr))
+        stop("pValue threshold should be numeric") else if ((thr > 1) |
+                                                            (thr < 0))
+        stop("pValue threshold should be a number between 0 and 1")
 }
-
-
 
 #' Summarize Omics Covaraites By Min Pvalue
 #'
@@ -371,9 +399,8 @@ checkPvalueThresholdFormat <- function(thr, name="thr") {
 #' # summarizeOmicsResByMinPvalue(2:3, mat=matrix(c(1,2,4,1,2,5), nrow=2))
 
 summarizeOmicsResByMinPvalue <- function(col, mat) {
-  apply(as.matrix(mat[, col, drop = FALSE]), 1, minOrNA)
+    apply(as.matrix(mat[, col, drop = FALSE]), 1, minOrNA)
 }
-
 
 #' Minimum or NA
 #'
@@ -388,11 +415,10 @@ summarizeOmicsResByMinPvalue <- function(col, mat) {
 #'   # minOrNA(c(NA,NA,NA))
 #'
 minOrNA <- function(x) {
-  if (all(is.na(x)))
-    return(NA)
-  min(x, na.rm = TRUE)
+    if (all(is.na(x)))
+        return(NA)
+    min(x, na.rm = TRUE)
 }
-
 
 #' Compute Frequencies in a Named List
 #'
@@ -405,20 +431,26 @@ minOrNA <- function(x) {
 #' @return a data.frame of the frequencies
 #' 
 #' @examples
-#' omicsIntersection <- list("exp;met" = c("PathwayA", "PathwayB", "PathwayC"),
-#'                           "exp;mut" = c("PathwayA", "PathwayC"),
-#'                           "cnv;mut" = c("PathwayB"))
+#' omicsIntersection <- list('exp;met' = c('PathwayA', 'PathwayB', 'PathwayC'),
+#'                           'exp;mut' = c('PathwayA', 'PathwayC'),
+#'                           'cnv;mut' = c('PathwayB'))
 #' freqDf <- computeFreqs(omicsIntersection)
 #'
 #' @export
 
 computeFreqs <- function(elementsIntersections) {
-  freques <- lapply(names(elementsIntersections), function(x) {
-    counts <- table(elementsIntersections[[x]])
-    data.frame(category=names(counts), frequencies=as.numeric(counts),
-               class=x, stringsAsFactors = FALSE)
-  })
-  do.call(rbind, freques)
+    freques <- lapply(
+        names(elementsIntersections),
+        function(x) {
+            counts <- table(elementsIntersections[[x]])
+            data.frame(
+                category = names(counts),
+                frequencies = as.numeric(counts),
+                class = x, stringsAsFactors = FALSE
+            )
+        }
+    )
+    do.call(rbind, freques)
 }
 
 
@@ -440,9 +472,9 @@ computeFreqs <- function(elementsIntersections) {
 #'
 #' @return a circular plot of the frequencies of pathway fathers
 #' @examples
-#' df <- data.frame(category=c("PathwayA", "PathwayB", "PathwayC", "PathwayD"),
+#' df <- data.frame(category=c('PathwayA', 'PathwayB', 'PathwayC', 'PathwayD'),
 #'   frequencies=c(1,2,1,3),
-#'   class=rep("Mut",4), stringsAsFactors = FALSE)
+#'   class=rep('Mut',4), stringsAsFactors = FALSE)
 #' plotFrequencies(df)
 #'
 #' @importFrom ggplot2 ggplot aes element_text coord_polar geom_point
@@ -453,51 +485,73 @@ computeFreqs <- function(elementsIntersections) {
 #' 
 #' @export
 
-plotFrequencies <- function(frequencies, manualColors=NULL, minSize=4,
-                            maxSize=20, width=20, relMagnificationOfLegend=0.5,
-                            lineSize=1){
-  category <- NULL
-  if (!all(colnames(frequencies) %in% c("category", "frequencies", "class")))
-    stop("Frequences dataframe must contain columns category, frequencies and 
-         class")
-  if (!is.null(manualColors)) {
-    g <- ggplot2::ggplot(frequencies, aes(y = frequencies,
-                                          x = factor(category),
-                                          group = class, colour=class))
-    g <- g + ggplot2::scale_colour_manual(values=manualColors)
-  } else {
-    g <- ggplot2::ggplot(frequencies, aes(y = frequencies,
-                                          x = factor(category),
-                                          group = class, colour = class))
-  }
-  size <- tapply(seq_along(frequencies$frequencies),
-                 factor(frequencies$category), function(idx) 
-                   max(frequencies$frequencies[idx]))
-  size <- as.numeric(size)+minSize
-  size[size > maxSize] <- maxSize
-  g <- suppressWarnings(
-    g + ggplot2::coord_polar() +
-      ggplot2::geom_point(stat='identity') +
-      ggplot2::geom_polygon(fill=NA) +
-      ggplot2::geom_path(linewidth=lineSize) +
-      ggplot2::labs(x = NULL) +
-      ggplot2::theme_bw() +
-      ggplot2::theme(panel.border = element_blank(),
-                     axis.line.x = element_blank(),
-                     axis.line.y = element_blank()) +
-      ggplot2::theme(
-        panel.grid = ggplot2::element_line(linewidth = lineSize*0.5),
-        axis.text.x = element_text(size=size, colour="black"),
-        axis.text=element_text(colour="black")) +
-      ggplot2::scale_x_discrete(
-        labels=function(x) lapply(strwrap(x, width = width, simplify = FALSE),
-                                  paste, collapse="\n")))
-  g <- g + theme(legend.position.inside = c(1,1), legend.justification=c(0, 1),
-                 legend.text=element_text(
-                   size=ggplot2::rel(relMagnificationOfLegend)))
-  grid::grid.newpage()
-  gt <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(g))
-  gt$layout$clip <- "off"
-  grid::grid.draw(gt)
+plotFrequencies <- function(
+    frequencies, manualColors = NULL, minSize = 4, maxSize = 20, width = 20,
+    relMagnificationOfLegend = 0.5, lineSize = 1
+) {
+    category <- NULL
+    if (!all(
+        colnames(frequencies) %in%
+            c("category", "frequencies", "class")
+    ))
+        stop(
+            "Frequences dataframe must contain columns category, frequencies
+            and class"
+        )
+    if (!is.null(manualColors)) {
+        g <- ggplot2::ggplot(
+            frequencies, aes(
+                y = frequencies, x = factor(category),
+                group = class, colour = class
+            )
+        )
+        g <- g + ggplot2::scale_colour_manual(values = manualColors)
+    } else {
+        g <- ggplot2::ggplot(
+            frequencies, aes(
+                y = frequencies, x = factor(category),
+                group = class, colour = class
+            )
+        )
+    }
+    size <- tapply(
+        seq_along(frequencies$frequencies),
+        factor(frequencies$category),
+        function(idx) max(frequencies$frequencies[idx])
+    )
+    size <- as.numeric(size) +
+        minSize
+    size[size > maxSize] <- maxSize
+    g <- suppressWarnings(
+        g + ggplot2::coord_polar() + ggplot2::geom_point(stat = "identity") +
+            ggplot2::geom_polygon(fill = NA) +
+            ggplot2::geom_path(linewidth = lineSize) +
+            ggplot2::labs(x = NULL) +
+            ggplot2::theme_bw() + ggplot2::theme(
+            panel.border = element_blank(), axis.line.x = element_blank(),
+            axis.line.y = element_blank()
+        ) +
+            ggplot2::theme(
+                panel.grid = ggplot2::element_line(linewidth = lineSize * 0.5),
+                axis.text.x = element_text(size = size, colour = "black"),
+                axis.text = element_text(colour = "black")
+            ) +
+            ggplot2::scale_x_discrete(
+                labels = function(x) lapply(
+                  strwrap(x, width = width, simplify = FALSE),
+                  paste, collapse = "\n"
+              )
+            )
+    )
+    g <- g + theme(
+        legend.position.inside = c(1, 1),
+        legend.justification = c(0, 1),
+        legend.text = element_text(
+          size = ggplot2::rel(relMagnificationOfLegend))
+    )
+    grid::grid.newpage()
+    gt <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(g))
+    gt$layout$clip <- "off"
+    grid::grid.draw(gt)
 }
 

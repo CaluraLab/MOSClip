@@ -29,8 +29,8 @@ plotModuleKM(
 \item{moduleNumber}{numeric value. The module number of interest}
 
 \item{formula}{a formula for the survival analysis. It should be written as
-"Surv(days, status) ~ omic". To plot more than one omic, write them
-separated by a "+" character after the separator (~)}
+'Surv(days, status) ~ omic'. To plot more than one omic, write them
+separated by a '+' character after the separator (~)}
 
 \item{fileName}{optional filenames to save the plot}
 
@@ -77,10 +77,10 @@ data(reactSmall)
 genesToUse <- row.names(multiOmics[[1]])
 
 MOM_survival <- multiOmicsSurvivalModuleTest(multiOmics, reactSmall[[1]],
-   survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+   survFormula='Surv(days, status) ~', autoCompleteFormula = TRUE,
    useTheseGenes = genesToUse)
 
-plotModuleKM(MOM_survival, 1, formula = "Surv(days, status) ~ mut + expPC2",
-  paletteNames = "Paired", inYears = TRUE)
+plotModuleKM(MOM_survival, 1, formula = 'Surv(days, status) ~ mut + expPC2',
+  paletteNames = 'Paired', inYears = TRUE)
 
 }

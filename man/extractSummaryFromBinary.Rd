@@ -23,6 +23,6 @@ using binary events.
 \item{covsConsidered}{the name of the considered omic}
 }
 \description{
-Given an omic summarized by "summarizeToBinaryEvents" extract the most
+Given an omic summarized by 'summarizeToBinaryEvents' extract the most
 important features.
 }

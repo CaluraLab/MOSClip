@@ -40,11 +40,11 @@ data(reactSmall)
 genesToUse <- row.names(multiOmics[[1]])
 
 MOM_survival <- multiOmicsSurvivalModuleTest(multiOmics, reactSmall[[1]],
-  survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+  survFormula='Surv(days, status) ~', autoCompleteFormula = TRUE,
   useTheseGenes = genesToUse)
 
  plotModuleReport(MOM_survival,
-                  MOcolors = c(exp = "red", met = "green", mut = "blue",
-                               cnv="yellow"))
+                  MOcolors = c(exp = 'red', met = 'green', mut = 'blue',
+                               cnv='yellow'))
                                
 }

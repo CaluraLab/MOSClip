@@ -57,11 +57,11 @@ in the pathway. The omics are also represented in the graph.
  genesToUse <- row.names(multiOmics[[1]])
  
  MOM_survival <- multiOmicsSurvivalModuleTest(multiOmics, reactSmall[[1]],
-  survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+  survFormula='Surv(days, status) ~', autoCompleteFormula = TRUE,
   useTheseGenes = genesToUse)
  
  plotModuleInGraph(MOM_survival, reactSmall, moduleNumber = 1,
-  paletteNames = c(exp = "red", met = "green", mut = "blue", cnv = "yellow")
+  paletteNames = c(exp = 'red', met = 'green', mut = 'blue', cnv = 'yellow')
  )
 
 }
