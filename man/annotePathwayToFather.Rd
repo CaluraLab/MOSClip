@@ -47,14 +47,18 @@ genesToUse <- row.names(multiOmics[[1]])
                                                 directed = TRUE)
 
 omicsClasses2pathways <- computeOmicsIntersections(
-  moduleSummary, pvalueThr = 0.1, zscoreThr = 0.1,
+  moduleSummary, pvalueThr = 1, zscoreThr = 1,
   excludeColumns = c("pathway", "module"))
 
 omicsClasses2pathways <- lapply(omicsClasses2pathways,
                                 stripModulesFromPathways)
 
-omicsClasses2fathers <- lapply(omicsClasses2pathways, annotePathwayToFather
-                               graphiteDB = reactome, 
-                               hierarchy = pathHierarchyGraph)
+# This step requires to download the whole reactome graph, which usually 
+# takes a lot of time.
+# reactome <- graphite::pathways("hsapiens", "reactome")
+# reactome <- graphite::convertIdentifiers(reactome, "entrez")
+#omicsClasses2fathers <- lapply(omicsClasses2pathways, annotePathwayToFather,
+#                              graphiteDB = reactome, 
+#                              hierarchy = pathHierarchyGraph)
 
 }

@@ -193,15 +193,8 @@ setMethod("showOmics",  signature(object = "Omics"),
 #' 
 #' @return NULL
 #' 
-#' @export
-setGeneric("showModule", function(object)
-   standardGeneric("showModule"))
-
-#' @describeIn MultiOmicsModules shows module info
-#' @param object an object of class `MultiOmicsModules`
-#' @return NULL
 #' @examples
-#' data(multiomics)
+#' data(multiOmics)
 #' data(reactSmall)
 #' 
 #' genesToUse <- row.names(multiOmics[[1]])
@@ -212,6 +205,13 @@ setGeneric("showModule", function(object)
 #'   
 #' showModule(MOM_survival)
 #' 
+#' @export
+setGeneric("showModule", function(object)
+   standardGeneric("showModule"))
+
+#' @describeIn MultiOmicsModules shows module info
+#' @param object an object of class `MultiOmicsModules`
+#' @return NULL
 #' @export
 setMethod("showModule",
           signature = "MultiOmicsModules",
@@ -251,14 +251,14 @@ setMethod("showModule",
 #' @return NULL
 #' 
 #' @examples
-#' data(multiomics)
+#' data(multiOmics)
 #' data(reactSmall)
 #' 
 #' genesToUse <- row.names(multiOmics[[1]])
 #' 
 #' MOP_survival <- multiOmicsSurvivalPathwayTest(multiOmics, reactSmall[[1]],
 #'   survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
-#'   useTheseGenes = genesToUse
+#'   useTheseGenes = genesToUse)
 #'   
 #' showPathway(MOP_survival)
 #' 

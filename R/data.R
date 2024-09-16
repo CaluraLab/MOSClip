@@ -132,5 +132,7 @@ omicsRegexp <- "(PC[0-9]+|[1-9]k[1-9]?|TRUE|FALSE|POS|NEG|POSTRUE|NEGTRUE)$"
 #'   number}
 #'   ...
 #' }
+#' 
+#' @usage data("ovarianDataset")
 
 "ovarianDataset"

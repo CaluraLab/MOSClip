@@ -20,7 +20,7 @@ number}
 }
 }
 \usage{
-ovarianDataset
+data("ovarianDataset")
 }
 \description{
 An ExperimentList class object containing data from TCGA ovarian cancer.

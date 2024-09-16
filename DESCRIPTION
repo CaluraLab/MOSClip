@@ -16,7 +16,7 @@ Authors@R: c(
           email = "enrica.calura@unipd.it",
           comment = c(ORCID = "0000-0001-8463-2432")),
    person(given = "Stefania", family = "Pirrotta", role = c("aut"),
-          email = "first.last@example.com",
+          email = "stefania.pirrotta@phd.unipd.it",
           comment = c(ORCID = "0009-0004-0030-217X")),
    person(given = "Federico", family = "Agostinis", role = c("aut"),
           email = "federico.agostinis@outlook.com")

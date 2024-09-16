@@ -46,7 +46,7 @@ df <- data.frame(pvalue = c(0.06, 0.04, 0.04, 0.03, 0.02),
                                "PathwayD", "PathwayE"))
                                
                                
-omicsClasses2Pathways <- computeOmicsIntersections(df, pvalueThr = 0.05,
-                                                   zscoreThr = 0.05)
+omicsClasses2Pathways <- computeOmicsIntersections(df, pvalueThr = 0.1,
+                                                   zscoreThr = 0.1)
      
 }
