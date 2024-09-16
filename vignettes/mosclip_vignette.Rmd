@@ -10,6 +10,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 Package: MOSClip
+bibliography: ../inst/mosclip.bib
 ---
 
 # Abstract {.unnumbered}
@@ -49,7 +50,8 @@ with several tools available for pathway analysis in a multi-omic framework;
 however, their purpose is mainly limited to two-class comparison. 
 `MOSClip` (Multi-Omic Survival Clip) was originally developed for survival 
 pathway analysis, combining both multi-omic data integration and graphical 
-model theory to keep track of gene interactions among a pathway<sup>1</sup>. 
+model theory to keep track of gene interactions among a 
+pathway [@martini_mosclip_2019]. 
 With this purpose, `MOSClip` allows to test survival association of pathways or 
 their connected components, that we called modules, in a multi-omic 
 framework.
@@ -98,7 +100,7 @@ documentation with `?multiOmics`. Moreover, additional information on how to
 pre-process datasets for a `MOSClip` analysis are available in this [GitHub 
 tutorial](https://cavei.github.io/MOSClipTutorials/
 How-to-format-TCGA-datasets.html) 
-or in the Materials and Methods section of the paper<sup>1</sup>.
+or in the Materials and Methods section of the paper [@martini_mosclip_2019].
 
 
 ```{r message=FALSE}
@@ -129,9 +131,9 @@ availableOmicMethods()
 
 In this vignette, we chose to use PCA for expression data, cluster analysis 
 for methylation data, vote counting for mutations and CNVs (for detail see 
-`MOSClip` paper<sup>1</sup>). This data transformations are easily applied 
-calling `MOSClip` functions, thus here we need only to provide the name of the 
-needed function. 
+`MOSClip` paper [@martini_mosclip_2019]). This data transformations are easily 
+applied calling `MOSClip` functions, thus, here we need only to provide the 
+name of the needed function. 
 Given the nature of the methylation data, we expect to have more than a CpG 
 cluster associated to a gene. For this reason, `MOSClip` provides the 
 possibility to include a dictionary to associate the methylation level of 
@@ -217,7 +219,7 @@ plotModuleKM(moduleSurv[["Activation of Matrix Metalloproteinases"]],
 We can explore the most important genes of the pathway and their original 
 profiles across the omics using an heatmap plot of the original values. 
 The most important genes are selected as described in 
-Martini et al.<sup>1</sup>. 
+Martini et al. [@martini_mosclip_2019].
 
 ```{r, message=FALSE, results='hide', fig.keep='all', fig.height=7, fig.width=7}
 additionalA <- colData(multiOmics)
@@ -307,10 +309,12 @@ plotPathwayKM(pathwaySurv[["Activation of Matrix Metalloproteinases"]],
 The analysis can be performed also on gene-sets rather than pathways. A tutorial
 can be found [here](https://cavei.github.io/MOSClipTutorials/
 workflowGitHub_TCGA_MOSClipAnalysisTutorial_geneList.html).
-`MOSClip` gives the possibility to prioritize most important and stable pathway 
-or module results, running a resampling procedure that can be found on the 
-extended tutorial on GitHub. 
-More tutorials are also available on how to perform two-class analysis with 
+
+Moreover, `MOSClip` gives the possibility to prioritize most important and 
+stable pathway or module results, running a resampling procedure that can be 
+found on the extended tutorial on GitHub. 
+
+More tutorials are also available on how to perform a two-class analysis with 
 `MOSClip`, as well as examples of more plots that were not shown in this 
 vignette.
 
@@ -319,9 +323,6 @@ vignette.
 sessionInfo()
 ```
 
-# References
-1. Martini,P., Chiogna,M., Calura,E. and Romualdi,C. (2019) MOSClip: multi-omic 
-and survival pathway analysis for the identification of survival associated 
-gene and modules. Nucleic Acids Research, 47, e80.
+# References {.unnumbered}
 
 
