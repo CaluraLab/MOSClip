@@ -64,7 +64,6 @@ setClass(Class ="MultiOmicsPathway",
 #' @name Omics-class
 #' @rdname Omics-class
 #'
-#' @export
 #' @import MultiAssayExperiment
 Omics <- setClass(Class = "Omics", package = "biocmosclip",
 

@@ -10,6 +10,25 @@
 #' @return a data.frame, pathways in rows, overall pvalue of the coxph, 
 #' followed by covariates pvalues, in columns.
 #'
+#' @examples
+#' data(multiOmics)
+#' data(reactSmall)
+#' 
+#' genesToUse <- row.names(multiOmics[[1]])
+#' 
+#' MOP_list <- lapply(reactSmall, function(g) {
+#'    print(g@title)  #  to see which pathways are being calculated
+#'    set.seed(1234)
+#'    fcl = multiOmicsSurvivalPathwayTest(multiOmics, g,
+#'                                        survFormula="Surv(days, status) ~",
+#'                                        autoCompleteFormula = TRUE,
+#'                                        useTheseGenes = genesToUse)
+#'    fcl
+#' })
+#' 
+#' pathwaysSummary <- multiPathwayReport(MOP_list)
+#' 
+#'
 #' @export
 multiPathwayReport <- function(multiPathwayList, priority_to=NULL){
   if (!is(multiPathwayList, "list") ||

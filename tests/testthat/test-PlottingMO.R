@@ -93,7 +93,7 @@ test_that("Plots with two class object work", {
     paletteNames = c(
       exp = "orange", met = "green", mut = "blue", cnv = "yellow"),
     envir = env),
-    "paletteNames value is not allowed")
+    "paletteNames value not allowed")
   expect_error(plotModuleInGraph(
     twoCModuleObj, dummy_react,
     moduleNumber = 3, legendLabels = c("expr", "methylation", "cnv"),

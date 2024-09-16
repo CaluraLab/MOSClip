@@ -25,7 +25,28 @@ setClassUnion("characterOrNULL", c("character", "NULL"))
 #' 
 #' @return an `Omics` class object
 #' 
-#' @export
+#' @examples
+#' data(ovarianDataset)
+#' 
+#' myColData <- data.frame(status = sample(c(0,1), 50, replace = TRUE),
+#'                         days = sample(c(0, 500), 50, replace = TRUE),
+#'                         row.names = colnames(ovarianDataset$exp))
+#' 
+#' myOmicsObj <- makeOmics(experiments = ovarianDataset,
+#'                         colData = myColData,
+#'                         modelInfo = c(
+#'                           "summarizeWithPca",
+#'                           "summarizeInCluster",
+#'                           "summarizeToNumberOfEvents",
+#'                           "summarizeToNumberOfDirectionalEvents"),
+#'                         specificArgs = list(
+#'                           pcaArgs = list(name = "exp", shrink = "FALSE",
+#'                                          method = "sparse", maxPCs = 3),
+#'                           clusterArgs = list(name = "met",
+#'                                              max_cluster_number = 3),
+#'                           countEvent = list(name = "mut", min_prop = 0.05),
+#'                           cnvAgv = list(name = "cnv", min_prop = 0.05)))
+#' 
 #' @importFrom S4Vectors DataFrame
 #'
 #' @export
@@ -124,6 +145,11 @@ makeOmics <- function(experiments = ExperimentList(),
 #' 
 #' @return NULL
 #' 
+#' @examples
+#' data(multiOmics)
+#' 
+#' showOmics(multiOmics)
+#' 
 #' @export
 setGeneric("showOmics", function(object) standardGeneric("showOmics"))
 
@@ -169,12 +195,24 @@ setMethod("showOmics",  signature(object = "Omics"),
 #' 
 #' @export
 setGeneric("showModule", function(object)
-   standardGeneric("showModule") )
+   standardGeneric("showModule"))
 
-#' @export
 #' @describeIn MultiOmicsModules shows module info
 #' @param object an object of class `MultiOmicsModules`
 #' @return NULL
+#' @examples
+#' data(multiomics)
+#' data(reactSmall)
+#' 
+#' genesToUse <- row.names(multiOmics[[1]])
+#' 
+#' MOM_survival <- multiOmicsSurvivalModuleTest(multiOmics, reactSmall[[1]],
+#'   survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+#'   useTheseGenes = genesToUse)
+#'   
+#' showModule(MOM_survival)
+#' 
+#' @export
 setMethod("showModule",
           signature = "MultiOmicsModules",
           definition = function(object){
@@ -211,6 +249,19 @@ setMethod("showModule",
 #' @param object an object of class `MultiOmicsPathway`
 #' 
 #' @return NULL
+#' 
+#' @examples
+#' data(multiomics)
+#' data(reactSmall)
+#' 
+#' genesToUse <- row.names(multiOmics[[1]])
+#' 
+#' MOP_survival <- multiOmicsSurvivalPathwayTest(multiOmics, reactSmall[[1]],
+#'   survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+#'   useTheseGenes = genesToUse
+#'   
+#' showPathway(MOP_survival)
+#' 
 #' @export
 setGeneric("showPathway", function(object)
    standardGeneric("showPathway") )

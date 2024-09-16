@@ -39,3 +39,16 @@ covariates analyzed and other specific information based on the omic.}
 \item{\code{analysis}}{the type of analysis done: survival or two-class.}
 }}
 
+\examples{
+data(multiomics)
+data(reactSmall)
+
+genesToUse <- row.names(multiOmics[[1]])
+
+MOM_survival <- multiOmicsSurvivalModuleTest(multiOmics, reactSmall[[1]],
+  survFormula="Surv(days, status) ~", autoCompleteFormula = TRUE,
+  useTheseGenes = genesToUse
+  
+showModule(MOM_survival)
+
+}

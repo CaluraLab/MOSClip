@@ -15,7 +15,7 @@ pathways)}
 \item{hierarchy}{a graph object with the pathway hierarchy}
 }
 \value{
-a vector of the pahtway fathers' names
+a vector of the pathway fathers' names
 }
 \description{
 Given the hierarchy of the pathways, this formula finds the fathers of the
@@ -23,4 +23,38 @@ respective pathway (e.g. pathway: "PI3K Cascade"; father:
 "Signaling Pathways"). This function is necessary for calculating the
 contribution of different omics to survival prediction in different
 biological processes, grouping the pathways by hierarchy.
+}
+\examples{
+data(multiOmics)
+data(reactSmall)
+
+genesToUse <- row.names(multiOmics[[1]])
+
+ MOM_list <- lapply(reactSmall[1:2], function(g) {
+   print(g@title ) #  to see which pathways are being calculated
+   set.seed(1234)
+   fcl = multiOmicsSurvivalModuleTest(multiOmics, g,
+                                       survFormula="Surv(days, status) ~",
+                                       autoCompleteFormula = TRUE,
+                                       useTheseGenes = genesToUse)
+   fcl
+})
+
+ moduleSummary <- multiPathwayModuleReport(MOM_list)
+ 
+ pathHierarchy <- downloadPathwayRelationFromReactome()
+ pathHierarchyGraph <- igraph::graph.data.frame(d = pathHierarchy,
+                                                directed = TRUE)
+
+omicsClasses2pathways <- computeOmicsIntersections(
+  moduleSummary, pvalueThr = 0.1, zscoreThr = 0.1,
+  excludeColumns = c("pathway", "module"))
+
+omicsClasses2pathways <- lapply(omicsClasses2pathways,
+                                stripModulesFromPathways)
+
+omicsClasses2fathers <- lapply(omicsClasses2pathways, annotePathwayToFather
+                               graphiteDB = reactome, 
+                               hierarchy = pathHierarchyGraph)
+
 }

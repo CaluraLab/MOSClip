@@ -12,3 +12,9 @@ showOmics(object)
 \description{
 A generic functions showing parameter associated with each omics
 }
+\examples{
+data(multiOmics)
+
+showOmics(multiOmics)
+
+}

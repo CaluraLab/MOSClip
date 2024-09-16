@@ -2,9 +2,19 @@
 % Please edit documentation in R/resamplingFunctions.R
 \name{resamplingModulesSurvival}
 \alias{resamplingModulesSurvival}
+\alias{resamplingPathwaySurvival}
 \title{Resampling function for survival analysis on modules}
 \usage{
 resamplingModulesSurvival(
+  fullMultiOmics,
+  pathdb,
+  nperm = 100,
+  pathwaySubset = NULL,
+  nPatients = 3,
+  genesToConsider = NULL
+)
+
+resamplingPathwaySurvival(
   fullMultiOmics,
   pathdb,
   nperm = 100,
@@ -29,7 +39,21 @@ genes found in the first experiment of the multiOmic object are used}
 }
 \value{
 list of the resampling tables of results
+
+list of the resampling tables of results
 }
 \description{
 Resampling function for survival analysis on modules
+
+Resampling function for pathways (survival analysis)
+}
+\examples{
+data(multiOmics)
+data(reactSmall)
+
+perms <- resamplingModulesSurvival(fullMultiOmics = multiOmics, reactSmall,
+                                   nperm = 10,
+                                   pathwaySubset =
+                                       "Intrinsic Pathway for Apoptosis")
+  
 }
