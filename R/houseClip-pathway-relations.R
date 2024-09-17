@@ -22,7 +22,7 @@ downloadPathwayRelationFromReactome <- function(
     url = NULL, speciesAbbr = "HSA") {
     if (is.null(url)) {
         url <- system.file(
-            "extdata", "ReactomePathwaysRelation.txt", package = "biocmosclip",
+            "extdata", "ReactomePathwaysRelation.txt", package = "MOSClip",
             mustWork = TRUE
         )
     }

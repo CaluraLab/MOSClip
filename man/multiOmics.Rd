@@ -46,9 +46,9 @@ information.
 Only patients with matched data across the four omics were considered.
 After the selection of patients and genes, we performed expression
 normalization and log2 of the counts+1 transformation. This will ensure us
-to work with expression data aproximately close to a normal distribution,
+to work with expression data approximately close to a normal distribution,
 the most suitable distribution for the subsequent MOSClip tests.
 Genes and samples were manually selected to create this small example
-dataset for demostration purposes.
+dataset for demonstration purposes.
 }
 \keyword{datasets}

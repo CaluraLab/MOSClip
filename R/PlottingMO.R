@@ -1130,8 +1130,6 @@ plotModuleInGraph <- function(
 #' genesToUse <- row.names(multiOmics[[1]])
 #' 
 #' MOP_list <- lapply(reactSmall, function(g) {
-#'    print(g@title)  #  to see which pathways are being calculated
-#'    set.seed(1234)
 #'    fcl = multiOmicsSurvivalPathwayTest(multiOmics, g,
 #'                                        survFormula='Surv(days, status) ~',
 #'                                        autoCompleteFormula = TRUE,

@@ -28,8 +28,6 @@ data(reactSmall)
 genesToUse <- row.names(multiOmics[[1]])
 
  MOM_list <- lapply(reactSmall[1:2], function(g) {
-   print(g@title)  #  to see which pathways are being calculated
-   set.seed(1234)
    fcl = multiOmicsSurvivalModuleTest(multiOmics, g,
                                        survFormula='Surv(days, status) ~',
                                        autoCompleteFormula = TRUE,
