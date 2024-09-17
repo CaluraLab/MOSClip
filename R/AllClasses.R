@@ -65,7 +65,7 @@ setClass(
 #'
 #' @import MultiAssayExperiment
 Omics <- setClass(
-    Class = "Omics", package = "biocmosclip",
+    Class = "Omics", package = "MOSClip",
     slots = c(modelInfo = "character", specificArgs = "list"),
     contains = "MultiAssayExperiment"
 )

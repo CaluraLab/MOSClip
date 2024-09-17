@@ -1,4 +1,4 @@
 library(testthat)
-library(biocmosclip)
+library(MOSClip)
 
-test_check("biocmosclip")
+test_check("MOSClip")

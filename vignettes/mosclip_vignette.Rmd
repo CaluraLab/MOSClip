@@ -80,7 +80,7 @@ or two-class prognostication power.
 if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
-BiocManager::install("biocmosclip")
+BiocManager::install("MOSClip")
 ```
 
 # How to use MOSClip for survival analysis 
@@ -104,7 +104,7 @@ or in the Materials and Methods section of the paper [@martini_mosclip_2019].
 
 
 ```{r message=FALSE}
-library(biocmosclip)
+library(MOSClip)
 library(MultiAssayExperiment)
 library(kableExtra)
 
