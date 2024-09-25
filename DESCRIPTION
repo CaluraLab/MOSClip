@@ -1,6 +1,6 @@
 Package: MOSClip
 Title: Multi Omics Survival Clip
-Version: 0.99.0
+Version: 0.99.1
 Depends: R (>= 4.4.0)
 Authors@R: c(
    person(given = "Paolo", family = "Martini", role = c("aut", "cre"),
@@ -33,8 +33,8 @@ Suggests: RUnit, BiocGenerics, MASS, BiocStyle, knitr, EDASeq, rmarkdown, kableE
 Encoding: UTF-8
 LazyData: false
 biocViews: Software, StatisticalMethod, GraphAndNetwork, Survival, Regression, DimensionReduction, Pathways, Reactome
-BugReports: https://github.com/cavei/MOSClip/
-URL: https://github.com/cavei/MOSClip
+BugReports: https://github.com/CaluraLab/MOSClip/issues
+URL: https://github.com/CaluraLab/MOSClip/
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 VignetteBuilder: knitr
