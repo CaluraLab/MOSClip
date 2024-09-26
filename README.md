@@ -22,7 +22,9 @@ conducting a two-class analysis with a generalized linear model.
 Additionally, the package offers valuable graphical tools to visualize
 and interpret the results.
 
-![](../man/figures/image.png)
+<p align="center">
+  <img src="man/figures/image.png" width="700">
+</p>
 
 ## Installation
 
