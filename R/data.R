@@ -93,11 +93,11 @@ omicsRegexp <- "(PC[0-9]+|[1-9]k[1-9]?|TRUE|FALSE|POS|NEG|POSTRUE|NEGTRUE)$"
 
 #' Omics class object with TCGA ovarian data
 #'
-#' A Omics class object containing data from TCGA ovarian cancer. The TCGA data 
-#' was manually selected and preprocessed. It contains 4 omics: expression,
+#' An `Omics` class object containing data from TCGA ovarian cancer. The TCGA 
+#' data was manually selected and preprocessed. It contains 4 omics: expression,
 #' methylation, mutation, and copy number variation. Additionally, it contains
 #' specific arguments to perform the dimensionality reduction.
-#' The datasets were downloaded from TCGA using TCGABiolink R package, 
+#' The datasets were downloaded from TCGA using `TCGABiolink` R package, 
 #' selecting only patients with primary solid tumors. 
 #' Expression matrix was processed first, converting gene identifiers into 
 #' Entrez IDs. The profiles of genes present more than once were averaged. 
@@ -117,7 +117,7 @@ omicsRegexp <- "(PC[0-9]+|[1-9]k[1-9]?|TRUE|FALSE|POS|NEG|POSTRUE|NEGTRUE)$"
 #' After the selection of patients and genes, we performed expression 
 #' normalization and log2 of the counts+1 transformation. This will ensure us 
 #' to work with expression data approximately close to a normal distribution, 
-#' the most suitable distribution for the subsequent MOSClip tests. 
+#' the most suitable distribution for the subsequent `MOSClip` tests. 
 #' Genes and samples were manually selected to create this small example 
 #' dataset for demonstration purposes.
 #'
@@ -136,6 +136,31 @@ omicsRegexp <- "(PC[0-9]+|[1-9]k[1-9]?|TRUE|FALSE|POS|NEG|POSTRUE|NEGTRUE)$"
 #' @usage data('multiOmics')
 
 "multiOmics"
+
+#' Omics class object with TCGA ovarian data for topological analysis
+#'
+#' An `Omics` class object containing data from TCGA ovarian cancer. 
+#' The data are the same as in \code{\link{multiOmics}} object.
+#' Arguments in `specificArgs` slot have been set to efficiently run a 
+#' topological pathway analysis, i.e., the topological method is used for PCA 
+#' and shrink parameter is set to TRUE. 
+#' This method can't be used for analyses on modules.
+#'
+#' @format ## `multiOmicsTopo`
+#' An Omics with 4 omics:
+#' \describe{
+#'   \item{exp}{Matrix with 151 rows and 50 columns of RNA expression values}
+#'   \item{met}{A matrix with 178 rows and 50 columns of methylation data with
+#'   probes clustered}
+#'   \item{mut}{A matrix with 107 rows and 50 columns of mutation counts}
+#'   \item{cnv}{A matrix with matrix with 145 rows and 50 columns of copy
+#'   number}
+#'   ...
+#' }
+#' 
+#' @usage data('multiOmicsTopo')
+
+"multiOmicsTopo"
 
 #' PathwayList of pathways from Reactome
 #'
