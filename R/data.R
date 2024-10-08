@@ -201,3 +201,38 @@ omicsRegexp <- "(PC[0-9]+|[1-9]k[1-9]?|TRUE|FALSE|POS|NEG|POSTRUE|NEGTRUE)$"
 #' @usage data('ovarianDataset')
 
 "ovarianDataset"
+
+#' MOSClip: Multi-Omics Survival Clip
+#'
+#' `MOSClip` R package implements a statistical approach able to integrate
+#' multi-omic data and look for survival associated gene modules. It
+#' integrates multiple omics - trascriptomics, methylomics, genomic
+#' mutations, and genomic copy number variations - using various data
+#' dimensionality reduction strategies and multivariate models. Exploiting
+#' graph theory, pathways can be decomposed into their connected
+#' components, that we call modules. The analysis can then be performed at
+#' the level of entire pathways or pathway modules. `MOSClip` pathway
+#' analysis serves two primary purposes: testing the survival association
+#' of pathways or modules using the Cox proportional hazard model, and
+#' conducting a two-class analysis with a generalized linear model.
+#' Additionally, the package offers valuable graphical tools to visualize
+#' and interpret the results.
+#'
+#' To conduct a multi-omic survival analysis on pathways or modules use:
+#' - \code{\link{multiOmicsSurvivalPathwayTest}}
+#' - \code{\link{multiOmicsSurvivalModuleTest}}
+#' 
+#' To perform a two-class comparison enrichment analysis on pathways or modules
+#' use:
+#' - \code{\link{multiOmicsTwoClassPathwayTest}}
+#' - \code{\link{multiOmicsTwoClassModuleTest}}
+#'
+#' @references Paolo Martini, Monica Chiogna, Enrica Calura, 
+#' and Chiara Romualdi. 2019. “MOSClip: Multi-Omic and Survival Pathway 
+#' Analysis for the Identification of Survival Associated Gene and Modules.” 
+#' Nucleic Acids Research 47 (14): e80. \url{https://doi.org/10.1093/nar/gkz324}
+#'
+#' @docType package
+#' @name MOSClip
+
+"_PACKAGE"
