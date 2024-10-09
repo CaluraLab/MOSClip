@@ -40,3 +40,10 @@ if (!requireNamespace("devtools", quietly = TRUE)) {
 # Install the package from GitHub
 devtools::install_github("CaluraLab/MOSClip")
 ```
+
+## References
+
+Paolo Martini, Monica Chiogna, Enrica Calura, and Chiara Romualdi. 2019.
+“MOSClip: Multi-Omic and Survival Pathway Analysis for the
+Identification of Survival Associated Gene and Modules.” Nucleic Acids
+Research 47 (14): e80. <https://doi.org/10.1093/nar/gkz324>
