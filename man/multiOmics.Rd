@@ -23,11 +23,11 @@ number}
 data('multiOmics')
 }
 \description{
-A Omics class object containing data from TCGA ovarian cancer. The TCGA data
-was manually selected and preprocessed. It contains 4 omics: expression,
+An \code{Omics} class object containing data from TCGA ovarian cancer. The TCGA
+data was manually selected and preprocessed. It contains 4 omics: expression,
 methylation, mutation, and copy number variation. Additionally, it contains
 specific arguments to perform the dimensionality reduction.
-The datasets were downloaded from TCGA using TCGABiolink R package,
+The datasets were downloaded from TCGA using \code{TCGABiolink} R package,
 selecting only patients with primary solid tumors.
 Expression matrix was processed first, converting gene identifiers into
 Entrez IDs. The profiles of genes present more than once were averaged.
@@ -47,7 +47,7 @@ Only patients with matched data across the four omics were considered.
 After the selection of patients and genes, we performed expression
 normalization and log2 of the counts+1 transformation. This will ensure us
 to work with expression data approximately close to a normal distribution,
-the most suitable distribution for the subsequent MOSClip tests.
+the most suitable distribution for the subsequent \code{MOSClip} tests.
 Genes and samples were manually selected to create this small example
 dataset for demonstration purposes.
 }

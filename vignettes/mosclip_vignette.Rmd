@@ -262,12 +262,11 @@ Then, we are ready to run the analysis using the function
 `multiOmicsSurvivalPathwayTest`.
 
 ```{r warning=FALSE}
-multiOmics@specificArgs$pcaArgs$method = "topological"
-multiOmics@specificArgs$pcaArgs$shrink = TRUE
+data("multiOmicsTopo")
 
 pathwaySurv <- lapply(reactSmall, function(g) {
   set.seed(1234)
-  fcl = multiOmicsSurvivalPathwayTest(multiOmics, g, 
+  fcl = multiOmicsSurvivalPathwayTest(multiOmicsTopo, g, 
                                       useTheseGenes = genesToConsider)
   })
 ```
