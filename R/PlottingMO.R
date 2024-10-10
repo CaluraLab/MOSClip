@@ -291,15 +291,9 @@ plotPathwayHeat <- function(
                 rev(as.vector(ann_col[involved[[n]]$covsConsidered][[1]]))
             )
         )
-        ht_list <- ht_list %v%
-            Ht
+        ht_list <- ht_list %v% Ht
     }
-    suppressMessages(
-        ComplexHeatmap::draw(
-            ht_list,
-            legend_grouping = "original"
-        )
-    )
+
     gb <- grid::grid.grabExpr(
         ComplexHeatmap::draw(
             ht_list,
@@ -717,20 +711,13 @@ plotModuleHeat <- function(
                 as.vector(ann_col[[involved[[n]]$covsConsidered[1]]])
             )
         )
-        ht_list <- ht_list %v%
-            Ht
+        ht_list <- ht_list %v% Ht
     }
-    suppressMessages(
-        ComplexHeatmap::draw(
-            ht_list,
-            legend_grouping = "original"
-        )
-    )
+    
     gb <- grid::grid.grabExpr(
         ComplexHeatmap::draw(
             ht_list,
-            legend_grouping = "original"
-        )
+            legend_grouping = "original")
     )
     return(gb)
 }
