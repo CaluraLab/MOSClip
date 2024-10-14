@@ -15,8 +15,7 @@
 extractCliquesFromDag <- function(dag, root = NULL) {
     checkmate::assertClass(dag, "graphNEL")
     idag <- igraph::graph_from_graphnel(dag)
-    if (sum(Matrix::diag(igraph::as_adjacency_matrix(idag))) !=
-        0) {
+    if (sum(Matrix::diag(igraph::as_adjacency_matrix(idag))) != 0) {
         dag <- removeSelfLoops(dag)
         idag <- igraph::graph_from_graphnel(dag)
     }
@@ -29,8 +28,7 @@ extractCliquesFromDag <- function(dag, root = NULL) {
 
     tg <- gRbase::triangulate(moral)
     ripped <- gRbase::rip(tg, root = root)
-    if (length(ripped) ==
-        0) {
+    if (length(ripped) == 0) {
         warning("This graph ", dag@title, "have 0 cliques")
         return(NULL)
     }

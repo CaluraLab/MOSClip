@@ -65,17 +65,20 @@ Given a \code{MultiOmicsPathway} class object, it plots Kaplan-Meier curves,
 in which the strata corresponds to the chosen omics
 }
 \examples{
- data(multiOmics)
- data(reactSmall)
- 
- genesToUse <- row.names(multiOmics[[1]])
+data(multiOmics)
+data(reactSmall)
 
- # Creating the MultiOmicsPathway object
-  MOP_survival <- multiOmicsSurvivalPathwayTest(multiOmics, reactSmall[[1]],
-   survFormula='Surv(days, status) ~', autoCompleteFormula = TRUE,
-   useTheseGenes = genesToUse)
-  
-  plotPathwayKM(MOP_survival, formula = 'Surv(days, status) ~ mut + expPC2',
-  paletteNames = 'Paired', inYears = TRUE)
+genesToUse <- row.names(multiOmics[[1]])
+
+# Creating the MultiOmicsPathway object
+MOP_survival <- multiOmicsSurvivalPathwayTest(multiOmics, reactSmall[[1]],
+    survFormula = "Surv(days, status) ~", autoCompleteFormula = TRUE,
+    useTheseGenes = genesToUse
+)
+
+plotPathwayKM(MOP_survival,
+    formula = "Surv(days, status) ~ mut + expPC2",
+    paletteNames = "Paired", inYears = TRUE
+)
 
 }

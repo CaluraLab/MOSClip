@@ -49,7 +49,8 @@ data(reactSmall)
 genesToUse <- row.names(multiOmics[[1]])
 
 MOP_survival <- multiOmicsSurvivalPathwayTest(multiOmics, reactSmall[[1]],
-  survFormula='Surv(days, status) ~', autoCompleteFormula = TRUE,
-  useTheseGenes = genesToUse)
+    survFormula = "Surv(days, status) ~", autoCompleteFormula = TRUE,
+    useTheseGenes = genesToUse
+)
 
 }

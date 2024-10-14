@@ -6,17 +6,15 @@
 #'
 #' @examples
 #' availableOmicMethods()
-#' 
+#'
 #' @export
 availableOmicMethods <- function() {
-    return(
-        c(
-            "summarizeToBinaryEvents", "summarizeToNumberOfEvents",
-            "summarizeWithPca", "summarizeInCluster",
-            "summarizeToBinaryDirectionalEvents",
-            "summarizeToNumberOfDirectionalEvents"
-        )
-    )
+    return(c(
+        "summarizeToBinaryEvents", "summarizeToNumberOfEvents",
+        "summarizeWithPca", "summarizeInCluster",
+        "summarizeToBinaryDirectionalEvents",
+        "summarizeToNumberOfDirectionalEvents"
+    ))
 }
 
 #' Summarize To Binary Events
@@ -28,7 +26,7 @@ availableOmicMethods <- function() {
 #' @param name prefix of the covariates
 #' @param binaryClassMin the minimum number of event to include the covariate
 #' @param cliques the features organized in cliques. Only use for topology
-#' 
+#'
 #' @return a list with summary of the omic:
 #'  \item{x}{summary of the omic for each sample}
 #'  \item{usedGenes}{genes list of genes used to calculate the summary}
@@ -39,40 +37,37 @@ availableOmicMethods <- function() {
 
 summarizeToBinaryEvents <- function(
     data, features, name = "bin", binaryClassMin = 10,
-    cliques = NULL
-) {
-    if (is.null(data))
+    cliques = NULL) {
+    if (is.null(data)) {
         return(NULL)
+    }
 
-    genes <- intersect(
-        row.names(data),
-        features
-    )
-    if (length(genes) ==
-        0)
+    genes <- intersect(row.names(data), features)
+    if (length(genes) == 0) {
         return(NULL)
+    }
 
     dataClique <- t(data[genes, , drop = FALSE])
-    if (ncol(dataClique) ==
-        0)
+    if (ncol(dataClique) == 0) {
         return(NULL)
+    }
 
     collapsed <- apply(dataClique > 0, 1, any, na.rm = TRUE)
 
-    if (sum(collapsed) <
-        binaryClassMin | sum(collapsed) >
-        NROW(dataClique) -
-            binaryClassMin)
+    if (sum(collapsed) < binaryClassMin |
+        sum(collapsed) > NROW(dataClique) - binaryClassMin) {
         return(NULL)
+    }
 
-    collapsed <- data.frame(
-        collapsed, row.names = names(collapsed),
+    collapsed <- data.frame(collapsed,
+        row.names = names(collapsed),
         stringsAsFactors = FALSE
     )
     colnames(collapsed) <- name
     list(
-        x = collapsed, usedGenes = genes, namesCov = name,
-        method = "binary", omicName = name, eventThr = 1
+        x = collapsed, usedGenes = genes, namesCov = name, method = "binary",
+        omicName = name,
+        eventThr = 1
     )
 }
 
@@ -90,44 +85,41 @@ summarizeToBinaryEvents <- function(
 #'  \item{method}{method used for the analysis}
 #'  \item{omicName}{name of the omic}
 #'  \item{evenThr}{threshold fot event counting}
-#'  \item{min_prop}{minimum proportion of samples to exclude to check the 
+#'  \item{min_prop}{minimum proportion of samples to exclude to check the
 #'  variability of values}
 
 summarizeToNumberOfEvents <- function(
     data, features, name = "event", min_prop = 0.1,
-    cliques = NULL
-) {
-    if (is.null(data))
+    cliques = NULL) {
+    if (is.null(data)) {
         return(NULL)
+    }
 
-    genes <- intersect(
-        row.names(data),
-        features
-    )
-    if (length(genes) ==
-        0)
+    genes <- intersect(row.names(data), features)
+    if (length(genes) == 0) {
         return(NULL)
+    }
 
     dataClique <- t(data[genes, , drop = FALSE])
-    if (ncol(dataClique) ==
-        0)
+    if (ncol(dataClique) == 0) {
         return(NULL)
+    }
 
     collapsed <- apply(dataClique > 0, 1, sum, na.rm = TRUE)
 
     keep <- check_minimal_proportion(collapsed, min_prop = min_prop)
-    if (!keep)
+    if (!keep) {
         return(NULL)
+    }
 
-    collapsed <- data.frame(
-        collapsed, row.names = names(collapsed),
+    collapsed <- data.frame(collapsed,
+        row.names = names(collapsed),
         stringsAsFactors = FALSE
     )
     colnames(collapsed) <- name
     list(
-        x = collapsed, usedGenes = genes, namesCov = name,
-        method = "count", omicName = name, eventThr = 1,
-        min_prop = min_prop
+        x = collapsed, usedGenes = genes, namesCov = name, method = "count",
+        omicName = name, eventThr = 1, min_prop = min_prop
     )
 }
 
@@ -139,7 +131,7 @@ summarizeToNumberOfEvents <- function(
 #' guess the optimal number of clusters using NbClust methods.
 #'
 #' @inheritParams summarizeToBinaryEvents
-#' @param dictionary translate features (genes) into sets 
+#' @param dictionary translate features (genes) into sets
 #' (row.names of the data)
 #' @param max_cluster_number the maximum number of cluster to evaluate
 #'
@@ -150,90 +142,68 @@ summarizeToNumberOfEvents <- function(
 #'  \item{cls}{the genes in clusters}
 #'  \item{method}{method used for the analysis}
 #'  \item{omicName}{name of the omic}
-#' 
+#'
 #' @importFrom stats cutree dist hclust
 #' @importFrom NbClust NbClust
 
 summarizeInCluster <- function(
-    data, features, name = "clu",
-    dictionary = NULL, max_cluster_number = 3,
-    cliques = NULL
-) {
-    if (is.null(data) ||
-        (ncol(data) ==
-            0) || !(is.matrix(data)))
+    data, features, name = "clu", dictionary = NULL, max_cluster_number = 3,
+    cliques = NULL) {
+    if (is.null(data) || (ncol(data) == 0) || !(is.matrix(data))) {
         return(NULL)
+    }
 
     if (is.null(dictionary)) {
-        genes <- intersect(
-            rownames(data),
-            features
-        )
-        if (length(genes) ==
-            0)
+        genes <- intersect(rownames(data), features)
+        if (length(genes) == 0) {
             return(NULL)
+        }
         used <- genes
         names(used) <- genes
         datamatClique <- t(data[genes, , drop = FALSE])
     } else {
-        genes <- intersect(
-            names(dictionary),
-            features
-        )
-        if (length(genes) ==
-            0)
+        genes <- intersect(names(dictionary), features)
+        if (length(genes) == 0) {
             return(NULL)
+        }
         used <- dictionary[genes]
         clusters <- unlist(dictionary[genes])
         clusters <- intersect(clusters, row.names(data))
-        if (length(clusters) ==
-            0)
+        if (length(clusters) == 0) {
             return(NULL)
-        datamatClique <- t(
-            data[clusters, ,
-                drop = FALSE]
-        )
+        }
+        datamatClique <- t(data[clusters, , drop = FALSE])
     }
 
-    if (ncol(datamatClique) ==
-        0)
+    if (ncol(datamatClique) == 0) {
         return(NULL)
+    }
 
     ## CREATE CLUSTERS
-    covs <- createOptiomalClusterClasses(
-        datamatClique, name,
+    covs <- createOptiomalClusterClasses(datamatClique, name,
         max_cluster_number = max_cluster_number
     )
 
-    if (any(
-        table(covs[[1]]) <
-            2
-    )) {
+    if (any(table(covs[[1]]) < 2)) {
         warning("Not meaningful class separation\n")
         return(NULL)
     }
 
     collapse <- covs
     list(
-        x = collapse, usedGenes = names(used),
-        namesCov = names(covs),
-        cls = used, method = "cluster",
-        omicName = name
+        x = collapse, usedGenes = names(used), namesCov = names(covs),
+        cls = used, method = "cluster", omicName = name
     )
 }
 
 createOptiomalClusterClasses <- function(
     datamatClique, name, max_cluster_number,
-    index_method = "silhouette"
-) {
+    index_method = "silhouette") {
     nb <- sinkNbClust(
         data = datamatClique, min.nc = 2, max.nc = max_cluster_number,
         method = "ward.D2", index = index_method
     )
-    covs <- data.frame(
-        factor(nb$Best.partition),
-        stringsAsFactors = TRUE
-    )
+    covs <- data.frame(factor(nb$Best.partition), stringsAsFactors = TRUE)
     optimalCLusterNumber <- length(table(nb$Best.partition))
     names(covs) <- paste0(name, optimalCLusterNumber, "k")
     covs
@@ -241,21 +211,21 @@ createOptiomalClusterClasses <- function(
 
 #' @importFrom grDevices dev.off pdf
 #'
-sinkNbClust <- function(
-    data, min.nc = 2, max.nc = 6, method = "ward.D2",
-    index = "silhouette"
-) {
-    if (index == "all")
+sinkNbClust <- function(data, min.nc = 2, max.nc = 6, method = "ward.D2",
+                        index = "silhouette") {
+    if (index == "all") {
         sink(file = tempfile())
+    }
     pdf(file = NULL)
 
     nb <- NbClust(
-        data = data, min.nc = min.nc, max.nc = max.nc,
-        method = method, index = index
+        data = data, min.nc = min.nc, max.nc = max.nc, method = method,
+        index = index
     )
 
-    if (index == "all")
+    if (index == "all") {
         sink()
+    }
     dev.off()
 
     return(nb)
@@ -264,7 +234,7 @@ sinkNbClust <- function(
 
 #' Summarize Using PCA
 #'
-#' Given a matrix it summarize to principal components. 
+#' Given a matrix it summarize to principal components.
 #' The user can specify the number of principal components. Default 3.
 #'
 #' @inheritParams summarizeToBinaryEvents
@@ -287,28 +257,24 @@ sinkNbClust <- function(
 
 summarizeWithPca <- function(
     data, features, name = "pca", shrink = FALSE, method = "regular",
-    cliques = NULL, maxPCs = 3, loadThr = 0.6
-) {
-    if (is.null(data))
+    cliques = NULL, maxPCs = 3, loadThr = 0.6) {
+    if (is.null(data)) {
         return(NULL)
+    }
 
-    genes <- intersect(
-        row.names(data),
-        features
-    )
-    if (length(genes) ==
-        0)
+    genes <- intersect(row.names(data), features)
+    if (length(genes) == 0) {
         return(NULL)
+    }
 
     dataClique <- t(data[genes, , drop = FALSE])
-    if (ncol(dataClique) ==
-        0)
+    if (ncol(dataClique) == 0) {
         return(NULL)
+    }
 
-    if (NCOL(dataClique) !=
-        1) {
-        pcs <- computePCs(
-            dataClique, shrink = shrink, method = method, cliques = cliques,
+    if (NCOL(dataClique) != 1) {
+        pcs <- computePCs(dataClique,
+            shrink = shrink, method = method, cliques = cliques,
             maxPCs = maxPCs
         )
         colnames(pcs$x) <- paste0(name, colnames(pcs$x))
@@ -316,10 +282,7 @@ summarizeWithPca <- function(
         colnames(pcs$loadings) <- paste0(name, colnames(pcs$loadings))
     } else {
         colnames(dataClique) <- paste0(name, "PC1")
-        pcs <- list(
-            x = dataClique, sdev = sd(dataClique),
-            loadings = 1
-        )
+        pcs <- list(x = dataClique, sdev = sd(dataClique), loadings = 1)
     }
 
     pcs$usedGenes <- genes
@@ -331,7 +294,7 @@ summarizeWithPca <- function(
 
 #' Summarize With Directed Sum
 #'
-#' Given a matrix it summarize the positive and negative in two vectors, 
+#' Given a matrix it summarize the positive and negative in two vectors,
 #' with counts of the events
 #'
 #' @inheritParams summarizeToNumberOfEvents
@@ -344,28 +307,25 @@ summarizeWithPca <- function(
 #'  \item{method}{method used for the analysis}
 #'  \item{omicName}{name of the omic}
 #'  \item{evenThr}{threshold fot event counting}
-#'  \item{min_prop}{minimum proportion of samples to exclude to check the 
+#'  \item{min_prop}{minimum proportion of samples to exclude to check the
 #'  variability of values}
 
 summarizeToNumberOfDirectionalEvents <- function(
-    data, features, name = "dCount", eventThr = 2, min_prop = 0.1,
-    cliques = NULL
-) {
-    if (is.null(data))
+    data, features, name = "dCount",
+    eventThr = 2, min_prop = 0.1, cliques = NULL) {
+    if (is.null(data)) {
         return(NULL)
+    }
 
-    genes <- intersect(
-        row.names(data),
-        features
-    )
-    if (length(genes) ==
-        0)
+    genes <- intersect(row.names(data), features)
+    if (length(genes) == 0) {
         return(NULL)
+    }
 
     dataClique <- t(data[genes, , drop = FALSE])
-    if (ncol(dataClique) ==
-        0)
+    if (ncol(dataClique) == 0) {
         return(NULL)
+    }
 
     posDataClique <- extractPositivePortion(dataClique)
     negDataClique <- extractPositivePortion(dataClique, invert = TRUE)
@@ -379,20 +339,18 @@ summarizeToNumberOfDirectionalEvents <- function(
     )
     colnames(collapsed) <- paste0(name, c("POS", "NEG"))
 
-    keep <- vapply(
-        collapsed, function(x) {
-            check_minimal_proportion(x, min_prop = min_prop)
-        }, logical(1)
-    )
+    keep <- vapply(collapsed, function(x) {
+        check_minimal_proportion(x, min_prop = min_prop)
+    }, logical(1))
     collapsed <- collapsed[, keep, drop = FALSE]
 
-    if (NCOL(collapsed) ==
-        0)
+    if (NCOL(collapsed) == 0) {
         return(NULL)
+    }
     list(
         x = collapsed, usedGenes = genes, namesCov = names(collapsed),
-        method = "directedCount", omicName = name, eventThr = eventThr,
-        min_prop = min_prop
+        method = "directedCount",
+        omicName = name, eventThr = eventThr, min_prop = min_prop
     )
 }
 
@@ -400,13 +358,13 @@ summarizeToNumberOfDirectionalEvents <- function(
 check_minimal_proportion <- function(x, min_prop = 0.1) {
     min <- quantile(x, probs = c(min_prop))
     max <- quantile(x, probs = c(1 - min_prop))
-    if ((min == min(x)) &&
-        (max == min(x)))
+    if ((min == min(x)) && (max == min(x))) {
         return(FALSE)
+    }
 
-    if ((min == max(x)) &&
-        (max == max(x)))
+    if ((min == max(x)) && (max == max(x))) {
         return(FALSE)
+    }
 
     TRUE
 }
@@ -426,26 +384,23 @@ check_minimal_proportion <- function(x, min_prop = 0.1) {
 #'  \item{method}{method used for the analysis}
 #'  \item{omicName}{name of the omic}
 #'  \item{evenThr}{threshold fot event counting}
-#'  
+#'
 summarizeToBinaryDirectionalEvents <- function(
-    data, features, name = "dirBin", binaryClassMin = 10, eventThr = 2,
-    cliques = NULL
-) {
-    if (is.null(data))
+    data, features, name = "dirBin", binaryClassMin = 10,
+    eventThr = 2, cliques = NULL) {
+    if (is.null(data)) {
         return(NULL)
+    }
 
-    genes <- intersect(
-        row.names(data),
-        features
-    )
-    if (length(genes) ==
-        0)
+    genes <- intersect(row.names(data), features)
+    if (length(genes) == 0) {
         return(NULL)
+    }
 
     dataClique <- t(data[genes, , drop = FALSE])
-    if (ncol(dataClique) ==
-        0)
+    if (ncol(dataClique) == 0) {
         return(NULL)
+    }
 
     posDataClique <- extractPositivePortion(dataClique)
     negDataClique <- extractPositivePortion(dataClique, invert = TRUE)
@@ -460,17 +415,18 @@ summarizeToBinaryDirectionalEvents <- function(
     colnames(collapsed) <- paste0(name, c("POS", "NEG"))
 
 
-    keep <- vapply(collapsed, sum, as.numeric(1)) >=
-        binaryClassMin | vapply(collapsed, sum, as.numeric(1)) <=
-        NROW(dataClique) -
-            binaryClassMin
+    keep <- vapply(collapsed, sum, as.numeric(1)) >= binaryClassMin | vapply(
+        collapsed,
+        sum, as.numeric(1)
+    ) <= NROW(dataClique) - binaryClassMin
     collapsed <- collapsed[, keep, drop = FALSE]
 
-    if (NCOL(collapsed) ==
-        0)
+    if (NCOL(collapsed) == 0) {
         return(NULL)
+    }
     list(
         x = collapsed, usedGenes = genes, namesCov = names(collapsed),
-        method = "directedBinary", omicName = name, eventThr = eventThr
+        method = "directedBinary",
+        omicName = name, eventThr = eventThr
     )
 }

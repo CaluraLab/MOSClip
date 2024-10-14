@@ -102,8 +102,7 @@ sparseCompPCs <- function(exp, shrink, k) {
         covmat, K = k, para = rep(paraSingle, k),
         type = "Gram", sparse = "varnum"
     )
-    eigenvector <- pcCov$loadings[, seq_len(k),
-        drop = FALSE]
+    eigenvector <- pcCov$loadings[, seq_len(k), drop = FALSE]
     scalee <- scale(exp, scale = FALSE)
     npc <- min(dim(exp))
     scores <- scalee %*% eigenvector
@@ -129,8 +128,7 @@ compPCs <- function(exp, shrink, k) {
     covmat <- makePositiveDefinite(covmat)$m1
     scovmat <- covmat
     pcCov <- base::eigen(scovmat)
-    eigenvector <- pcCov$vectors[, seq_len(k),
-        drop = FALSE]
+    eigenvector <- pcCov$vectors[, seq_len(k), drop = FALSE]
     scalee <- scale(exp, scale = FALSE)
     npc <- min(dim(exp))
     scores <- scalee %*% eigenvector

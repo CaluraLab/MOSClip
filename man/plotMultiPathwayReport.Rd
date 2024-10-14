@@ -42,16 +42,20 @@ data(reactSmall)
 genesToUse <- row.names(multiOmics[[1]])
 
 MOP_list <- lapply(reactSmall, function(g) {
-   fcl = multiOmicsSurvivalPathwayTest(multiOmics, g,
-                                       survFormula='Surv(days, status) ~',
-                                       autoCompleteFormula = TRUE,
-                                       useTheseGenes = genesToUse)
-   fcl
+    fcl <- multiOmicsSurvivalPathwayTest(multiOmics, g,
+        survFormula = "Surv(days, status) ~",
+        autoCompleteFormula = TRUE,
+        useTheseGenes = genesToUse
+    )
+    fcl
 })
 
 plotMultiPathwayReport(MOP_list,
-                       MOcolors = c(exp = 'red', met = 'green', mut = 'blue',
-                                    cnv='yellow'),
-                       fontsize = 12)
+    MOcolors = c(
+        exp = "red", met = "green", mut = "blue",
+        cnv = "yellow"
+    ),
+    fontsize = 12
+)
 
 }

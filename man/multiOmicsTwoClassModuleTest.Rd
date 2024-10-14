@@ -48,17 +48,20 @@ Performs topological two-class analysis using an \code{Omics} object. It
 decomposes graphs (pathways) into modules.
 }
 \examples{
-data('multiOmics')
-data('reactSmall')
+data("multiOmics")
+data("reactSmall")
 
 genesToUse <- row.names(multiOmics[[1]])
 
-classAnnot <- data.frame('treatment' = c(rep('A', 25), rep('B', 25)),
-                         row.names = colnames(multiOmics[[1]]))
-                         
+classAnnot <- data.frame(
+    "treatment" = c(rep("A", 25), rep("B", 25)),
+    row.names = colnames(multiOmics[[1]])
+)
+
 MOM_twoclasses <- multiOmicsTwoClassModuleTest(
-  multiOmics, reactSmall[[1]], classAnnot,
-  baseFormula = 'treatment ~ ', nullModel = 'treatment ~ 1',
-  useTheseGenes = genesToUse)
-  
+    multiOmics, reactSmall[[1]], classAnnot,
+    baseFormula = "treatment ~ ", nullModel = "treatment ~ 1",
+    useTheseGenes = genesToUse
+)
+
 }

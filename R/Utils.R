@@ -1,31 +1,22 @@
 conversionToSymbols <- function(idsGraphiteStyle, orgDbi = "org.Hs.eg.db") {
-    if (!requireNamespace(orgDbi))
+    if (!requireNamespace(orgDbi)) {
         return(idsGraphiteStyle)
+    }
 
-    if (is.null(idsGraphiteStyle))
+    if (is.null(idsGraphiteStyle)) {
         return(NULL)
+    }
 
-    if (!(length(grep(":", idsGraphiteStyle)) ==
-        length(idsGraphiteStyle) &
-        length(
-            unique(
-                do.call(rbind, (strsplit(idsGraphiteStyle, ":")))[,
-                  1]
-            )
-        ) ==
-            1))
+    if (!(length(grep(":", idsGraphiteStyle)) == length(idsGraphiteStyle) &
+        length(unique(do.call(
+            rbind, (strsplit(idsGraphiteStyle, ":"))
+        )[, 1])) == 1)) {
         return(idsGraphiteStyle)
+    }
 
-    typeId <- unique(
-        do.call(rbind, (strsplit(idsGraphiteStyle, ":")))[,
-            1]
-    )
-    originals <- gsub(
-        paste0(typeId, ":"),
-        "", idsGraphiteStyle
-    )
-    symbols <- select(
-        get(orgDbi),
+    typeId <- unique(do.call(rbind, (strsplit(idsGraphiteStyle, ":")))[, 1])
+    originals <- gsub(paste0(typeId, ":"), "", idsGraphiteStyle)
+    symbols <- select(get(orgDbi),
         keys = originals, columns = c("SYMBOL"),
         keytype = typeId
     )$SYMBOL
@@ -37,22 +28,21 @@ conversionToSymbols <- function(idsGraphiteStyle, orgDbi = "org.Hs.eg.db") {
 formatAnnotations <- function(listOfMostlyInvolvedGenesInOmics, sortBy) {
     involved <- listOfMostlyInvolvedGenesInOmics
     samplesList <- row.names(involved[[1]]$discrete)
-    annotationFull <- lapply(
-        seq_along(involved),
-        function(i) {
-            covNames <- involved[[i]]$covsConsidered
-            annotations <- involved[[i]]$discrete[samplesList,
-                covNames, drop = FALSE]
-            annotations
-        }
-    )
+    annotationFull <- lapply(seq_along(involved), function(i) {
+        covNames <- involved[[i]]$covsConsidered
+        annotations <- involved[[i]]$discrete[samplesList, covNames,
+            drop = FALSE
+        ]
+        annotations
+    })
     annotationFull <- do.call(cbind, annotationFull)
     if (is.null(sortBy)) {
-        annotationFull <- annotationFull[order(
-            annotationFull[, 1], annotationFull[,
-                ncol(annotationFull)]
-        ),
-            , drop = FALSE]
+        annotationFull <- annotationFull[
+            order(
+                annotationFull[, 1], annotationFull[, ncol(annotationFull)]
+            ), ,
+            drop = FALSE
+        ]
     } else {
         ord <- getMultiColOrder(annotationFull, sortBy)
         annotationFull <- annotationFull[ord, , drop = FALSE]
@@ -61,26 +51,23 @@ formatAnnotations <- function(listOfMostlyInvolvedGenesInOmics, sortBy) {
 }
 
 sortAnnotations <- function(annotations, sortBy) {
-    if (is.null(sortBy))
+    if (is.null(sortBy)) {
         return(annotations)
+    }
 
     missing <- setdiff(sortBy, colnames(annotations))
-    if (length(missing) !=
-        0)
-        stop(
-            paste0(
-                paste(missing, collapse = ", "),
-                ": covariates not found"
-            )
-        )
+    if (length(missing) != 0) {
+        stop(paste0(paste(missing, collapse = ", "), ": covariates not found"))
+    }
 
     ord <- getMultiColOrder(annotations, sortBy)
     annotations[ord, , drop = FALSE]
 }
 
 getMultiColOrder <- function(df, sortBy) {
-    if (!is.data.frame(df))
+    if (!is.data.frame(df)) {
         stop("df must be a data frame.")
+    }
 
     columns <- paste0("df$", sortBy)
     columns <- paste(columns, collapse = ", ")
@@ -98,12 +85,11 @@ extractPvalues <- function(x) {
 }
 
 matchArguments <- function(dots, defaults) {
-    if (length(defaults) ==
-        0)
+    if (length(defaults) == 0) {
         return(dots)
+    }
 
-    defaults[names(defaults) %in%
-        names(dots)] <- NULL
+    defaults[names(defaults) %in% names(dots)] <- NULL
     c(defaults, dots)
 }
 
@@ -117,14 +103,10 @@ guessOmics <- function(covs) {
 
 guessOmicsColors <- function(omics) {
     uomics <- unique(omics)
-    if (length(uomics) <
-        7) {
+    if (length(uomics) < 7) {
         MOcols <- names(MOSpalette)[seq_along(uomics)]
     } else {
-        MOcols <- RColorBrewer::brewer.pal(
-            length(uomics),
-            "Set3"
-        )
+        MOcols <- RColorBrewer::brewer.pal(length(uomics), "Set3")
     }
     names(MOcols) <- uomics
     MOcols
@@ -132,45 +114,36 @@ guessOmicsColors <- function(omics) {
 
 mapColor <- function(omic, MOcolors) {
     color <- MOSpalette[MOcolors[omic]]
-    if (is.na(color))
+    if (is.na(color)) {
         color <- MOcolors[omic]
+    }
     unname(color)
 }
 
 createColors <- function(omics, MOcolors) {
-    vapply(
-        unique(omics),
-        function(o) mapColor(o, MOcolors),
-        character(1)
-    )
+    vapply(unique(omics), function(o) mapColor(o, MOcolors), character(1))
 }
 
 matchAnnotations <- function(d1, d2) {
-    if (nrow(d1) !=
-        nrow(d2))
+    if (nrow(d1) != nrow(d2)) {
         stop("Annotations have different row numbers")
+    }
 
-    diff <- setdiff(
-        row.names(d2),
-        row.names(d1)
-    )
-    if (length(diff) !=
-        0)
-        stop(
-            paste0(
-                "We found samples", paste(diff, collapse = ", "),
-                "that do not match MOM annotation"
-            )
-        )
+    diff <- setdiff(row.names(d2), row.names(d1))
+    if (length(diff) != 0) {
+        stop(paste0(
+            "We found samples", paste(diff, collapse = ", "),
+            "that do not match MOM annotation"
+        ))
+    }
 
-    d2 <- d2[row.names(d1),
-        , drop = FALSE]
+    d2 <- d2[row.names(d1), , drop = FALSE]
     d2
 }
 
 getContinousPalette <- function(palette, n) {
-    switch(
-        palette, red = redShades(n),
+    switch(palette,
+        red = redShades(n),
         green = greenShades(n),
         blue = blueShades(n),
         yellow = yellowShades(n),
@@ -192,9 +165,9 @@ extractPositivePortion <- function(data, invert = FALSE) {
 
 
 #' Create the list of covariates that are going to be tested
-#' 
+#'
 #' @param omicsObj `Omics` class object
-#' @param genes genes of the clique 
+#' @param genes genes of the clique
 #'
 #' @importFrom methods new
 #' @importFrom survival Surv
@@ -217,8 +190,9 @@ createMOMView <- function(omicsObj, genes) {
                 data = omicsObj@ExperimentList@listData[[i]],
                 features = genes
             )
-            if (!is.null(specificArgs))
+            if (!is.null(specificArgs)) {
                 args <- c(args, specificArgs)
+            }
             do.call(test, args)
         }
     )
@@ -228,31 +202,27 @@ createMOMView <- function(omicsObj, genes) {
 
 
 #' Create Cox Object
-#' 
+#'
 #' Create the coxObj from the covariates used in the test
 #'
 #' @param colData colData from multiOmic object
-#' @param moView modulesView or pathView from multiOmicsModules or 
+#' @param moView modulesView or pathView from multiOmicsModules or
 #' multiOmicsPathway object
 #'
 #' @return data.frame, samples in the rows, covariates in the columns
 createCoxObj <- function(colData, moView) {
-
-    additionalCovariates <- lapply(
-        moView, function(mo) {
-            mo$x
-        }
-    )
+    additionalCovariates <- lapply(moView, function(mo) {
+        mo$x
+    })
     additionalCovariates <- do.call(cbind, additionalCovariates)
 
-    if (is.null(additionalCovariates))
+    if (is.null(additionalCovariates)) {
         return(NULL)
+    }
 
-    if (!identical(
-        row.names(colData),
-        row.names(additionalCovariates)
-    ))
+    if (!identical(row.names(colData), row.names(additionalCovariates))) {
         stop("Mismatch in covariates and daysStatus annotations rownames.")
+    }
 
     coxObj <- data.frame(colData, additionalCovariates)
     return(coxObj)
@@ -260,13 +230,13 @@ createCoxObj <- function(colData, moView) {
 
 
 #' Create Data Module
-#' 
-#' Extract sub-matrix for the genes of a module or pathway from data matrix of 
+#'
+#' Extract sub-matrix for the genes of a module or pathway from data matrix of
 #' a specific omic
 #'
-#' @param omic modulesView or pathView object 
+#' @param omic modulesView or pathView object
 #' @param multiOmicObj object of class 'Omics'
-#' 
+#'
 #' @return matrix, genes in the rows, samples in the columns
 createDataModule <- function(omic, multiOmicObj) {
     if (omic$omicName == "met") {
@@ -283,49 +253,36 @@ createDataModule <- function(omic, multiOmicObj) {
         )
     }
     assay <- assay(multiOmicObj, omic$omicName)
-    dataModule <- assay[rownames(assay) %in%
-        genes, , drop = FALSE]
+    dataModule <- assay[rownames(assay) %in% genes, , drop = FALSE]
     return(dataModule)
 }
 
 
 #' Shows the MOSClip palette.
 #'
-#' This function shows the MOSClip palette. 
-#' Each omic should be coupled to a color panel, this match will be preserved 
+#' This function shows the MOSClip palette.
+#' Each omic should be coupled to a color panel, this match will be preserved
 #' in plots.
-#' 
+#'
 #' @return NULL. No value is returned
 #'
 #' @examples
 #' showMOSpalette()
-#' 
+#'
 #' @importFrom graphics axis title
 #'
 #' @export
 showMOSpalette <- function() {
-    plot(
-        c(
-            rep(
-                seq_len(6),
-                4
-            )
-        ),
-        c(
-            rep(1, 6),
-            rep(2, 6),
-            rep(3, 6),
-            rep(4, 6)
-        ),
-        col = apply(MOSpaletteSchema, 2, c),
-        pch = 19, cex = 13, xlim = c(0.5, 6.5),
-        ylim = c(0, 4.8),
-        xlab = "", ylab = "", axes = FALSE
+    plot(c(rep(seq_len(6), 4)), c(rep(1, 6), rep(2, 6), rep(3, 6), rep(4, 6)),
+        col = apply(
+            MOSpaletteSchema,
+            2, c
+        ), pch = 19, cex = 13, xlim = c(0.5, 6.5), ylim = c(0, 4.8), xlab = "",
+        ylab = "", axes = FALSE
     )
-    axis(
-        3, at = seq_len(6),
-        labels = rownames(MOSpaletteSchema),
-        las = 1, cex.axis = 0.8, lwd = 0, pos = 4.5, font = 4
+    axis(3,
+        at = seq_len(6), labels = rownames(MOSpaletteSchema), las = 1,
+        cex.axis = 0.8, lwd = 0, pos = 4.5, font = 4
     )
     title("MOSClip palette")
 }

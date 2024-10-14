@@ -50,7 +50,8 @@ data(reactSmall)
 genesToUse <- row.names(multiOmics[[1]])
 
 MOM_survival <- multiOmicsSurvivalModuleTest(multiOmics, reactSmall[[1]],
-  survFormula='Surv(days, status) ~', autoCompleteFormula = TRUE,
-  useTheseGenes = genesToUse)
+    survFormula = "Surv(days, status) ~", autoCompleteFormula = TRUE,
+    useTheseGenes = genesToUse
+)
 
 }

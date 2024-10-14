@@ -1,4 +1,3 @@
-
 #' Two-classes glm test.
 #'
 #' @param data data
@@ -8,29 +7,22 @@
 #' @importFrom stats glm poisson pchisq deviance df.residual na.omit
 
 glmTest <- function(data, fullModelFormula, nullModelFormula) {
-
-    glmRes <- glm(
-        as.formula(fullModelFormula),
+    glmRes <- glm(as.formula(fullModelFormula),
         family = "binomial", data = na.omit(data)
     )
     glmSummary <- summary(glmRes)
     zlist <- glmSummary$coefficients[, "Pr(>|z|)"][-1]
     names(zlist) <- row.names(glmSummary$coefficients)[-1]
 
-    fullModel <- glm(
-        as.formula(fullModelFormula),
+    fullModel <- glm(as.formula(fullModelFormula),
         family = poisson, data = data
     )
-    nullModel <- glm(
-        as.formula(nullModelFormula),
+    nullModel <- glm(as.formula(nullModelFormula),
         family = poisson, data = data
     )
 
-    pvalue <- pchisq(
-        deviance(nullModel) -
-            deviance(fullModel),
-        df.residual(nullModel) -
-            df.residual(fullModel),
+    pvalue <- pchisq(deviance(nullModel) - deviance(fullModel),
+        df.residual(nullModel) - df.residual(fullModel),
         lower.tail = FALSE
     )
 
@@ -41,15 +33,13 @@ glmTest <- function(data, fullModelFormula, nullModelFormula) {
 MOMglmTest <- function(
     genes, omicsObj, classAnnot, baseFormula = "classes ~ ",
     autoCompleteFormula = TRUE,
-    nullModel = "classes ~ 1"
-) {
-
+    nullModel = "classes ~ 1") {
     # check if topological method has been used
     for (i in seq_along(omicsObj@ExperimentList@listData)) {
         if (omicsObj@modelInfo[i] == "summarizeWithPca") {
             if (!is.null(omicsObj@specificArgs[[i]]$method)) {
                 if (omicsObj@specificArgs[[i]]$method == "topological") {
-                  stop("Invalid method for module analysis: topological")
+                    stop("Invalid method for module analysis: topological")
                 }
             }
         }
@@ -57,29 +47,22 @@ MOMglmTest <- function(
 
     moView <- createMOMView(omicsObj, genes)
 
-    additionalCovariates <- lapply(
-        moView, function(mo) {
-            mo$x
-        }
-    )
+    additionalCovariates <- lapply(moView, function(mo) {
+        mo$x
+    })
 
     additionalCovariates <- do.call(cbind, additionalCovariates)
 
-    if (is.null(additionalCovariates))
+    if (is.null(additionalCovariates)) {
         return(NULL)
+    }
 
-    if (!identical(
-        row.names(classAnnot),
-        row.names(additionalCovariates)
-    )) {
-        if (all(
-            row.names(classAnnot) %in%
-                row.names(additionalCovariates)
-        )) {
+    if (!identical(row.names(classAnnot), row.names(additionalCovariates))) {
+        if (all(row.names(classAnnot) %in% row.names(additionalCovariates))) {
             res <- resolveAndOrder(list(
-              classAnnot = classAnnot,
-              additionalCovariates = additionalCovariates))
-
+                classAnnot = classAnnot,
+                additionalCovariates = additionalCovariates
+            ))
             classAnnot <- res$classAnnot
             additionalCovariates <- res$additionalCovariates
         } else {
@@ -93,14 +76,17 @@ MOMglmTest <- function(
 
     dependentVar <- all.vars(as.formula(nullModelFormula))[1]
 
-    if (!(dependentVar %in% colnames(dataTest)))
+    if (!(dependentVar %in% colnames(dataTest))) {
         stop("Data does not contain one of the model dependent variables")
+    }
 
     twoClasses <- unique(dataTest[, dependentVar])
-    if (length(twoClasses) !=
-        2)
+    if (length(twoClasses) != 2) {
         stop(
-          "Classes should be only two. Check your dependent variables columns")
+            "Classes should be only two. ",
+            "Check your dependent variables columns"
+        )
+    }
 
     dataTestOut <- dataTest
 
@@ -111,13 +97,14 @@ MOMglmTest <- function(
     }
 
     fullModelFormula <- baseFormula
-    if (autoCompleteFormula)
+    if (autoCompleteFormula) {
         fullModelFormula <- paste0(
-            baseFormula, paste(
-                colnames(additionalCovariates),
+            baseFormula,
+            paste(colnames(additionalCovariates),
                 collapse = "+"
             )
         )
+    }
 
     res <- glmTest(dataTest, fullModelFormula, nullModelFormula)
 

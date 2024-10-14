@@ -16,7 +16,7 @@ a numeric. The minimum or NA
 For internal use only. Get back minimum or NA.
 }
 \examples{
-  # minOrNA(c(1,5,0.1,NA))
-  # minOrNA(c(NA,NA,NA))
+# minOrNA(c(1,5,0.1,NA))
+# minOrNA(c(NA,NA,NA))
 
 }

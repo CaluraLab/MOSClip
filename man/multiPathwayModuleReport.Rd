@@ -27,14 +27,15 @@ data(reactSmall)
 
 genesToUse <- row.names(multiOmics[[1]])
 
- MOM_list <- lapply(reactSmall[1:2], function(g) {
-   fcl = multiOmicsSurvivalModuleTest(multiOmics, g,
-                                       survFormula='Surv(days, status) ~',
-                                       autoCompleteFormula = TRUE,
-                                       useTheseGenes = genesToUse)
-   fcl
+MOM_list <- lapply(reactSmall[1:2], function(g) {
+    fcl <- multiOmicsSurvivalModuleTest(multiOmics, g,
+        survFormula = "Surv(days, status) ~",
+        autoCompleteFormula = TRUE,
+        useTheseGenes = genesToUse
+    )
+    fcl
 })
 
- moduleSummary <- multiPathwayModuleReport(MOM_list)
+moduleSummary <- multiPathwayModuleReport(MOM_list)
 
 }

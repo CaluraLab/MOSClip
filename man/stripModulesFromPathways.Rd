@@ -18,10 +18,12 @@ pathway name. Necessary step for \code{\link{annotePathwayToFather}} and
 \code{\link{plotFrequencies}}
 }
 \examples{
-pathwaysModules <- list('Intrinsic Pathway for Apoptosis.1',
-                        'Intrinsic Pathway for Apoptosis.2',
-                        'Opioid Signalling.1', 'Opioid Signalling.2')
-                        
+pathwaysModules <- list(
+    "Intrinsic Pathway for Apoptosis.1",
+    "Intrinsic Pathway for Apoptosis.2",
+    "Opioid Signalling.1", "Opioid Signalling.2"
+)
+
 resPathwayNames <- stripModulesFromPathways(pathwaysModules)
 
 }

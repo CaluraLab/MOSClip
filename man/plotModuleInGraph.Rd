@@ -51,17 +51,20 @@ From a \code{MultiOmicsModules} object, it plots the position of a given module
 in the pathway. The omics are also represented in the graph.
 }
 \examples{
- data(multiOmics)
- data(reactSmall)
- 
- genesToUse <- row.names(multiOmics[[1]])
- 
- MOM_survival <- multiOmicsSurvivalModuleTest(multiOmics, reactSmall[[1]],
-  survFormula='Surv(days, status) ~', autoCompleteFormula = TRUE,
-  useTheseGenes = genesToUse)
- 
- plotModuleInGraph(MOM_survival, reactSmall, moduleNumber = 1,
-  paletteNames = c(exp = 'red', met = 'green', mut = 'blue', cnv = 'yellow')
- )
+data(multiOmics)
+data(reactSmall)
+
+genesToUse <- row.names(multiOmics[[1]])
+
+MOM_survival <- multiOmicsSurvivalModuleTest(multiOmics, reactSmall[[1]],
+    survFormula = "Surv(days, status) ~", autoCompleteFormula = TRUE,
+    useTheseGenes = genesToUse
+)
+
+plotModuleInGraph(MOM_survival, reactSmall,
+    moduleNumber = 1,
+    paletteNames = c(exp = "red", met = "green", 
+                     mut = "blue", cnv = "yellow")
+)
 
 }

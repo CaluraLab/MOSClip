@@ -40,9 +40,11 @@ from a data.frame of the frequencies returned with the function
 \code{\link{computeFreqs}}.
 }
 \examples{
-df <- data.frame(category=c('PathwayA', 'PathwayB', 'PathwayC', 'PathwayD'),
-  frequencies=c(1,2,1,3),
-  class=rep('Mut',4), stringsAsFactors = FALSE)
+df <- data.frame(
+    category = c("PathwayA", "PathwayB", "PathwayC", "PathwayD"),
+    frequencies = c(1, 2, 1, 3),
+    class = rep("Mut", 4), stringsAsFactors = FALSE
+)
 plotFrequencies(df)
 
 }

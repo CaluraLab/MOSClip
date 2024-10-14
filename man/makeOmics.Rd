@@ -49,23 +49,33 @@ the dimensionality reduction step.
 \examples{
 data(ovarianDataset)
 
-myColData <- data.frame(status = sample(c(0,1), 50, replace = TRUE),
-                        days = sample(c(0, 500), 50, replace = TRUE),
-                        row.names = colnames(ovarianDataset$exp))
+myColData <- data.frame(
+    status = sample(c(0, 1), 50, replace = TRUE),
+    days = sample(c(0, 500), 50, replace = TRUE),
+    row.names = colnames(ovarianDataset$exp)
+)
 
-myOmicsObj <- makeOmics(experiments = ovarianDataset,
-                        colData = myColData,
-                        modelInfo = c(
-                          'summarizeWithPca',
-                          'summarizeInCluster',
-                          'summarizeToNumberOfEvents',
-                          'summarizeToNumberOfDirectionalEvents'),
-                        specificArgs = list(
-                          pcaArgs = list(name = 'exp', shrink = 'FALSE',
-                                         method = 'sparse', maxPCs = 3),
-                          clusterArgs = list(name = 'met',
-                                             max_cluster_number = 3),
-                          countEvent = list(name = 'mut', min_prop = 0.05),
-                          cnvAgv = list(name = 'cnv', min_prop = 0.05)))
+myOmicsObj <- makeOmics(
+    experiments = ovarianDataset,
+    colData = myColData,
+    modelInfo = c(
+        "summarizeWithPca",
+        "summarizeInCluster",
+        "summarizeToNumberOfEvents",
+        "summarizeToNumberOfDirectionalEvents"
+    ),
+    specificArgs = list(
+        pcaArgs = list(
+            name = "exp", shrink = "FALSE",
+            method = "sparse", maxPCs = 3
+        ),
+        clusterArgs = list(
+            name = "met",
+            max_cluster_number = 3
+        ),
+        countEvent = list(name = "mut", min_prop = 0.05),
+        cnvAgv = list(name = "cnv", min_prop = 0.05)
+    )
+)
 
 }

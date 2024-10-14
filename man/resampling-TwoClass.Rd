@@ -55,13 +55,17 @@ Resampling function for pathways (two-class analysis)
 data(multiOmics)
 data(reactSmall)
 
-classAnnot <- data.frame('treatment' = c(rep('A', 25), rep('B', 25)),
-                         row.names = colnames(multiOmics[[1]]))
+classAnnot <- data.frame(
+    "treatment" = c(rep("A", 25), rep("B", 25)),
+    row.names = colnames(multiOmics[[1]])
+)
 
-perms <- resamplingModulesTwoClass(fullMultiOmics = multiOmics,
-                                   classAnnot, reactSmall,
-                                   nperm = 10,
-                                   pathwaySubset =
-                                     'FGFR1 mutant receptor activation') 
+perms <- resamplingModulesTwoClass(
+    fullMultiOmics = multiOmics,
+    classAnnot, reactSmall,
+    nperm = 10,
+    pathwaySubset =
+        "FGFR1 mutant receptor activation"
+)
 
 }

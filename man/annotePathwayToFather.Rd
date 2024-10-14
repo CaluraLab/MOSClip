@@ -30,33 +30,41 @@ data(reactSmall)
 
 genesToUse <- row.names(multiOmics[[1]])
 
- MOM_list <- lapply(reactSmall[1:2], function(g) {
-   fcl = multiOmicsSurvivalModuleTest(multiOmics, g,
-                                       survFormula='Surv(days, status) ~',
-                                       autoCompleteFormula = TRUE,
-                                       useTheseGenes = genesToUse)
-   fcl
+MOM_list <- lapply(reactSmall[1:2], function(g) {
+    fcl <- multiOmicsSurvivalModuleTest(multiOmics, g,
+        survFormula = "Surv(days, status) ~",
+        autoCompleteFormula = TRUE,
+        useTheseGenes = genesToUse
+    )
+    fcl
 })
 
- moduleSummary <- multiPathwayModuleReport(MOM_list)
- 
- pathHierarchy <- downloadPathwayRelationFromReactome()
- pathHierarchyGraph <- igraph::graph.data.frame(d = pathHierarchy,
-                                                directed = TRUE)
+moduleSummary <- multiPathwayModuleReport(MOM_list)
+
+pathHierarchy <- downloadPathwayRelationFromReactome()
+pathHierarchyGraph <- igraph::graph.data.frame(
+    d = pathHierarchy,
+    directed = TRUE
+)
 
 omicsClasses2pathways <- computeOmicsIntersections(
-  moduleSummary, pvalueThr = 1, zscoreThr = 1,
-  excludeColumns = c('pathway', 'module'))
+    moduleSummary,
+    pvalueThr = 1, zscoreThr = 1,
+    excludeColumns = c("pathway", "module")
+)
 
-omicsClasses2pathways <- lapply(omicsClasses2pathways,
-                                stripModulesFromPathways)
+omicsClasses2pathways <- lapply(
+    omicsClasses2pathways,
+    stripModulesFromPathways
+)
 
-# This step requires to download the whole reactome graph, which usually 
+# This step requires to download the whole reactome graph, which usually
 # takes a lot of time.
 # reactome <- graphite::pathways('hsapiens', 'reactome')
 # reactome <- graphite::convertIdentifiers(reactome, 'entrez')
-#omicsClasses2fathers <- lapply(omicsClasses2pathways, annotePathwayToFather,
-#                              graphiteDB = reactome, 
-#                              hierarchy = pathHierarchyGraph)
+# omicsClasses2fathers <- lapply(omicsClasses2pathways, 
+#                                annotePathwayToFather, 
+#                                graphiteDB = reactome,
+#                                hierarchy = pathHierarchyGraph)
 
 }

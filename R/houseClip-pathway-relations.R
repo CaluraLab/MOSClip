@@ -70,8 +70,7 @@ getPathFathers <- function(pathway, hierarchyGraph, ord = 3, plot = FALSE) {
 
     chain <- as_ids(mmlist[[1]])
     parents <- chain[-1]
-    if (length(parents) ==
-        0)
+    if (length(parents) == 0)
         return(chain)
 
     dis <- distances(mm[[1]])
