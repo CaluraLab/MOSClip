@@ -106,7 +106,7 @@ test_that(
         expect_false(is.null(res.moduleHeat))
         expect_identical(
             class(res.moduleHeat),
-            c("gTree", "grob", "gDesc")
+            c("gg", "ggplot")
         )
 
         expect_error(
