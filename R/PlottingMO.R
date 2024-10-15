@@ -199,7 +199,7 @@ plotPathwayHeat <- function(
         legend_grouping = "original"
     ))
     gb <- ggplotify::as.ggplot(gb)
-    invisible(gb)
+    return(gb)
 }
 
 #' Plot Kaplan-Meier survival curves of a specific pathway
@@ -502,7 +502,9 @@ plotModuleHeat <- function(
     gb <- grid::grid.grabExpr(ComplexHeatmap::draw(ht_list,
         legend_grouping = "original"
     ))
-    return(gb)
+    
+    ggplot_obj <- ggplotify::as.ggplot(gb)
+    return(ggplot_obj)
 }
 
 
