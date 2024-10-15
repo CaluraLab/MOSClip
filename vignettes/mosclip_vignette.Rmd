@@ -98,8 +98,7 @@ explore its methods and tools in a simplified context.
 Information on how the dataset was generated can be found in package 
 documentation with `?multiOmics`. Moreover, additional information on how to 
 pre-process datasets for a `MOSClip` analysis are available in this [GitHub 
-tutorial](https://cavei.github.io/MOSClipTutorials/
-How-to-format-TCGA-datasets.html) 
+tutorial](https://caluralab.github.io/MOSClipTutorials/) 
 or in the Materials and Methods section of the paper [@martini_mosclip_2019].
 
 
@@ -305,13 +304,10 @@ plotPathwayKM(pathwaySurv[["Activation of Matrix Metalloproteinases"]],
 ```
 
 # Additional functionalities {.unnumbered}
-The analysis can be performed also on gene-sets rather than pathways. A tutorial
-can be found [here](https://cavei.github.io/MOSClipTutorials/
-workflowGitHub_TCGA_MOSClipAnalysisTutorial_geneList.html).
-
-Moreover, `MOSClip` gives the possibility to prioritize most important and 
+`MOSClip` gives the possibility to prioritize most important and 
 stable pathway or module results, running a resampling procedure that can be 
-found on the extended tutorial on GitHub. 
+found on the 
+[extended tutorial on GitHub](https://caluralab.github.io/MOSClipTutorials/). 
 
 More tutorials are also available on how to perform a two-class analysis with 
 `MOSClip`, as well as examples of more plots that were not shown in this 
