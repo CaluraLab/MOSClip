@@ -23,7 +23,7 @@ Additionally, the package offers valuable graphical tools to visualize
 and interpret the results.
 
 <p align="center">
-  <img src="man/figures/image.png" width="700">
+<img src="man/figures/image.png" width="700">
 </p>
 
 ## Installation
