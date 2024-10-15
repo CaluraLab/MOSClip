@@ -1,0 +1,13 @@
+bibentry(
+  bibtype  = "Article",
+  title    = "MOSClip: multi-omic and survival pathway analysis for the identification of survival associated gene and modules",
+  author   = c(person("Paolo", "Martini"), person("Monica", "Chiogna"), person("Enrica", "Calura"), person("Chiara", "Romualdi")),
+  journal  = "Nucleic Acids Research",
+  year     = "2019",
+  volume   = "47",
+  number   = "14",
+  pages    = "e80",
+  doi      = "10.1093/nar/gkz324"
+)
+
+
