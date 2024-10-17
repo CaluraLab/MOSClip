@@ -1,6 +1,6 @@
 Package: MOSClip
 Title: Multi Omics Survival Clip
-Version: 0.99.4
+Version: 0.99.5
 Depends: R (>= 4.4.0)
 Authors@R: c(
    person(given = "Paolo", family = "Martini", role = c("aut", "cre"),
@@ -21,7 +21,8 @@ Authors@R: c(
    person(given = "Federico", family = "Agostinis", role = c("aut"),
           email = "federico.agostinis@outlook.com")
    )
-Description: Topological pathway analysis tool able to integrate multi-omics data. It finds survival-associated gene modules or significant modules for two-class analysis. This tool have two main methods: pathway tests and module tests. The latter method allows the user to dig inside the pathways itself.
+Description: Topological pathway analysis tool able to integrate multi-omics data. It finds survival-associated modules or significant modules for two-class analysis. This tool have two main methods: pathway tests and module tests. The latter method allows the user to dig inside the pathways itself.
+License: AGPL-3
 Imports: MultiAssayExperiment, methods, survminer, graph,
   graphite, AnnotationDbi, checkmate, ggplot2, gridExtra, igraph,
   pheatmap, survival, RColorBrewer, SuperExactTest,
