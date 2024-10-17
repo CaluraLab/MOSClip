@@ -32,13 +32,15 @@ You can install `MOSClip` directly from GitHub writing the following
 commands in your R console.
 
 ``` r
-# Install devtools if not already installed
-if (!requireNamespace("devtools", quietly = TRUE)) {
-  install.packages("devtools")
-}
+# Install the package from Bioconductor
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("MOSClip")
+
 
 # Install the package from GitHub
-devtools::install_github("CaluraLab/MOSClip")
+# devtools::install_github("CaluraLab/MOSClip")
 ```
 
 ## References
