@@ -134,16 +134,29 @@ makeOmics <- function(experiments = ExperimentList(),
     }
 
     data_validation <- lapply(MAE@ExperimentList@listData, function(exp) {
-        all(exp == 0 | is.na(exp))
+        all(exp == 0)
     })
 
     if (any(data_validation == TRUE)) {
         stop(paste0(
-            "Some experiment matrices contains only 0 or NA values: ",
+            "Some experiment matrices contain only 0s: ",
             paste(names(data_validation)[
                 which(data_validation == TRUE)
             ], collapse = ", ")
         ))
+    }
+    
+    data_validation <- lapply(MAE@ExperimentList@listData, function(exp) {
+      anyNA(exp)
+    })
+    
+    if (any(data_validation == TRUE)) {
+      stop(paste0(
+        "Some experiment matrices contain NA values: ",
+        paste(names(data_validation)[
+          which(data_validation == TRUE)
+        ], collapse = ", ")
+      ))
     }
 
     new("Omics",
