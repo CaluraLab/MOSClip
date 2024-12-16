@@ -1,3 +1,50 @@
+#' Check formulas
+#' 
+#' Check input baseFormula and nullModel formula are correct.
+#' 
+#' @inheritParams multiOmicsTwoClassPathwayTest
+#' 
+#' @return NULL. Stop function if one of the formulas is not correct.
+#' 
+
+checkFormula <- function(baseFormula, nullModel, classAnnot, 
+                         autoCompleteFormula, omicsObj, paired, patientCol){
+  
+  baseFormula_input <- strsplit(baseFormula, "\\s*~\\s*")[[1]]
+  if (!(baseFormula_input[1] %in% colnames(classAnnot))) {
+    stop("Invalid base formula. Class column not found in classAnnot")
+  } else if (!grepl("~", baseFormula)) {
+    stop("Invalid base formula. Formula should be written as: 'classes ~': ",
+         "classes is the name of the class column in classAnnot")
+  }
+  
+  nullModel_input <- strsplit(nullModel, "\\s*~\\s*")[[1]]
+  if (!(nullModel_input[1] %in% colnames(classAnnot))) {
+    stop("Invalid null formula. Class column not found in classAnnot")
+  } else if (length(nullModel_input) == 1) {
+    stop("Null formula is too short. ",
+         "Formula should be written as 'classes ~ 1': ",
+         "classes in the name of the class column in classAnnot")
+  } else if (!grepl("~", nullModel)) {
+    stop("Invalid null formula. ",
+         "Formula should be written as: 'classes ~ 1': ",
+         "classes is the name of the class column in classAnnot")
+  }
+  
+  if (autoCompleteFormula == TRUE & length(baseFormula_input) != 1){
+    stop("With autoCompleteFormula = TRUE baseFormula should be written as: ",
+         "'classes ~'. Covariates will be automatically added, including ",
+         "sample information for paired test.")
+  }
+  
+  if (paired == TRUE){
+    if (!(patientCol %in% colnames(omicsObj@colData))){
+      stop(patientCol, " column for paired test not found in colData.")
+    }
+  }
+}
+
+
 #' Compute Multi Omics Two-Class in Pathways
 #'
 #' Performs topological two-class analysis using an `Omics` object.
@@ -45,22 +92,10 @@
 multiOmicsTwoClassPathwayTest <- function(
     omicsObj, graph, classAnnot, baseFormula = "classes ~ ",
     autoCompleteFormula = TRUE, useTheseGenes = NULL, nullModel = "classes ~ 1",
-    pathName = NULL) {
-    baseFormula_input <- strsplit(baseFormula, " ")[[1]]
-    if (!(baseFormula_input[1] %in% colnames(classAnnot))) {
-        stop("Invalid formula. Class column not found in classAnnot")
-    } else if (length(baseFormula_input) == 1 | baseFormula_input[2] != "~") {
-        stop("Invalid formula. Formula should be written as: 'classes ~'")
-    }
-
-    nullModel_input <- strsplit(nullModel, " ")[[1]]
-    if (!(nullModel_input[1] %in% colnames(classAnnot))) {
-        stop("Invalid formula. Class column not found in classAnnot")
-    } else if (length(nullModel_input) == 1) {
-        stop("Formula is too short. Formula should be written as 'classes ~ 1")
-    } else if (nullModel_input[2] != "~" | nullModel_input[3] != "1") {
-        stop("Invalid formula. Formula should be written as: 'classes ~'")
-    }
+    pathName = NULL, paired = FALSE, patientCol = "patient") {
+    
+    checkFormula(baseFormula, nullModel, classAnnot, autoCompleteFormula, 
+                 omicsObj, paired, patientCol)
 
     if (nrow(classAnnot) != nrow(omicsObj@colData)) {
         stop("Mismatch in the number of samples")
@@ -210,26 +245,13 @@ multiOmicsTwoClassPathwayTest <- function(
 multiOmicsTwoClassModuleTest <- function(
     omicsObj, graph, classAnnot, baseFormula = "classes ~",
     autoCompleteFormula = TRUE, useTheseGenes = NULL, nullModel = "classes ~ 1",
-    pathName = NULL) {
+    pathName = NULL, paired = FALSE, patientCol = "patient") {
     if (is(graph, "character")) {
         stop("graph argument should be a graphNEL object, not a gene list.")
     }
-
-    baseFormula_input <- strsplit(baseFormula, " ")[[1]]
-    if (!(baseFormula_input[1] %in% colnames(classAnnot))) {
-        stop("Invalid formula. Class column not found in classAnnot")
-    } else if (length(baseFormula_input) == 1 | baseFormula_input[2] != "~") {
-        stop("Invalid formula. Formula should be written as: 'classes ~'")
-    }
-
-    nullModel_input <- strsplit(nullModel, " ")[[1]]
-    if (!(nullModel_input[1] %in% colnames(classAnnot))) {
-        stop("Invalid null formula. Class column not found in classAnnot")
-    } else if (length(nullModel_input) == 1) {
-        stop("Null formula should be written as 'classes ~ 1")
-    } else if (nullModel_input[2] != "~" | nullModel_input[3] != "1") {
-        stop("Invalid null formula. Formula should be written as: 'classes ~'")
-    }
+  
+    checkFormula(baseFormula, nullModel, classAnnot, autoCompleteFormula, 
+                 omicsObj, paired, patientCol)
 
     if (nrow(classAnnot) != nrow(omicsObj@colData)) {
         stop("Mismatch in the number of samples")
