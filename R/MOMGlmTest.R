@@ -29,11 +29,12 @@ glmTest <- function(data, fullModelFormula, nullModelFormula) {
     return(list(pvalue = pvalue, zlist = zlist))
 }
 
+
 #' @importFrom methods new
 MOMglmTest <- function(
     genes, omicsObj, classAnnot, baseFormula = "classes ~ ",
     autoCompleteFormula = TRUE,
-    nullModel = "classes ~ 1") {
+    nullModel = "classes ~ 1", paired = FALSE, patientCol = "patient") {
     # check if topological method has been used
     for (i in seq_along(omicsObj@ExperimentList@listData)) {
         if (omicsObj@modelInfo[i] == "summarizeWithPca") {
@@ -73,6 +74,11 @@ MOMglmTest <- function(
     dataTest <- data.frame(classAnnot, additionalCovariates)
 
     nullModelFormula <- nullModel
+    if (paired == TRUE) {
+      if (grepl(patientCol, nullModelFormula) == FALSE){
+          nullModelFormula <- paste0(c(nullModel, patientCol), collapse = "+")
+      }
+    }
 
     dependentVar <- all.vars(as.formula(nullModelFormula))[1]
 
@@ -98,13 +104,19 @@ MOMglmTest <- function(
 
     fullModelFormula <- baseFormula
     if (autoCompleteFormula) {
-        fullModelFormula <- paste0(
-            baseFormula,
-            paste(colnames(additionalCovariates),
-                collapse = "+"
-            )
-        )
-    }
+      if (paired == TRUE){
+        patient <- omicsObj@colData[, patientCol]
+        fullModelFormula <-  paste0(baseFormula, 
+                                    paste(c(colnames(additionalCovariates), 
+                                          patientCol),
+                                          collapse = "+"))
+        dataTest <- cbind(patient, dataTest)
+      }
+      else{
+        fullModelFormula <- paste0(baseFormula, 
+                                   paste(colnames(additionalCovariates), 
+                                                      collapse = "+"))
+      }}
 
     res <- glmTest(dataTest, fullModelFormula, nullModelFormula)
 

@@ -126,11 +126,18 @@ multiOmicsTwoClassPathwayTest <- function(
     dataTest <- data.frame(classAnnot, covariates)
 
     nullModelFormula <- nullModel
+    if (paired == TRUE) {
+      if (grepl(patientCol, nullModelFormula) == FALSE){
+        nullModelFormula <- paste0(c(nullModel, patientCol), collapse = "+")
+      }
+    }
 
     dependentVar <- all.vars(as.formula(nullModelFormula))[1]
     if (!(dependentVar %in% colnames(dataTest))) {
         stop("Data does not contain one of the model dependent variables")
     }
+    
+    dataTest <- dataTest[, c(dependentVar, colnames(covariates))]
 
     twoClasses <- unique(dataTest[, dependentVar])
     if (length(twoClasses) != 2) {
@@ -143,12 +150,20 @@ multiOmicsTwoClassPathwayTest <- function(
         dataTest[dataTest[, dependentVar] == twoClasses[2], dependentVar] <- 1
         dataTest[, dependentVar] <- as.numeric(dataTest[, dependentVar])
     }
-
+    
     fullModelFormula <- baseFormula
     if (autoCompleteFormula) {
-        fullModelFormula <- paste0(baseFormula, paste(colnames(covariates), 
-                                                      collapse = "+"))
-    }
+        if (paired == TRUE){
+          patient <- omicsObj@colData[, patientCol]
+          fullModelFormula <-  paste0(baseFormula, 
+                                      paste(c(colnames(covariates), patientCol),
+                                            collapse = "+"))
+          dataTest <- cbind(patient, dataTest)
+        }
+        else{
+          fullModelFormula <- paste0(baseFormula, paste(colnames(covariates), 
+                                                        collapse = "+"))
+    }}
 
     res <- glmTest(dataTest, fullModelFormula, nullModelFormula)
 
@@ -235,7 +250,7 @@ multiOmicsTwoClassModuleTest <- function(
     results <- lapply(cliques, MOMglmTest,
         omicsObj = omicsObj, classAnnot = classAnnot,
         baseFormula = baseFormula, autoCompleteFormula = autoCompleteFormula, 
-        nullModel = nullModel
+        nullModel = nullModel, paired = paired, patientCol = patientCol
     )
 
     alphas <- as.numeric(vapply(results, extractPvalues, numeric(1)))
