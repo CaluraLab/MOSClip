@@ -57,14 +57,19 @@ checkFormula <- function(baseFormula, nullModel, classAnnot,
 #' @param baseFormula model formula to be used for the test. It should be
 #' written as 'classes ~ ', while 'classes' being the column name for the class
 #' labels
-#' @param autoCompleteFormula a logical value. If TRUE. It autocompletes the
-#' formula used to fit generalized lienar models function  using all the
-#' available covariates (omics)
+#' @param autoCompleteFormula a logical value, default TRUE. 
+#' If TRUE, it autocompletes the formula used to fit generalized linear 
+#' models function  using all the available covariates (omics)
 #' @param useTheseGenes (optional) vector of specific genes to be used
 #' @param nullModel the null model formula. It should be written the same as
 #' the baseFormula, followed by ' 1'. (e.g. 'classes ~ 1')
 #' @param pathName (optional) title of the pathway. If NULL, `graph@title` is
 #' used as title
+#' @param paired whether samples are paired or not. Default FALSE. If TRUE, 
+#' a specific column should be present in `colData` specifying paired samples
+#' @param patientCol name of the column to be searched in `colData` specifying 
+#' paired samples. Default "patient"
+#' 
 #' @examples
 #' data("multiOmics")
 #' data("reactSmall")
@@ -180,7 +185,7 @@ multiOmicsTwoClassPathwayTest <- function(
              "Check your dependent variables columns")
     }
 
-    if (!all(twoClasses == c(0, 1))) {
+    if (!(all(twoClasses %in% c(0, 1)) & is.numeric(twoClasses))) {
         dataTest[dataTest[, dependentVar] == twoClasses[1], dependentVar] <- 0
         dataTest[dataTest[, dependentVar] == twoClasses[2], dependentVar] <- 1
         dataTest[, dependentVar] <- as.numeric(dataTest[, dependentVar])

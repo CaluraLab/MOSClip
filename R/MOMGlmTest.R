@@ -96,7 +96,7 @@ MOMglmTest <- function(
 
     dataTestOut <- dataTest
 
-    if (!all(twoClasses == c(0, 1))) {
+    if (!(all(twoClasses %in% c(0, 1)) & is.numeric(twoClasses))) {
         dataTest[dataTest[, dependentVar] == twoClasses[1], dependentVar] <- 0
         dataTest[dataTest[, dependentVar] == twoClasses[2], dependentVar] <- 1
         dataTest[, dependentVar] <- as.numeric(dataTest[, dependentVar])
