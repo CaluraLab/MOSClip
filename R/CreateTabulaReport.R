@@ -51,8 +51,12 @@ multiPathwayReport <- function(multiPathwayList, priority_to = NULL) {
     }))
 
     ord <- order(pvalues)
+    
+    logs <- unlist(lapply(multiPathwayList, 
+                          function(p) ifelse(length(p@log) != 0, 1, 0)))
+    
     df <- cbind(row.names = names(pvalues)[ord], pvalue = pvalues[ord], 
-                data.frame(zMat[ord, , drop = FALSE]))
+                data.frame(zMat[ord, , drop = FALSE]), logs = logs[ord])
     order_by_covariates(df, 1, priority_to)
 }
 
@@ -122,7 +126,8 @@ formatModuleReport <- function(smObj) {
     alphas <- smObj@alphas
     z <- smObj@zlists
     idxs <- order(alphas)
-
+    logs <- unlist(lapply(smObj@log, function(c) ifelse(length(c) != 0, 1, 0)))
+    
     zcols <- sort(unique(unlist(lapply(z, function(x) {
         names(x)
     }))))
@@ -134,7 +139,9 @@ formatModuleReport <- function(smObj) {
         additionalCols
     }))
 
-    cbind(row.names = idxs, pvalue = alphas[idxs], data.frame(colDescription))
+    cbind(row.names = idxs, pvalue = alphas[idxs], 
+          data.frame(colDescription),
+          logs = logs[idxs])
 }
 
 mergeAll <- function(list) {
