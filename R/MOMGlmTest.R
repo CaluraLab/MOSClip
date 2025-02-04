@@ -118,8 +118,22 @@ MOMglmTest <- function(
                                                       collapse = "+"))
       }}
 
-    res <- glmTest(dataTest, fullModelFormula, nullModelFormula)
+    log_messages <- character(0)
+    res <- tryCatch({
+      withCallingHandlers({
+        glmTest(dataTest, fullModelFormula, nullModelFormula)   },
+        warning = function(w) {
+          log_messages <<- c(log_messages, paste("Warning in glmTest:", 
+                                                conditionMessage(w))) }) 
+    },
+    error = function(e) {
+      log_messages <<- c(log_messages, paste("Error in glmTest:", 
+                                            conditionMessage(e)))
+      return(NULL) 
+    }
+    )
 
     res$moView <- moView
-    res
+    res$log <- log_messages
+    return(res)
 }

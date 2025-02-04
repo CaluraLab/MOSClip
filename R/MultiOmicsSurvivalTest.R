@@ -100,17 +100,32 @@ multiOmicsSurvivalPathwayTest <- function(
     if (autoCompleteFormula) {
         formula <- paste0(survFormula, paste(add_covs, collapse = "+"))
     }
-
-    if (robust) {
-        scox <- survivalcoxr(coxObj, formula)
-    } else {
-        scox <- survivalcox(coxObj, formula)
+    
+    log_messages <- character(0)
+    scox <- tryCatch({
+      withCallingHandlers({
+        if (robust) {
+          survivalcoxr(coxObj, formula) 
+        } else {
+          survivalcox(coxObj, formula)  
+        }
+      },
+      warning = function(w) {
+        log_messages <<- c(log_messages, paste("Warning in survivalcox[r]:", 
+                                               conditionMessage(w)))
+      })
+    },
+    error = function(e) {
+      log_messages <<- c(log_messages, paste("Error in survivalcox[r]:", 
+                                             conditionMessage(e)))
+      return(NULL) 
     }
+    )
 
     new("MultiOmicsPathway",
         pvalue = scox$pvalue, zlist = scox$zlist, pathView = pathView,
         analysis = "survival", multiOmicObj = deparse(substitute(omicsObj)),
-        title = pathName
+        title = pathName, log = log_messages
     )
 }
 
@@ -175,12 +190,13 @@ multiOmicsSurvivalModuleTest <- function(
     zlist <- lapply(results, function(x) x$zlist)
     momics <- lapply(results, function(x) x$moView)
     modules <- cliques
+    log <- lapply(results, function(x) x$log)
 
     names(alphas) <- NULL
     new("MultiOmicsModules",
         alphas = alphas, zlists = zlist, modulesView = momics,
         modules = modules, analysis = "survival",
         multiOmicObj = deparse(substitute(omicsObj)),
-        title = pathName
+        title = pathName, log = log
     )
 }

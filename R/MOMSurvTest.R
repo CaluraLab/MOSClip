@@ -36,17 +36,31 @@ MOMSurvTest <- function(
         formula <- paste0(survFormula, paste(add_covs, collapse = "+"))
     }
 
+    log_messages <- character(0) 
     if (is.null(coxObj)) {
         scox <- list()
     } else {
-        if (robust) {
-            scox <- survivalcoxr(coxObj, formula)
-        } else {
-            scox <- survivalcox(coxObj, formula)
-        }
+      scox <- tryCatch({
+        withCallingHandlers({
+          if (robust) {
+            survivalcoxr(coxObj, formula)  
+          } else {
+            survivalcox(coxObj, formula)  
+          }
+        },
+        warning = function(w) {
+          log_messages <<- c(log_messages, paste("Warning in survivalcox[r]:", 
+                                                 conditionMessage(w)))
+        })
+      },
+      error = function(e) {
+        log_messages <<- c(log_messages, paste("Error in survivalcox[r]:", 
+                                               conditionMessage(e)))
+        return(NULL) })
     }
 
     scox$moView <- moView
+    scox$log <- log_messages
 
-    scox
+    return(scox)
 }

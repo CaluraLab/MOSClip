@@ -203,14 +203,26 @@ multiOmicsTwoClassPathwayTest <- function(
         else{
           fullModelFormula <- paste0(baseFormula, paste(colnames(covariates), 
                                                         collapse = "+"))
-    }}
-
-    res <- glmTest(dataTest, fullModelFormula, nullModelFormula)
+        }}
+    
+    log_messages <- character(0)
+    res <- tryCatch({
+      withCallingHandlers({
+        glmTest(dataTest, fullModelFormula, nullModelFormula)   },
+        warning = function(w) {
+          log_messages <<- c(log_messages, paste("Warning in glmTest:", 
+                                                 conditionMessage(w))) }) 
+    },
+    error = function(e) {
+      log_messages <<- c(log_messages, paste("Error in glmTest:", 
+                                             conditionMessage(e)))
+      return(NULL) 
+    })
 
     new("MultiOmicsPathway",
         pvalue = res$pvalue, zlist = res$zlist, pathView = moduleView,
         analysis = "twoClass", multiOmicObj = deparse(substitute(omicsObj)), 
-        title = pathName
+        title = pathName, log = log_messages
     )
 }
 
@@ -283,6 +295,7 @@ multiOmicsTwoClassModuleTest <- function(
     alphas <- as.numeric(vapply(results, extractPvalues, numeric(1)))
     zlists <- lapply(results, function(x) x$zlist)
     momics <- lapply(results, function(x) x$moView)
+    log <- lapply(results, function(x) x$log)
     analysis <- "twoClass"
 
     names(alphas) <- NULL
@@ -290,6 +303,6 @@ multiOmicsTwoClassModuleTest <- function(
         alphas = alphas, zlists = zlists, modulesView = momics,
         modules = cliques, analysis = analysis, 
         multiOmicObj = deparse(substitute(omicsObj)),
-        title = pathName
+        title = pathName, log = log
     )
 }
