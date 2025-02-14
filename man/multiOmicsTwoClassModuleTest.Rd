@@ -12,7 +12,9 @@ multiOmicsTwoClassModuleTest(
   autoCompleteFormula = TRUE,
   useTheseGenes = NULL,
   nullModel = "classes ~ 1",
-  pathName = NULL
+  pathName = NULL,
+  paired = FALSE,
+  patientCol = "patient"
 )
 }
 \arguments{
@@ -28,9 +30,9 @@ labels}
 written as 'classes ~ ', while 'classes' being the column name for the class
 labels}
 
-\item{autoCompleteFormula}{a logical value. If TRUE. It autocompletes the
-formula used to fit generalized lienar models function  using all the
-available covariates (omics)}
+\item{autoCompleteFormula}{a logical value, default TRUE.
+If TRUE, it autocompletes the formula used to fit generalized linear
+models function  using all the available covariates (omics)}
 
 \item{useTheseGenes}{(optional) vector of specific genes to be used}
 
@@ -39,6 +41,12 @@ the baseFormula, followed by ' 1'. (e.g. 'classes ~ 1')}
 
 \item{pathName}{(optional) title of the pathway. If NULL, \code{graph@title} is
 used as title}
+
+\item{paired}{whether samples are paired or not. Default FALSE. If TRUE,
+a specific column should be present in \code{colData} specifying paired samples}
+
+\item{patientCol}{name of the column to be searched in \code{colData} specifying
+paired samples. Default "patient"}
 }
 \value{
 \code{MultiOmicsModule} object

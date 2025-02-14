@@ -37,5 +37,8 @@ covariates analyzed and other specific information based on the omic.}
 \item{\code{title}}{the name of the pathway.}
 
 \item{\code{analysis}}{the type of analysis done: survival or two-class.}
+
+\item{\code{log}}{a list of the warning and/or error messages generated
+by \code{glm} or \code{cox} for each module.}
 }}
 
