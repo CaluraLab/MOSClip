@@ -266,8 +266,8 @@ summarizeWithPca <- function(
     if (length(genes) == 0) {
         return(NULL)
     }
-
-    dataClique <- t(data[genes, , drop = FALSE])
+    
+    dataClique <- Matrix::t(data[genes, , drop=FALSE])
     if (ncol(dataClique) == 0) {
         return(NULL)
     }

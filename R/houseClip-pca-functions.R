@@ -19,21 +19,21 @@
 #' @importFrom FactoMineR estim_ncp
 
 computePCs <- function(
-    exp, shrink = FALSE, method = c("regular", "topological", "sparse"),
+    exp, shrink = FALSE, method = c("regular", "topological", "sparse", "SC"),
     cliques = NULL, maxPCs = 3
 ) {
-    k <- min(
-        FactoMineR::estim_ncp(exp, scale = FALSE, ncp.min = 1)$ncp,
-        maxPCs
-    )
+    k <- min(FactoMineR::estim_ncp(exp, scale = FALSE, ncp.min = 1)$ncp,
+             maxPCs
+             )
     switch(
         method[1], regular = compPCs(exp = exp, shrink = shrink, k = k),
-        topological = topoCompPCs(
-            exp = exp, shrink = shrink, cliques = cliques,
-            k = k
-        ),
-        sparse = sparseCompPCs(exp = exp, shrink = shrink, k = k)
-    )
+        topological = topoCompPCs(exp = exp, shrink = shrink, 
+                                  cliques = cliques, k = k),
+        sparse = sparseCompPCs(exp = exp, shrink = shrink, k = k),
+        SC = SCcompPCs(exp = exp, shrink = shrink, k = k),
+        stop("Error: Invalid method. Choose from 'regular', 
+             'topological', 'sparse', or 'SC'.")
+        )
 }
 
 #' Topological PCA
@@ -137,4 +137,28 @@ compPCs <- function(exp, shrink, k) {
     row.names(eigenvector) <- nms
     sd <- apply(scores, 2, sd)
     return(list(x = scores, sdev = sd, loadings = eigenvector))
+}
+
+
+#' Single-cell PCA
+#' 
+#' @param exp a matrix
+#' @param shrink logical, whether to shrink or not.
+#' @param k the number of components to use
+#' 
+#' @return a list with the following elements:
+#'   \item{x}{the computed PCs}
+#'   \item{sdev}{the standard deviation captured by the PCs}
+#'   \item{loadings}{the loadings}
+#' 
+#' @importFrom BiocSingular runArpackSVD
+#'   
+SCcompPCs <- function(exp, shrink, k) {
+  pc <- runArpackSVD(exp, k = k, center = TRUE)
+  scores <- pc$u
+  colnames(scores) <- paste0("PC", seq_len(k))
+  loadings <- pc$v
+  colnames(loadings) <- paste0("PC", seq_len(k))
+  sd <- pc$d
+  return(list(x = scores, sdev = sd, loadings = loadings))
 }
