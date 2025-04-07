@@ -8,7 +8,7 @@
 #' 
 
 checkFormula <- function(baseFormula, nullModel, classAnnot, 
-                         autoCompleteFormula, omicsObj, paired, patientCol){
+                         autoCompleteFormula, omicsObj, mixed, patientCol){
   
   baseFormula_input <- strsplit(baseFormula, "\\s*~\\s*")[[1]]
   if (!(baseFormula_input[1] %in% colnames(classAnnot))) {
@@ -16,7 +16,7 @@ checkFormula <- function(baseFormula, nullModel, classAnnot,
   } else if (!grepl("~", baseFormula)) {
     stop("Invalid base formula. Formula should be written as: 'classes ~': ",
          "classes is the name of the class column in classAnnot")
-  }
+  } 
   
   nullModel_input <- strsplit(nullModel, "\\s*~\\s*")[[1]]
   if (!(nullModel_input[1] %in% colnames(classAnnot))) {
@@ -34,12 +34,12 @@ checkFormula <- function(baseFormula, nullModel, classAnnot,
   if (autoCompleteFormula == TRUE & length(baseFormula_input) != 1){
     stop("With autoCompleteFormula = TRUE baseFormula should be written as: ",
          "'classes ~'. Covariates will be automatically added, including ",
-         "sample information for paired test.")
+         "mixed effects.")
   }
   
-  if (paired == TRUE){
+  if (mixed == TRUE){
     if (!(patientCol %in% colnames(omicsObj@colData))){
-      stop(patientCol, " column for paired test not found in colData.")
+      stop(patientCol, " column for mixed effect model not found in colData.")
     }
   }
 }
@@ -65,10 +65,10 @@ checkFormula <- function(baseFormula, nullModel, classAnnot,
 #' the baseFormula, followed by ' 1'. (e.g. 'classes ~ 1')
 #' @param pathName (optional) title of the pathway. If NULL, `graph@title` is
 #' used as title
-#' @param paired whether samples are paired or not. Default FALSE. If TRUE, 
-#' a specific column should be present in `colData` specifying paired samples
-#' @param patientCol name of the column to be searched in `colData` specifying 
-#' paired samples. Default "patient"
+#' @param mixed whether a mixed effects model has to be fitted or not. 
+#' Default FALSE. If TRUE, a specific column should be present in `colData` 
+#' @param patientCol name of the column to be searched in `colData` to fit a 
+#' mixed effects model. Default "patient"
 #' 
 #' @examples
 #' data("multiOmics")
@@ -97,10 +97,10 @@ checkFormula <- function(baseFormula, nullModel, classAnnot,
 multiOmicsTwoClassPathwayTest <- function(
     omicsObj, graph, classAnnot, baseFormula = "classes ~ ",
     autoCompleteFormula = TRUE, useTheseGenes = NULL, nullModel = "classes ~ 1",
-    pathName = NULL, paired = FALSE, patientCol = "patient") {
+    pathName = NULL, mixed = FALSE, patientCol = "patient") {
     
     checkFormula(baseFormula, nullModel, classAnnot, autoCompleteFormula, 
-                 omicsObj, paired, patientCol)
+                 omicsObj, mixed, patientCol)
 
     if (nrow(classAnnot) != nrow(omicsObj@colData)) {
         stop("Mismatch in the number of samples")
@@ -112,7 +112,8 @@ multiOmicsTwoClassPathwayTest <- function(
     graph <- convertPathway(graph, useTheseGenes)
     genesToUse <- graph::nodes(graph)
     if (length(genesToUse) == 0) {
-        stop("There is no nodes on the graph.")
+        stop("There is no intersection between the given feature names and ",
+             "the node names in the graph.")
     }
 
     moduleView <- lapply(seq_along(omicsObj@ExperimentList@listData), 
@@ -148,9 +149,10 @@ multiOmicsTwoClassPathwayTest <- function(
     })
     covariates <- do.call(cbind, covariates)
 
-    if (is.null(covariates)) {
+    if (is.null(covariates)){ 
+        # | NCOL(covariates) < 2) {
         return(NULL)
-    }
+    } 
 
     if (!identical(row.names(classAnnot), row.names(covariates))) {
         if (all(row.names(classAnnot) %in% row.names(covariates))) {
@@ -163,12 +165,13 @@ multiOmicsTwoClassPathwayTest <- function(
         }
     }
 
-    dataTest <- data.frame(classAnnot, covariates)
+    dataTest <- data.frame(classAnnot, as.matrix(covariates))
 
     nullModelFormula <- nullModel
-    if (paired == TRUE) {
+    if (mixed == TRUE) {
       if (grepl(patientCol, nullModelFormula) == FALSE){
-        nullModelFormula <- paste0(c(nullModel, patientCol), collapse = "+")
+        effect <- paste0("(1|", patientCol, ")")
+        nullModelFormula <- paste0(c(nullModel, effect), collapse = "+")
       }
     }
 
@@ -193,12 +196,13 @@ multiOmicsTwoClassPathwayTest <- function(
     
     fullModelFormula <- baseFormula
     if (autoCompleteFormula) {
-        if (paired == TRUE){
+        if (mixed == TRUE){
           patient <- omicsObj@colData[, patientCol]
-          fullModelFormula <-  paste0(baseFormula, 
-                                      paste(c(colnames(covariates), patientCol),
-                                            collapse = "+"))
           dataTest <- cbind(patient, dataTest)
+          effect <- paste0("(1|", patientCol, ")")
+          fullModelFormula <-  paste0(baseFormula, 
+                                      paste(c(colnames(covariates), effect),
+                                            collapse = "+"))
         }
         else{
           fullModelFormula <- paste0(baseFormula, paste(colnames(covariates), 
@@ -208,7 +212,7 @@ multiOmicsTwoClassPathwayTest <- function(
     log_messages <- character(0)
     res <- tryCatch({
       withCallingHandlers({
-        glmTest(dataTest, fullModelFormula, nullModelFormula)   },
+        glmTest(dataTest, fullModelFormula, nullModelFormula, mixed)   },
         warning = function(w) {
           log_messages <<- c(log_messages, paste("Warning in glmTest:", 
                                                  conditionMessage(w))) }) 
@@ -262,13 +266,13 @@ multiOmicsTwoClassPathwayTest <- function(
 multiOmicsTwoClassModuleTest <- function(
     omicsObj, graph, classAnnot, baseFormula = "classes ~",
     autoCompleteFormula = TRUE, useTheseGenes = NULL, nullModel = "classes ~ 1",
-    pathName = NULL, paired = FALSE, patientCol = "patient") {
+    pathName = NULL, patientCol = "patient", mixed = FALSE) {
     if (is(graph, "character")) {
         stop("graph argument should be a graphNEL object, not a gene list.")
     }
   
     checkFormula(baseFormula, nullModel, classAnnot, autoCompleteFormula, 
-                 omicsObj, paired, patientCol)
+                 omicsObj, mixed, patientCol)
 
     if (nrow(classAnnot) != nrow(omicsObj@colData)) {
         stop("Mismatch in the number of samples")
@@ -280,17 +284,42 @@ multiOmicsTwoClassModuleTest <- function(
     graph <- convertPathway(graph, useTheseGenes)
     genes <- graph::nodes(graph)
     if (length(genes) == 0) {
-        stop("There is no intersection between expression feature names and ", 
+        stop("There is no intersection between the given feature names and ", 
              "the node names in the graph.")
     }
 
     cliques <- extractCliquesFromDag(graph)
-
-    results <- lapply(cliques, MOMglmTest,
-        omicsObj = omicsObj, classAnnot = classAnnot,
-        baseFormula = baseFormula, autoCompleteFormula = autoCompleteFormula, 
-        nullModel = nullModel, paired = paired, patientCol = patientCol
-    )
+    
+    results <- lapply(cliques, function(clique) {
+      log_entry <- c()  
+      
+      res <- tryCatch(
+        withCallingHandlers(
+          {
+            out <- MOMglmTest(
+              clique, omicsObj = omicsObj, classAnnot = classAnnot, 
+              baseFormula = baseFormula, autoCompleteFormula = autoCompleteFormula,
+              nullModel = nullModel, patientCol = patientCol,
+              mixed = mixed
+            )
+            out$log <- log_entry  
+            out
+          },
+          warning = function(w) {
+            log_entry <<- c(log_entry, paste("Warning in MOMglmTest:", conditionMessage(w)))
+          }
+        ),
+        error = function(e) {
+          msg <- paste("Error in MOMglmTest:", conditionMessage(e))
+          log_entry <<- c(log_entry, msg)
+          message(msg)
+          return(list(log = log_entry)) 
+        }
+      )
+      
+      res$log <- log_entry  
+      return(res)
+    })
 
     alphas <- as.numeric(vapply(results, extractPvalues, numeric(1)))
     zlists <- lapply(results, function(x) x$zlist)
