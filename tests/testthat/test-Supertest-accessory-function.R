@@ -6,12 +6,9 @@ test_that(
             directed = TRUE
         )
 
-        pathwayName = c(
-            "Circadian Clock",
-            "Signaling Pathways"
-        )
-        reactome <- graphite::pathways("hsapiens", "reactome")[pathwayName]
-
+        
+        reactome <- graphite::pathways("hsapiens", "reactome")[1:2]
+        pathwayName <- names(reactome)
 
         omicsClasses2pathways <- list(
             exp = pathwayName,
