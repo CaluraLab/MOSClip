@@ -15,10 +15,10 @@ glmTest <- function(data, fullModelFormula, nullModelFormula) {
     names(zlist) <- row.names(glmSummary$coefficients)[-1]
 
     fullModel <- glm(as.formula(fullModelFormula),
-        family = poisson, data = data
+        family = "binomial", data = data
     )
     nullModel <- glm(as.formula(nullModelFormula),
-        family = poisson, data = data
+        family = "binomial", data = data
     )
 
     pvalue <- pchisq(deviance(nullModel) - deviance(fullModel),
