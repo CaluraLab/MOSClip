@@ -33,10 +33,7 @@ test_that(
         )
 
         expect_false(is.null(res.pathwayHeat))
-        expect_identical(
-            class(res.pathwayHeat),
-            c("gg", "ggplot")
-        )
+        expect_s3_class(res.pathwayHeat, "ggplot")
 
         res.pathwayHeat_nopalette <- plotPathwayHeat(
             twoCPathwayObj, sortBy = c("expPC2", "mut", "classes"),
@@ -47,10 +44,7 @@ test_that(
         )
 
         expect_false(is.null(res.pathwayHeat_nopalette))
-        expect_identical(
-            class(res.pathwayHeat_nopalette),
-            c("gg", "ggplot")
-        )
+        expect_s3_class(res.pathwayHeat_nopalette, "ggplot")
 
         expect_error(
             plotPathwayHeat(
@@ -104,10 +98,7 @@ test_that(
         )
 
         expect_false(is.null(res.moduleHeat))
-        expect_identical(
-            class(res.moduleHeat),
-            c("gg", "ggplot")
-        )
+        expect_s3_class(res.moduleHeat, "ggplot")
 
         expect_error(
             plotModuleHeat(
@@ -225,10 +216,7 @@ test_that(
         expect_false(is.null(res.PathwayKM))
         expect_identical(
             class(res.PathwayKM),
-            c(
-                "ggsurvplot", "ggsurv",
-                "list"
-            )
+            c("ggsurvplot", "ggsurv", "list")
         )
 
         res.survModules <- multiOmicsSurvivalModuleTest(
