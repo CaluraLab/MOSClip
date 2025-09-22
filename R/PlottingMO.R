@@ -295,7 +295,7 @@ plotPathwayKM <- function(
 
     p <- survminer::ggsurvplot(fit,
         data = coxObj, risk.table = risk.table, pval = pval,
-        palette = palette, size = size
+        palette = palette, linewidth = size
     )
 
     if (!is.null(fileName)) {
@@ -659,7 +659,7 @@ plotModuleKM <- function(
 
     p <- survminer::ggsurvplot(fit,
         data = coxObj, risk.table = risk.table, pval = pval,
-        palette = unname(palette), size = size
+        palette = unname(palette), linewidth = size
     )
 
     if (!is.null(fileName)) {
