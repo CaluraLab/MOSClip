@@ -1,6 +1,6 @@
 Package: MOSClip
 Title: Multi Omics Survival Clip
-Version: 1.2.2
+Version: 1.2.3
 Depends: R (>= 4.4.0)
 Authors@R: c(
    person(given = "Paolo", family = "Martini", role = c("aut", "cre"),
